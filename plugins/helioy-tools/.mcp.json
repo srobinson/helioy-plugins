@@ -7,6 +7,10 @@
     "fmm": {
       "command": "npx",
       "args": ["-y", "frontmatter-matters", "serve"]
+    },
+    "mdx": {
+      "command": "npx",
+      "args": ["-y", "--package", "mdcontext", "mdcontext-mcp"]
     }
   }
 }
