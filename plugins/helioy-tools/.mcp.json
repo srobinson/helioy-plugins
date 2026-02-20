@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "am": {
-      "command": "npx",
-      "args": ["-y", "attention-matters", "serve"]
+      "command": "am",
+      "args": ["serve"]
     },
     "fmm": {
       "command": "npx",
@@ -11,6 +11,10 @@
     "mdx": {
       "command": "npx",
       "args": ["-y", "--package", "mdcontext", "mdcontext-mcp"]
+    },
+    "linear-server": {
+      "type": "http",
+      "url": "https://mcp.linear.app/mcp"
     }
   }
 }

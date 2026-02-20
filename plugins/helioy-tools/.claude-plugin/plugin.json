@@ -1,27 +1,8 @@
 {
   "name": "helioy-tools",
-  "version": "0.1.0",
   "description": "Complete Helioy ecosystem — geometric memory (attention-matters), code navigation (FMM), knowledge base (~/.mdx), Linear workflow, and Nancy orchestration",
   "author": {
     "name": "Stuart Robinson",
     "email": "stuart@alphab.io"
-  },
-  "repository": "https://github.com/srobinson/helioy-plugins",
-  "homepage": "https://helioy.com",
-  "license": "MIT",
-  "keywords": [
-    "memory",
-    "geometric-memory",
-    "code-navigation",
-    "knowledge-base",
-    "orchestration",
-    "mcp",
-    "fmm",
-    "attention-matters",
-    "helioy"
-  ],
-  "engines": {
-    "claudeCode": ">=2.0.0",
-    "node": ">=18.0.0"
   }
 }

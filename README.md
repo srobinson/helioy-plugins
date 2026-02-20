@@ -4,7 +4,7 @@ Claude Code plugin for the [Helioy](https://helioy.com) ecosystem.
 
 ## What's included
 
-**helioy-tools** — one plugin, 11 skills, 3 MCP servers.
+**helioy-tools** — one plugin, 11 skills, 4 MCP servers.
 
 ### MCP Servers
 
@@ -13,6 +13,7 @@ Claude Code plugin for the [Helioy](https://helioy.com) ecosystem.
 | `am` | [attention-matters](https://www.npmjs.com/package/attention-matters) | Geometric memory on S3 hypersphere — persistent recall across sessions |
 | `fmm` | [frontmatter-matters](https://www.npmjs.com/package/frontmatter-matters) | Code metadata navigation — O(1) symbol/file lookups via frontmatter |
 | `mdx` | [mdcontext](https://www.npmjs.com/package/mdcontext) | Document structural intelligence — markdown indexing, search, embeddings |
+| `linear-server` | [Linear](https://mcp.linear.app) (HTTP) | Issue tracking — teams, projects, issues, comments, cycles |
 
 ### Skills
 
