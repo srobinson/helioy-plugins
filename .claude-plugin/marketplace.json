@@ -1,0 +1,37 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "helioy",
+  "description": "Helioy ecosystem tools — geometric memory, code navigation, knowledge management, and workflow orchestration for Claude Code",
+  "owner": {
+    "name": "Stuart Robinson",
+    "email": "stuart@alphab.io"
+  },
+  "metadata": {
+    "repository": "https://github.com/srobinson/helioy-plugins",
+    "homepage": "https://helioy.com"
+  },
+  "plugins": [
+    {
+      "name": "helioy-tools",
+      "description": "All Helioy capabilities in one plugin — attention-matters memory, FMM code navigation, ~/.mdx knowledge base, Linear workflow, and Nancy orchestration",
+      "version": "0.1.0",
+      "author": {
+        "name": "Stuart Robinson",
+        "email": "stuart@alphab.io"
+      },
+      "source": "./plugins/helioy-tools",
+      "category": "development",
+      "license": "MIT",
+      "keywords": [
+        "memory",
+        "geometric-memory",
+        "code-navigation",
+        "knowledge-base",
+        "orchestration",
+        "mcp",
+        "fmm",
+        "attention-matters"
+      ]
+    }
+  ]
+}

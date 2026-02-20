@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "am": {
+      "command": "npx",
+      "args": ["-y", "attention-matters", "serve"]
+    },
+    "fmm": {
+      "command": "npx",
+      "args": ["-y", "frontmatter-matters", "serve"]
+    }
+  }
+}
