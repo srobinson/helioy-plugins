@@ -1,10 +1,9 @@
 ---
 name: memory
 description: >
-  Persistent geometric memory across sessions. Auto-invoked at session start
-  to recall prior context, and after substantive exchanges to store new
-  memories. Use when the user asks about memory, wants to recall prior
-  sessions, inspect memory, check stats, or manage memory state.
+  Persistent geometric memory across sessions. Use when the user asks about
+  memory, wants to recall prior sessions, inspect memory, check stats, or
+  manage memory state.
 ---
 
 # Persistent Memory — attention-matters
@@ -32,6 +31,9 @@ Call `am_query` with the user's first message BEFORE doing anything else.
 
 - Results include conscious recall (marked insights), subconscious recall
   (past conversations), and novel connections (lateral associations)
+- Results also include `recalled_ids` — neighborhood UUIDs categorized by
+  type (`conscious`, `subconscious`, `novel`). Note these for use with
+  `am_feedback` later (see CORRECT below)
 - If empty, the project is new — don't mention it
 - For general context (conventions, patterns, preferences): weave silently
   into your response. Don't announce "I remember..."
@@ -108,6 +110,81 @@ Salient-worthy discoveries:
 architecture pattern, or make a design decision — that same response should
 include `am_salient`. If you found 3 issues in a code review, that's 3
 salient calls in your review response.
+
+### 6. CORRECT (when recall proves wrong)
+
+**Trigger: a recalled memory led you astray, or the user corrects something
+that came from memory.**
+
+Creating a new salient memory is NOT enough — the old memory that misled you
+must be demoted, or it keeps surfacing at equal activation and the manifold
+holds contradictory truths. The correction pattern is always: **demote the
+old, then salient the new.**
+
+#### When to demote
+
+Call `am_feedback` with `signal: "demote"` when:
+
+1. **User explicitly corrects you.** You stated something based on recall and
+   the user says "no, that's wrong" or "that changed." Demote the
+   neighborhood(s) that contained the wrong information.
+
+2. **Recalled info contradicts current reality.** You recall "component X uses
+   pattern Y" but the code shows pattern Z. The memory is stale. Demote it.
+
+3. **Recalled plan is superseded.** After RECONCILE surfaces a conflict and
+   the user confirms the change, demote the old plan's neighborhoods.
+
+4. **Memory caused a wrong action.** You used recalled context to make a
+   decision (edit a file path, use an API pattern) and it failed because the
+   info was outdated. Demote the source neighborhoods.
+
+#### When to boost
+
+Call `am_feedback` with `signal: "boost"` when:
+
+1. **Recalled info directly solved the problem.** You queried memory, got a
+   result, and it was exactly right — correct API pattern, right file path,
+   accurate architecture description.
+
+2. **User confirms recalled context.** You surface a recalled decision or
+   pattern and the user says "yes, exactly" or builds on it without
+   correction.
+
+#### How to call am_feedback
+
+```
+am_feedback(
+  query: "<the original query text from am_query>",
+  neighborhood_ids: ["<uuid>", ...],
+  signal: "boost" | "demote"
+)
+```
+
+- `query`: The ORIGINAL query text you passed to `am_query`
+- `neighborhood_ids`: The specific UUIDs from `recalled_ids` in the query
+  response — only the relevant ones, not all of them
+- `signal`: "boost" or "demote"
+
+#### Tracking neighborhood_ids
+
+The `am_query` response includes `recalled_ids` with UUIDs grouped by
+category. When the correction happens in the same exchange or shortly after
+recall, use those IDs directly.
+
+If the IDs have scrolled out of context (correction happens many messages
+later), **re-query** with the same or similar query text. The same wrong
+memories will surface for the same query — demote whatever comes back.
+
+#### The full correction pattern
+
+When correcting stale memory, ALWAYS do both steps in the same response:
+
+1. `am_feedback` with "demote" on the old neighborhoods
+2. `am_salient` with the corrected information
+
+This ensures the old memory fades (activation decayed by 2 per occurrence)
+while the new one starts fresh. Over time the manifold self-corrects.
 
 ## Explicit Commands
 
