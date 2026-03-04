@@ -1,16 +1,29 @@
 {
   "mcpServers": {
     "am": {
-      "command": "am",
-      "args": ["serve"]
+      "command": "npx",
+      "args": [
+        "-y",
+        "attention-matters",
+        "serve"
+      ]
     },
     "fmm": {
       "command": "npx",
-      "args": ["-y", "frontmatter-matters", "serve"]
+      "args": [
+        "-y",
+        "frontmatter-matters",
+        "serve"
+      ]
     },
     "mdx": {
       "command": "npx",
-      "args": ["-y", "--package", "mdcontext", "mdcontext-mcp"]
+      "args": [
+        "-y",
+        "--package",
+        "mdcontext",
+        "mdcontext-mcp"
+      ]
     },
     "linear-server": {
       "type": "http",

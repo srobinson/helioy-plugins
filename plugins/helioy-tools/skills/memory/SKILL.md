@@ -186,12 +186,31 @@ When correcting stale memory, ALWAYS do both steps in the same response:
 This ensures the old memory fades (activation decayed by 2 per occurrence)
 while the new one starts fresh. Over time the manifold self-corrects.
 
+## Two-Phase Retrieval (large manifolds)
+
+When the manifold is large and you want to avoid context pollution, use
+two-phase retrieval instead of a single `am_query`:
+
+1. **Index phase:** Call `am_query_index` with query text. Returns compact
+   entries (~50-100 tokens each) with `id`, `type`, `score`, `epoch`,
+   `summary` (first 100 chars), and `token_estimate`. No full content.
+
+2. **Retrieve phase:** Review the index, pick the entries worth reading in
+   full, then call `am_retrieve` with those IDs. Returns complete text for
+   only the selected neighborhoods.
+
+This is optional — `am_query` still works for normal-sized manifolds. Use
+two-phase when you're hitting token budget limits or getting too much
+low-value recall.
+
 ## Explicit Commands
 
 When the user invokes `/memory`, offer these operations:
 
 - **stats** — `am_stats` shows memory system statistics (episodes, conscious memories, occurrences)
 - **query `<text>`** — `am_query` runs a manual memory query and shows results
+- **index `<text>`** — `am_query_index` returns compact summaries for two-phase retrieval
+- **retrieve `<ids>`** — `am_retrieve` fetches full content for specific neighborhood IDs
 - **export** — `am_export` exports the full memory state as JSON
 - **import** — `am_import` imports a previously exported state
 - **ingest `<text>`** — `am_ingest` stores a document as a searchable memory episode

@@ -7,6 +7,7 @@
     "email": "stuart@alphab.io"
   },
   "metadata": {
+    "description": "Geometric memory, code navigation, knowledge management, and workflow orchestration for Claude Code",
     "repository": "https://github.com/srobinson/helioy-plugins",
     "homepage": "https://helioy.com"
   },
