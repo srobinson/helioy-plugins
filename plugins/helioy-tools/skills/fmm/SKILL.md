@@ -11,7 +11,7 @@ This codebase has FMM metadata available via MCP tools. Use them for instant, st
 
 | Tool | Use Case | Example |
 |------|----------|---------|
-| `fmm_read_symbol` | "Show me the code for X" | `fmm_read_symbol(name: "createPipeline")` |
+| `fmm_read_symbol` | "Show me the code for X" | `fmm_read_symbol(name: "createPipeline")` or `fmm_read_symbol(name: "NestFactory.create")` |
 | `fmm_lookup_export` | "Where is X defined?" | `fmm_lookup_export(name: "createPipeline")` |
 | `fmm_file_outline` | "What's in this file?" | `fmm_file_outline(file: "src/core/index.ts")` |
 | `fmm_list_files` | "What files are in this module?" | `fmm_list_files(path: "src/agent/")` |
@@ -27,9 +27,12 @@ This codebase has FMM metadata available via MCP tools. Use them for instant, st
 
 ```
 1. fmm_read_symbol(name: "X") → exact source + file path + line range — DONE
+   For a specific method: fmm_read_symbol(name: "ClassName.methodName") — DONE
 ```
 
 Replaces 3+ tool calls (search → find file → read file → locate symbol) with ONE.
+
+Use `ClassName.method` notation for dotted symbol navigation — extracts just the method without the full class body noise.
 
 Re-export chains are resolved automatically: if `X` is re-exported via `__init__.py` or `index.ts`, the tool follows the chain to the concrete definition.
 
