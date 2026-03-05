@@ -1,6 +1,6 @@
 ---
 name: linear-workflow
-description: Create and manage Linear issues following Helioy ways of working. Use when creating issues, planning features, breaking down work, or organizing tasks in Linear. Enforces parent/sub-issue pattern, proper sizing, and metadata conventions.
+description: "INVOKE THIS SKILL before creating any Linear issues. Required when creating issues, planning features, breaking down work, or organizing tasks in Linear. Enforces parent/sub-issue pattern, proper sizing, and metadata conventions."
 ---
 
 # Linear Workflow — Ways of Working
