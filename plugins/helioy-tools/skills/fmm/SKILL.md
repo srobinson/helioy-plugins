@@ -19,6 +19,7 @@ This codebase has FMM metadata available via MCP tools. Use them for instant, st
 | `fmm_dependency_graph` | "Deps and blast radius for this file" | `fmm_dependency_graph(file: "src/core/index.ts")` |
 | `fmm_file_info` | "Quick file summary" | `fmm_file_info(file: "src/utils/helpers.ts")` |
 | `fmm_search` | Multi-criteria search with relevance ranking | `fmm_search(imports: "lodash", min_loc: 100)` |
+| `fmm_glossary` | Symbol-level blast radius — who imports this symbol? | `fmm_glossary(pattern: "run_dispatch")` |
 
 ## Navigation Protocol
 
@@ -53,6 +54,14 @@ Re-export chains are resolved automatically: if `X` is re-exported via `__init__
 1. fmm_file_outline(file: "src/foo.ts") → every export with line ranges and sizes
 2. Decide WHAT to read before reading anything
 ```
+
+### "What would break if I rename/change X?"
+
+```
+1. fmm_glossary(pattern: "X") → all definitions of X + exact files that import each one — DONE
+```
+
+More surgical than fmm_dependency_graph: file-level blast radius tells you which files are affected; glossary tells you which specific callers import that symbol.
 
 ### "What depends on this file?" / "What does this file import?"
 
