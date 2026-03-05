@@ -14,10 +14,11 @@ This codebase has FMM metadata available via MCP tools. Use them for instant, st
 | `fmm_read_symbol` | "Show me the code for X" | `fmm_read_symbol(name: "createPipeline")` |
 | `fmm_lookup_export` | "Where is X defined?" | `fmm_lookup_export(name: "createPipeline")` |
 | `fmm_file_outline` | "What's in this file?" | `fmm_file_outline(file: "src/core/index.ts")` |
+| `fmm_list_files` | "What files are in this module?" | `fmm_list_files(path: "src/agent/")` |
 | `fmm_list_exports` | "Find exports matching X" | `fmm_list_exports(pattern: "swarm")` |
-| `fmm_dependency_graph` | "What depends on this file?" | `fmm_dependency_graph(file: "src/core/index.ts")` |
+| `fmm_dependency_graph` | "Deps and blast radius for this file" | `fmm_dependency_graph(file: "src/core/index.ts")` |
 | `fmm_file_info` | "Quick file summary" | `fmm_file_info(file: "src/utils/helpers.ts")` |
-| `fmm_search` | Multi-criteria search | `fmm_search(imports: "lodash", min_loc: 100)` |
+| `fmm_search` | Multi-criteria search with relevance ranking | `fmm_search(imports: "lodash", min_loc: 100)` |
 
 ## Navigation Protocol
 
@@ -28,6 +29,15 @@ This codebase has FMM metadata available via MCP tools. Use them for instant, st
 ```
 
 Replaces 3+ tool calls (search → find file → read file → locate symbol) with ONE.
+
+Re-export chains are resolved automatically: if `X` is re-exported via `__init__.py` or `index.ts`, the tool follows the chain to the concrete definition.
+
+### "What files are in this module?"
+
+```
+1. fmm_list_files(path: "src/agent/") → all indexed files with LOC and export count — DONE
+2. Use fmm_file_outline on specific files to understand their shape
+```
 
 ### "Where is X defined?"
 
@@ -44,10 +54,14 @@ Replaces 3+ tool calls (search → find file → read file → locate symbol) wi
 2. Decide WHAT to read before reading anything
 ```
 
-### "What depends on this file?"
+### "What depends on this file?" / "What does this file import?"
 
 ```
-1. fmm_dependency_graph(file: "src/foo.ts") → upstream + downstream deps — DONE
+1. fmm_dependency_graph(file: "src/foo.ts")
+2. Response includes three fields:
+   - local_deps: intra-project files it imports, resolved to actual paths
+   - external: third-party packages
+   - downstream: files that import this file (blast radius if it changes)
 ```
 
 ## Sidecar Fallback
@@ -56,13 +70,13 @@ If MCP tools are unavailable, `.fmm` sidecar files exist alongside source files:
 
 ```yaml
 file: src/core/pipeline.ts
-fmm: v0.3
+fmm: v0.3+0.1.11
 exports:
   createPipeline: [10, 45]
   PipelineConfig: [47, 52]
-imports: [zod, lodash]
-dependencies: [./engine, ./validators]
+imports: [./engine, ./validators, lodash, zod]
 loc: 142
+modified: 2026-03-05
 ```
 
 Line ranges enable surgical reads: `Read(file, offset=10, limit=36)`.
