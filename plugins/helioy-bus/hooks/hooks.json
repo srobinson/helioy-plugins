@@ -1,0 +1,35 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/plugin/hooks/bus-register.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "TodoWrite|ToolSearch|WebFetch|WebSearch|Agent|Read|Write|Edit|Glob|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/plugin/hooks/check-mail.sh"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/plugin/hooks/bus-unregister.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

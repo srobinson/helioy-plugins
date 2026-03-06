@@ -1,0 +1,8 @@
+{
+  "name": "helioy-bus",
+  "description": "Inter-agent message bus — register Claude instances, discover peers, send and receive messages across projects",
+  "author": {
+    "name": "Stuart Robinson",
+    "email": "stuart@alphab.io"
+  }
+}

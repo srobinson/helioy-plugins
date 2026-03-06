@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "helioy",
-  "description": "Helioy ecosystem tools — geometric memory, code navigation, knowledge management, and workflow orchestration for Claude Code",
+  "description": "Helioy ecosystem tools \u2014 geometric memory, code navigation, knowledge management, and workflow orchestration for Claude Code",
   "owner": {
     "name": "Stuart Robinson",
     "email": "stuart@alphab.io"
@@ -14,7 +14,7 @@
   "plugins": [
     {
       "name": "helioy-tools",
-      "description": "All Helioy capabilities in one plugin — attention-matters memory, FMM code navigation, ~/.mdx knowledge base, Linear workflow, and Nancy orchestration",
+      "description": "All Helioy capabilities in one plugin \u2014 attention-matters memory, FMM code navigation, ~/.mdx knowledge base, Linear workflow, and Nancy orchestration",
       "version": "0.1.0",
       "author": {
         "name": "Stuart Robinson",
@@ -32,6 +32,26 @@
         "mcp",
         "fmm",
         "attention-matters"
+      ]
+    },
+    {
+      "name": "helioy-bus",
+      "description": "Inter-agent message bus \u2014 register Claude instances, discover peers, send and receive messages across projects",
+      "version": "0.1.0",
+      "author": {
+        "name": "Stuart Robinson",
+        "email": "stuart@alphab.io"
+      },
+      "source": "./plugins/helioy-bus",
+      "category": "development",
+      "license": "MIT",
+      "keywords": [
+        "agents",
+        "messaging",
+        "ipc",
+        "tmux",
+        "multi-agent",
+        "bus"
       ]
     }
   ]
