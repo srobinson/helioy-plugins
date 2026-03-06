@@ -1,9 +1,6 @@
 ---
 name: memory
-description: >
-  Persistent geometric memory across sessions. Use when the user asks about
-  memory, wants to recall prior sessions, inspect memory, check stats, or
-  manage memory state.
+description: Persistent geometric memory across sessions. Use when the user asks about memory, wants to recall prior sessions, inspect memory, check stats, or manage memory state.
 ---
 
 # Persistent Memory — attention-matters
@@ -99,6 +96,7 @@ a future session.** Call `am_salient` IMMEDIATELY — in the same response
 where you made the discovery, not later.
 
 Salient-worthy discoveries:
+
 - Architecture decisions and the reasoning behind them
 - Bugs found and their root causes
 - User preferences and conventions

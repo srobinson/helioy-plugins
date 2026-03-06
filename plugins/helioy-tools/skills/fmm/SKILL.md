@@ -2,10 +2,11 @@
 name: fmm
 description: >
   MCP-first code navigation for this codebase. Use before any symbol lookup,
-  file search, dependency trace, or impact analysis — replaces grep/glob/read
-  with O(1) fmm_* tool calls. Trigger when: navigating code structure, finding
-  where a symbol is defined, checking what imports a file, tracing blast radius
-  before a rename, or mapping test coverage.
+  file search, dependency trace, impact analysis, or codebase evaluation —
+  replaces grep/glob/read with O(1) fmm_* tool calls. Trigger when: starting
+  any task involving unfamiliar code, navigating code structure, finding where
+  a symbol is defined, checking what imports a file, tracing blast radius
+  before a rename, mapping test coverage, or evaluating/auditing a codebase.
 ---
 
 # FMM — MCP-First Code Navigation
@@ -14,18 +15,24 @@ This codebase has FMM metadata available via the **`fmm` MCP server**. All tools
 
 The index stays current throughout your session — a hook re-indexes any file you edit immediately after the write. You can trust fmm data at every point in your task.
 
+## Before You Touch Any Code
+
+If you are about to call `Read`, `Grep`, or `Glob` on a source file — stop. Ask: does fmm answer this? It answers structural questions at O(1): file topology, symbol locations, export maps, dependency graphs, blast radius. Reading files to derive those answers costs 10-50x more tokens and is less complete.
+
+Reserve `Read` for two cases only: editing a specific symbol, or understanding logic that `fmm_read_symbol` cannot provide.
+
 ## MCP Tools (ALWAYS USE THESE FIRST)
 
-| Tool                   | Use Case                                                       | Example                                                            |
-| ---------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `fmm_list_files`       | Orient in an unknown codebase — instant size map, sort by LOC  | `fmm_list_files(directory: "src/agent/", sort_by: "loc")`          |
-| `fmm_file_outline`     | Full structural profile — exports, public methods, line ranges | `fmm_file_outline(file: "src/core/index.ts")`                      |
-| `fmm_lookup_export`    | O(1) exact lookup → file, line range, full file profile        | `fmm_lookup_export(name: "createPipeline")`                        |
-| `fmm_list_exports`     | Export search: substring or regex (auto-detected). `^handle`, `Service$`, `^[A-Z]` for regex; plain text for substring | `fmm_list_exports(pattern: "^[A-Z]", directory: "packages/core/")` |
-| `fmm_read_symbol`      | Exact source for a named export or specific method             | `fmm_read_symbol(name: "Injector.loadInstance")`                   |
-| `fmm_search`           | Cross-cutting queries: imports, LOC range, depends_on, term    | `fmm_search(imports: "rxjs", min_loc: 500)`                        |
-| `fmm_dependency_graph` | Upstream deps + downstream blast radius for a file             | `fmm_dependency_graph(file: "src/core/index.ts")`                  |
-| `fmm_glossary`         | Symbol impact — call-site callers or test coverage by method   | `fmm_glossary(pattern: "Injector.loadInstance", mode: "source")`   |
+| Tool                   | Use Case                                                                                                                          | Example                                                              |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `fmm_list_files`       | Orient in an unknown codebase. sort_by: loc (heaviest), downstream (most-imported, best pre-refactoring), name, exports, modified | `fmm_list_files(directory: "src/", sort_by: "downstream")`           |
+| `fmm_file_outline`     | Full structural profile — exports, public/private (--include_private) methods, line ranges                                        | `fmm_file_outline(file: "src/core/index.ts", include_private: true)` |
+| `fmm_lookup_export`    | O(1) exact lookup → file, line range, full file profile                                                                           | `fmm_lookup_export(name: "createPipeline")`                          |
+| `fmm_list_exports`     | Export search: substring or regex (auto-detected). `^handle`, `Service$`, `^[A-Z]` for regex; plain text for substring            | `fmm_list_exports(pattern: "^[A-Z]", directory: "packages/core/")`   |
+| `fmm_read_symbol`      | Exact source for a named export or specific method                                                                                | `fmm_read_symbol(name: "Injector.loadInstance")`                     |
+| `fmm_search`           | Cross-cutting queries: imports, LOC range, depends_on, term                                                                       | `fmm_search(imports: "rxjs", min_loc: 500)`                          |
+| `fmm_dependency_graph` | Upstream deps + downstream blast radius. filter: "source" strips test files, filter: "tests" shows only test coverage             | `fmm_dependency_graph(file: "src/core/index.ts", filter: "source")`  |
+| `fmm_glossary`         | Symbol impact — call-site callers or test coverage by method                                                                      | `fmm_glossary(pattern: "Injector.loadInstance", mode: "source")`     |
 
 ## Navigation Protocol
 
@@ -36,7 +43,11 @@ The index stays current throughout your session — a hook re-indexes any file y
 2. Top entries = complexity anchors. Use fmm_file_outline on those first.
 ```
 
-First tool to reach for in an unknown codebase. Always pass `sort_by: "loc"` — the default is alphabetical, which buries the files that matter.
+First tool to reach for in an unknown codebase. Default sort is `loc` (heaviest files first).
+
+**Sort modes:** `loc` (default, heaviest files), `downstream` (most-imported — best before a refactor to see blast radius), `exports` (most exported symbols), `name` (alphabetical), `modified` (recently changed).
+
+**Pre-refactoring:** use `sort_by: "downstream"` to find the files other files depend on most. Those are the highest-risk targets for changes.
 
 ### "What's in this file?"
 
@@ -112,6 +123,18 @@ Results include class methods (e.g., `Injector.loadInstance`) as distinct entrie
 2. Transitive: fmm_dependency_graph(file: "...", depth: 3) or depth: -1 for full closure
 ```
 
+### "Evaluate or audit this codebase"
+
+```
+1. fmm_list_files(group_by: "subdir")               → full topology, LOC per bucket
+2. fmm_list_files(sort_by: "loc", limit: 20)        → largest files = complexity anchors
+3. fmm_list_files(sort_by: "downstream", limit: 15) → highest blast-radius files
+4. fmm_file_outline on key files                    → structure without reading
+5. fmm_search(imports: "package")                   → cross-cutting architecture patterns
+```
+
+A comprehensive evaluation in 5-8 calls and under 5k tokens — faster and more complete than reading files.
+
 ## Sidecar Fallback
 
 If MCP tools are unavailable, `.fmm` sidecar files exist alongside source files:
@@ -131,10 +154,12 @@ Line ranges enable surgical reads: `Read(file, offset=10, limit=36)`.
 
 ## Rules
 
-1. **MCP tools are primary** — always call `fmm_*` before grep/read
-2. **`fmm_list_files` first** — orient before navigating
-3. **`fmm_file_outline` before reading** — see the shape, then decide what to read
-4. **`fmm_read_symbol("ClassName.method")`** — never read a full class to find one method
-5. **Dotted pattern for rename safety** — `fmm_glossary("ClassName.method")` for call-site precision
-6. **Read source only when editing** — MCP tools tell you everything you need for navigation
-7. **Trust the index** — it updates automatically after every file write
+1. **Never use `Read` to understand structure** — use `fmm_file_outline`
+2. **Never use `Grep` to find a symbol** — use `fmm_lookup_export` or `fmm_glossary`
+3. **Never use `Glob` to explore a directory** — use `fmm_list_files`
+4. **`fmm_list_files` first** — orient before navigating
+5. **`fmm_file_outline` before reading** — see the shape, then decide what to read
+6. **`fmm_read_symbol("ClassName.method")`** — never read a full class to find one method
+7. **Dotted pattern for rename safety** — `fmm_glossary("ClassName.method")` for call-site precision
+8. **Read source only when editing** — MCP tools tell you everything you need for navigation
+9. **Trust the index** — it updates automatically after every file write

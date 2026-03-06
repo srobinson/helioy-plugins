@@ -10,6 +10,26 @@
         ]
       }
     ],
+    "PreToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "INPUT=$(cat); FILE=$(echo \"$INPUT\" | jq -r '.tool_input.file_path // empty'); if [ -n \"$FILE\" ] && echo \"$FILE\" | grep -qE '\\.(ts|tsx|js|jsx|py|rs|go|svelte|vue)$'; then SIDECAR=\"${FILE}.fmm\"; if [ -f \"$SIDECAR\" ]; then LOC=$(grep -m1 '^loc:' \"$SIDECAR\" | awk '{print $2}'); if [ -n \"$LOC\" ] && [ \"$LOC\" -gt 300 ] 2>/dev/null; then echo \"[fmm] ${FILE##*/} is $LOC LOC - structural index available.\"; echo 'Use fmm_file_outline(file) for structure, fmm_read_symbol(name) for specific code.'; printf '\\n--- fmm index ---\\n'; cat \"$SIDECAR\"; printf -- '---\\n'; fi; fi; fi; true"
+          }
+        ]
+      },
+      {
+        "matcher": "Glob|Grep",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[fmm] prefer fmm_search, fmm_list_files, or fmm_list_exports — check before globbing/grepping'; true"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
