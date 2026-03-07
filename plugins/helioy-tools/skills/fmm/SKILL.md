@@ -26,13 +26,67 @@ Reserve `Read` for two cases only: editing a specific symbol, or understanding l
 | Tool                   | Use Case                                                                                                                          | Example                                                              |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | `fmm_list_files`       | Orient in an unknown codebase. sort_by: loc (heaviest), downstream (most-imported, best pre-refactoring), name, exports, modified | `fmm_list_files(directory: "src/", sort_by: "downstream")`           |
-| `fmm_file_outline`     | Full structural profile — exports, public/private (--include_private) methods, line ranges                                        | `fmm_file_outline(file: "src/core/index.ts", include_private: true)` |
+| `fmm_file_outline`     | Full structural profile — exports, public/private (include_private) methods, line ranges                                          | `fmm_file_outline(file: "src/core/index.ts", include_private: true)` |
 | `fmm_lookup_export`    | O(1) exact lookup → file, line range, full file profile                                                                           | `fmm_lookup_export(name: "createPipeline")`                          |
 | `fmm_list_exports`     | Export search: substring or regex (auto-detected). `^handle`, `Service$`, `^[A-Z]` for regex; plain text for substring            | `fmm_list_exports(pattern: "^[A-Z]", directory: "packages/core/")`   |
 | `fmm_read_symbol`      | Exact source for a named export or specific method                                                                                | `fmm_read_symbol(name: "Injector.loadInstance")`                     |
 | `fmm_search`           | Cross-cutting queries: imports, LOC range, depends_on, term                                                                       | `fmm_search(imports: "rxjs", min_loc: 500)`                          |
 | `fmm_dependency_graph` | Upstream deps + downstream blast radius. filter: "source" strips test files, filter: "tests" shows only test coverage             | `fmm_dependency_graph(file: "src/core/index.ts", filter: "source")`  |
 | `fmm_glossary`         | Symbol impact — call-site callers or test coverage by method                                                                      | `fmm_glossary(pattern: "Injector.loadInstance", mode: "source")`     |
+
+## Navigation Workflow
+
+1. **Orient** — `fmm_list_files(sort_by: "downstream")` — highest blast-radius files first. Start here before touching anything.
+2. **Locate** — `fmm_lookup_export("SymbolName")` — O(1) file + line range. Replaces grep.
+3. **Outline** — `fmm_file_outline(file, include_private: true)` — full method inventory including private members.
+4. **Read** — `fmm_read_symbol("Class.method", line_numbers: true)` — surgical extraction.
+5. **Impact** — `fmm_glossary("Class.method")` — confirmed callers before renaming or changing a signature.
+
+### Discovering Code Structure
+
+```
+fmm_list_files(sort_by: "downstream")        →  highest blast-radius first
+fmm_list_files(group_by: "subdir")           →  directory topology in one call
+fmm_list_files(filter: "source")             →  source files only (no tests)
+fmm_list_files(pattern: "*.ts")              →  filter by filename glob
+```
+
+### Finding a Symbol
+
+```
+fmm_lookup_export("SymbolName")              →  O(1) file + line range
+fmm_list_exports(pattern: "auth")            →  fuzzy: validateAuth, authMiddleware
+fmm_file_outline(file: "src/foo.ts")         →  all exports with line ranges
+fmm_file_outline(..., include_private: true) →  private members too
+```
+
+### Reading Code
+
+```
+fmm_read_symbol("ClassName")                        →  full class source (capped at 10KB)
+fmm_read_symbol("Class.method")                     →  single method — surgical extraction
+fmm_read_symbol("Symbol", line_numbers: true)       →  with absolute line numbers
+fmm_read_symbol("LargeClass", truncate: false)      →  bypass 10KB cap
+```
+
+### Impact Analysis
+
+```
+fmm_glossary("loadInstance")                        →  all callers (named-import precision)
+fmm_glossary("Injector.loadInstance")               →  call-site precision
+fmm_dependency_graph(file: "src/injector.ts")       →  upstream deps + downstream blast radius
+fmm_dependency_graph(..., filter: "source")         →  production blast radius (no tests)
+fmm_dependency_graph(..., depth: -1)                →  full transitive closure
+```
+
+### Searching
+
+```
+fmm_search(term: "store")                           →  smart search: exports, files, imports
+fmm_search(imports: "lodash", min_loc: 100)         →  structured AND query
+fmm_search(export: "createStore", min_loc: 50)      →  export + size filter
+fmm_search(depends_on: "src/auth.ts")               →  full blast radius (transitive)
+```
 
 ## Navigation Protocol
 
@@ -135,6 +189,109 @@ Results include class methods (e.g., `Injector.loadInstance`) as distinct entrie
 
 A comprehensive evaluation in 5-8 calls and under 5k tokens — faster and more complete than reading files.
 
+## Parameter Reference
+
+### `fmm_lookup_export`
+
+Instant O(1) symbol-to-file lookup. Returns file path plus metadata (exports, imports, dependencies, LOC). Use before Grep.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `name` | string | yes | Exact export name to find (function, class, type, variable, component) |
+
+### `fmm_list_exports`
+
+Search or list exported symbols. Patterns with regex metacharacters (`^`, `$`, `[`, `(`, `\`, `.`, `*`, `+`, `?`, `{`) are compiled as regex; plain text uses case-insensitive substring match. Default limit: 200.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `pattern` | string | no | Substring or regex. `^handle` = prefix, `Service$` = suffix, `^[A-Z]` = PascalCase only |
+| `file` | string | no | File path — returns all exports from this specific file |
+| `directory` | string | no | Path prefix to scope results (e.g. `packages/core/`) |
+| `limit` | integer | no | Maximum results (default: 200) |
+| `offset` | integer | no | Results to skip (default: 0). Use for pagination |
+
+### `fmm_dependency_graph`
+
+Upstream dependencies (what it imports) and downstream dependents (what would break). Use `depth=-1` for full transitive closure.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `file` | string | yes | File path to analyze |
+| `depth` | integer | no | Traversal depth (default: 1). `depth=-1` = full transitive closure |
+| `filter` | enum: all \| source \| tests | no | `all` (default), `source` (exclude tests), `tests` (only test coverage) |
+
+### `fmm_read_symbol`
+
+Read exact source for a named export. Use `ClassName.method` to extract one method from a large class. Private methods found via `fmm_file_outline(include_private: true)` are accessible with the same dotted notation.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `name` | string | yes | Export name or `ClassName.method` for a specific method |
+| `truncate` | boolean | no | Apply 10KB cap (default: true). Set `false` for full source of large symbols |
+| `line_numbers` | boolean | no | Prepend absolute line numbers to each source line |
+
+### `fmm_file_outline`
+
+Full structural profile: every exported symbol with line range and size. Set `include_private: true` for private/protected members (TypeScript and Python; on-demand tree-sitter parse).
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `file` | string | yes | File path to outline |
+| `include_private` | boolean | no | Include private/protected methods and fields annotated with `# private` |
+
+### `fmm_search`
+
+Universal codebase search. Filters combine with AND semantics. `depends_on` uses transitive matching — for direct importers only, use `fmm_dependency_graph(depth: 1)`.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `term` | string | no | Smart search across exports, file paths, and imports. Grouped results |
+| `export` | string | no | Files exporting this symbol (exact then substring fallback) |
+| `imports` | string | no | Files that import this package/module (substring match) |
+| `depends_on` | string | no | Files that transitively depend on this local path |
+| `min_loc` | integer | no | Minimum lines of code |
+| `max_loc` | integer | no | Maximum lines of code |
+| `limit` | integer | no | Max fuzzy export results (default: 50) |
+
+### `fmm_list_files`
+
+List all indexed files with LOC, export count, and downstream dependent count. Default sort: LOC descending. Default limit: 200.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `directory` | string | no | Directory prefix to filter (e.g. `src/cli/`). Omit for all files |
+| `pattern` | string | no | Glob filter by filename (e.g. `*.py`, `test_*`) |
+| `limit` | integer | no | Maximum files (default: 200) |
+| `offset` | integer | no | Files to skip (default: 0). Use for pagination |
+| `sort_by` | enum: name \| loc \| exports \| downstream \| modified | no | `loc` (default), `downstream` (blast-radius sort), `name`, `exports`, `modified` |
+| `order` | enum: asc \| desc | no | Explicit sort order. Defaults: `name` → asc, others → desc |
+| `group_by` | enum: subdir | no | Collapse into directory buckets showing file count and total LOC |
+| `filter` | enum: all \| source \| tests | no | `all` (default), `source` (exclude tests), `tests` (only test files) |
+
+### `fmm_glossary`
+
+Symbol-level impact analysis. Three-layer precision: bare name returns named-import filtered callers; dotted name (e.g. `Injector.loadInstance`) adds call-site precision; `precision: "call-site"` removes dead imports and annotates re-exports.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `pattern` | string | yes | Case-insensitive substring filter on export name |
+| `limit` | integer | no | Max entries (default: 10, hard cap: 50) |
+| `mode` | enum: source \| tests \| all | no | `source` (default, no tests), `tests` (test exports only), `all` |
+| `precision` | enum: named \| call-site | no | `named` (default, fast index lookup), `call-site` (tree-sitter verification) |
+
+## Rules
+
+1. **Never use `Read` to understand structure** — use `fmm_file_outline`
+2. **Never use `Grep` to find a symbol** — use `fmm_lookup_export` or `fmm_glossary`
+3. **Never use `Glob` to explore a directory** — use `fmm_list_files`
+4. **`fmm_list_files` first** — orient before navigating
+5. **`fmm_file_outline` before reading** — see the shape, then decide what to read
+6. **`fmm_read_symbol("ClassName.method")`** — never read a full class to find one method
+7. **Dotted pattern for rename safety** — `fmm_glossary("ClassName.method")` for call-site precision
+8. **Read source only when editing** — MCP tools tell you everything you need for navigation
+9. **Trust the index** — it updates automatically after every file write
+
 ## Sidecar Fallback
 
 If MCP tools are unavailable, `.fmm` sidecar files exist alongside source files:
@@ -151,15 +308,3 @@ modified: 2026-03-06
 ```
 
 Line ranges enable surgical reads: `Read(file, offset=10, limit=36)`.
-
-## Rules
-
-1. **Never use `Read` to understand structure** — use `fmm_file_outline`
-2. **Never use `Grep` to find a symbol** — use `fmm_lookup_export` or `fmm_glossary`
-3. **Never use `Glob` to explore a directory** — use `fmm_list_files`
-4. **`fmm_list_files` first** — orient before navigating
-5. **`fmm_file_outline` before reading** — see the shape, then decide what to read
-6. **`fmm_read_symbol("ClassName.method")`** — never read a full class to find one method
-7. **Dotted pattern for rename safety** — `fmm_glossary("ClassName.method")` for call-site precision
-8. **Read source only when editing** — MCP tools tell you everything you need for navigation
-9. **Trust the index** — it updates automatically after every file write
