@@ -63,24 +63,7 @@ explicitly revised.
 
 **If no conflict exists**, proceed normally without announcing the check.
 
-### 3. ENGAGE (every substantive exchange)
-
-**Trigger: you just sent a response that contains technical content.**
-In that same response (or immediately at the start of the next), call
-`am_buffer` with the exchange pair.
-
-- **user**: The user's message text (condensed if long)
-- **assistant**: Your response text (condensed to key points)
-- Skip ONLY trivial exchanges: greetings, "ok", "yes", single-word confirmations
-- Everything else gets buffered: code reviews, debugging, design discussions,
-  implementation work, questions answered, decisions made
-- After 3 buffered exchanges, a memory episode is created automatically
-- Leftover buffer is flushed at start of next session
-
-**Rule of thumb:** if your response took more than 30 seconds of thinking or
-used any tools, it gets buffered.
-
-### 4. STRENGTHEN (after deep technical responses)
+### 3. STRENGTHEN (after deep technical responses)
 
 **Trigger: you just delivered a code review, architectural analysis, debugging
 session, or implementation plan.** Call `am_activate_response` with your
@@ -89,7 +72,7 @@ response text in the same message.
 - Consolidates related memories via drift and phase coupling on the manifold
 - Skip for simple Q&A or confirmations
 
-### 5. MARK INSIGHTS (the moment you discover them)
+### 4. MARK INSIGHTS (the moment you discover them)
 
 **Trigger: you just discovered or decided something that would be valuable in
 a future session.** Call `am_salient` IMMEDIATELY — in the same response
@@ -109,7 +92,7 @@ architecture pattern, or make a design decision — that same response should
 include `am_salient`. If you found 3 issues in a code review, that's 3
 salient calls in your review response.
 
-### 6. CORRECT (when recall proves wrong)
+### 5. CORRECT (when recall proves wrong)
 
 **Trigger: a recalled memory led you astray, or the user corrects something
 that came from memory.**
@@ -226,6 +209,8 @@ When the user invokes `/memory`, offer these operations:
 
 ## Session End
 
-Before a session ends, verify `am_buffer` was called for substantive exchanges.
-If the session contained technical work that was not buffered, call `am_buffer`
-with a condensed summary before closing. Unbuffered work is lost work.
+Memory episodes are created automatically when a session ends. The SessionEnd
+hook parses the full transcript and extracts all substantive content (user
+messages, assistant text, thinking blocks). Long sessions are chunked into
+multiple episodes. Subagent work becomes separate episodes. No manual action
+is needed at session end.
