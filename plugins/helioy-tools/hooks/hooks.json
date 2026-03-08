@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd ~/Dev/LLM/DEV/helioy && just preflight >/dev/null 2>&1 && STATUS='Preflight: ok' || STATUS='Preflight: FAILED (run just preflight to debug)'; echo \"${STATUS}\"; echo 'You have persistent geometric memory via the am MCP server. Call am_query NOW with a summary of the first user message to recall relevant context from past sessions. Do this BEFORE responding or exploring the codebase. During the session, call am_buffer with substantive exchange pairs. After meaningful technical responses, call am_activate_response to strengthen memory connections.'"
+            "command": "cd ~/Dev/LLM/DEV/helioy && just preflight >/dev/null 2>&1 && STATUS='Preflight: ok' || STATUS='Preflight: FAILED (run just preflight to debug)'; echo \"${STATUS}\"; echo 'You have persistent geometric memory via the am MCP server. Call am_query NOW with a summary of the first user message to recall relevant context from past sessions. Do this BEFORE responding or exploring the codebase. After meaningful technical responses, call am_activate_response to strengthen memory connections. Memory episodes are created automatically from the session transcript at session end.'"
           }
         ]
       }
@@ -36,7 +36,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "FILE=$(cat | jq -r '.tool_input.file_path // empty') && [ -n \"$FILE\" ] && [ -f .fmmrc.json ] && fmm generate \"$FILE\" 2>/dev/null; true"
+            "command": "cat > /tmp/helioy_recent_edits.txt && FILE=$(cat | jq -r '.tool_input.file_path // empty') && [ -n \"$FILE\" ] && [ -f .fmm.db  ] && fmm generate \"$FILE\" 2>/dev/null; true"
           }
         ]
       }
@@ -46,7 +46,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "am sync 2>/dev/null; echo 'Preflight: ok'"
+            "command": "am sync 2>/dev/null; true'"
           }
         ]
       }
@@ -56,7 +56,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "am sync >/tmp/am-stop.log; true"
+            "command": "am sync 2>/dev/null; true"
           }
         ]
       }

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# helo — launch Claude Code with a trackable session ID
+#
+# Generates a UUID, exports HELIOY_SESSION_ID for downstream hooks
+# (bus registration, stream tailing), and passes --session-id to Claude.
+# All caller args are forwarded as-is.
+#
+# Named after the SMTP HELO greeting — fits the bus metaphor.
+#
+# Usage:
+#   helo --verbose --dangerously-skip-permissions
+#   helo -p "do something" --model opus
+#
+# Install:
+#   ln -s ~/Dev/LLM/DEV/helioy/helioy-plugins/bin/helo ~/bin/helo
+
+set -euo pipefail
+
+export HELIOY_SESSION_ID="$(uuidgen | tr '[:upper:]' '[:lower:]')"
+
+exec claude --session-id "$HELIOY_SESSION_ID" "$@"

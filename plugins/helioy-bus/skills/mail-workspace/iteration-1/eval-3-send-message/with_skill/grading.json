@@ -1,0 +1,10 @@
+{
+  "eval_id": 3,
+  "eval_name": "send-message",
+  "configuration": "with_skill",
+  "expectations": [
+    {"text": "calls_send_message", "passed": true, "evidence": "Calls send_message with to and content fields"},
+    {"text": "correct_recipient", "passed": true, "evidence": "Calls list_agents first to resolve agent ID, then sends to attention-matters"},
+    {"text": "concise_actionable_content", "passed": true, "evidence": "Message content: 'Config bug is fixed. You can re-run ingestion now.' Concise, actionable, no pleasantries."}
+  ]
+}

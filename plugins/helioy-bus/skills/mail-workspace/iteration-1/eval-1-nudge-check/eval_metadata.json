@@ -1,0 +1,9 @@
+{
+  "eval_id": 1,
+  "eval_name": "nudge-check",
+  "prompt": "you have mail!",
+  "assertions": [
+    {"name": "calls_get_messages", "description": "Agent calls get_messages tool"},
+    {"name": "no_assumption_empty", "description": "Agent does not assume inbox is empty without checking"}
+  ]
+}

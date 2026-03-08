@@ -1,0 +1,9 @@
+{
+  "eval_id": 2,
+  "eval_name": "repeated-nudge",
+  "configuration": "with_skill",
+  "expectations": [
+    {"text": "checks_again_on_second_nudge", "passed": true, "evidence": "Explicitly calls get_messages again on Turn 2, quoting the skill rule: 'Always call get_messages regardless of whether you checked recently'"},
+    {"text": "no_dismissal", "passed": true, "evidence": "No mention of 'already checked'. Turn 2 is described as mechanically identical to Turn 1."}
+  ]
+}

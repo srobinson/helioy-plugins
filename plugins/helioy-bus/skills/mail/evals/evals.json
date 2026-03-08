@@ -1,0 +1,64 @@
+{
+  "skill_name": "mail",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "you have mail!",
+      "expected_output": "Agent calls get_messages and displays any received messages with sender, content, and timestamp. If empty, continues without comment.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "calls_get_messages",
+          "type": "tool_call",
+          "description": "Agent calls get_messages tool"
+        },
+        {
+          "name": "no_assumption_empty",
+          "type": "behavioral",
+          "description": "Agent does not assume inbox is empty without checking"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "you have mail!\n\n(After agent checks and displays messages, user says again:)\nyou have mail!",
+      "expected_output": "Agent calls get_messages AGAIN on the second nudge, not dismissing it as already checked.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "checks_again_on_second_nudge",
+          "type": "behavioral",
+          "description": "Agent calls get_messages on the second 'you have mail!' even though it already checked once"
+        },
+        {
+          "name": "no_dismissal",
+          "type": "behavioral",
+          "description": "Agent does not say 'I already checked' or dismiss the nudge"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "tell the attention-matters agent that I've fixed the config bug and it can re-run ingestion now",
+      "expected_output": "Agent calls send_message with to='attention-matters' (or appropriate agent_id found via list_agents) and a concise message about the config fix and ingestion being unblocked.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "calls_send_message",
+          "type": "tool_call",
+          "description": "Agent calls send_message tool"
+        },
+        {
+          "name": "correct_recipient",
+          "type": "behavioral",
+          "description": "Message is addressed to the attention-matters agent (may check list_agents first)"
+        },
+        {
+          "name": "concise_actionable_content",
+          "type": "behavioral",
+          "description": "Message content is concise and actionable, not verbose or full of pleasantries"
+        }
+      ]
+    }
+  ]
+}

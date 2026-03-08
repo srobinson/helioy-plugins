@@ -1,0 +1,10 @@
+{
+  "eval_id": 3,
+  "eval_name": "send-message",
+  "prompt": "tell the attention-matters agent that I've fixed the config bug and it can re-run ingestion now",
+  "assertions": [
+    {"name": "calls_send_message", "description": "Agent calls send_message tool"},
+    {"name": "correct_recipient", "description": "Message is addressed to the attention-matters agent"},
+    {"name": "concise_actionable_content", "description": "Message content is concise and actionable, not verbose"}
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "eval_id": 2,
+  "eval_name": "repeated-nudge",
+  "prompt": "User says 'you have mail!' — agent checks inbox and displays messages. Then user says 'you have mail!' again.",
+  "assertions": [
+    {"name": "checks_again_on_second_nudge", "description": "Agent calls get_messages on the second nudge even though it already checked once"},
+    {"name": "no_dismissal", "description": "Agent does not say 'I already checked' or dismiss the nudge"}
+  ]
+}

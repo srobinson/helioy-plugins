@@ -1,0 +1,9 @@
+{
+  "eval_id": 2,
+  "eval_name": "repeated-nudge",
+  "configuration": "old_skill",
+  "expectations": [
+    {"text": "checks_again_on_second_nudge", "passed": true, "evidence": "Does call get_messages again on Turn 2. However, extensively discusses the ambiguity: notes the skill is 'stateless' and has 'no concept of already read', exposing uncertainty about whether this is correct behavior."},
+    {"text": "no_dismissal", "passed": false, "evidence": "While it does call the tool, the response hedges heavily: 'The repeated nudge exposes a gap', 'duplicate display', questioning whether the behavior makes sense. This hesitation and analysis is exactly the kind of friction that leads to the real-world failure (dismissing the nudge) observed in practice."}
+  ]
+}

@@ -3,7 +3,9 @@
     "helioy-bus": {
       "type": "stdio",
       "command": "/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/.venv/bin/python",
-      "args": ["/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/server/proxy.py"]
+      "args": [
+        "/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/server/proxy.py"
+      ]
     }
   }
 }

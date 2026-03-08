@@ -1,0 +1,9 @@
+{
+  "eval_id": 1,
+  "eval_name": "nudge-check",
+  "configuration": "with_skill",
+  "expectations": [
+    {"text": "calls_get_messages", "passed": true, "evidence": "Calls get_messages with no arguments as first action"},
+    {"text": "no_assumption_empty", "passed": true, "evidence": "Explicitly quotes skill rule about never assuming inbox is empty without calling"}
+  ]
+}
