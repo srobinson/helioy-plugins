@@ -12,11 +12,31 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "TodoWrite|ToolSearch|WebFetch|WebSearch|Agent|Read|Write|Edit|Glob|Bash",
+        "matcher": "TodoWrite|ToolSearch|WebFetch|WebSearch|Agent|Read|Write|Edit|Glob|Bash|Grep|Skill",
         "hooks": [
           {
             "type": "command",
             "command": "/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/plugin/hooks/check-mail.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/plugin/hooks/check-mail.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/plugin/hooks/stop-check-mail.sh"
           }
         ]
       }
