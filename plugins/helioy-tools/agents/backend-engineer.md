@@ -1,6 +1,6 @@
 ---
 name: backend-engineer
-description: "Use this agent when the user needs server-side implementation: API endpoints, database schema design, authentication flows, background jobs, WebSocket services, or infrastructure configuration. This agent owns everything behind the API boundary.\n\nExamples:\n\n- user: \"Design the API for the billing system\"\n  assistant: \"I'll use the backend-engineer agent to design the API contract and implement the endpoints.\"\n  <commentary>API design and implementation is backend engineering. Use the backend-engineer agent.</commentary>\n\n- user: \"Add rate limiting to our public API\"\n  assistant: \"Let me launch the backend-engineer agent to implement rate limiting.\"\n  <commentary>Rate limiting is server-side infrastructure. Use the backend-engineer agent.</commentary>\n\n- user: \"The database queries on the analytics page are slow\"\n  assistant: \"I'll use the backend-engineer agent to profile and optimize the queries.\"\n  <commentary>Database query optimization is backend engineering. Use the backend-engineer agent.</commentary>"
+description: "Use this agent when building server-side APIs, microservices, and backend systems that require robust architecture, scalability planning, and production-ready implementation."
 model: opus
 color: green
 memory: user

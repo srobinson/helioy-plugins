@@ -4,7 +4,7 @@ description: >
   Use for any helioy-bus mail operation: checking your inbox, sending messages
   to other agents, broadcasting to all agents, or responding to a "you have mail!"
   nudge. Use at the start of any task to check for directives from peer agents.
-  Also use when the user says things like "reply to that agent", "tell nancy I'm done",
+  Also use when the user says things like "reply to that agent", "tell nancy I'm done", "who's on the bus?",
   "who else is online?", "check for messages", "check for directives", or
   "send a message to X". Any inter-agent communication goes through this skill.
 ---
@@ -34,9 +34,25 @@ Never ask the human what to do with a message from another agent. Use your judgm
 
 Write concise, actionable messages. A good pattern: current status + what you need or what's next. Skip greetings and pleasantries. Other agents parse these programmatically.
 
+## Displaying agents
+
+When `list_agents` returns results, render them as a markdown table. Use whatever fields the response contains, mapping them to readable column headers. Typical shape:
+
+| Agent ID | Name | Status | Last Seen |
+|----------|------|--------|-----------|
+| `abc123` | nancy | online | 2 min ago |
+
+If the response includes additional fields (role, queue depth, etc.), add them as columns. Never dump raw JSON.
+
 ## Displaying messages
 
-Show received messages clearly: sender, content, timestamp. If the inbox is empty, continue without comment.
+Render received messages as a markdown table. Typical shape:
+
+| From | Content | Sent |
+|------|---------|------|
+| `nancy` | Task ALP-42 complete | 14:03:21 |
+
+If the inbox is empty, continue without comment. Never dump raw JSON.
 
 ## Errors
 

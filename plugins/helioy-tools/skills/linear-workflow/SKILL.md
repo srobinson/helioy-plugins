@@ -23,6 +23,80 @@ The rest of this document covers all three levels. Read the section that matches
 
 ---
 
+## Step 2: Spec-Driven Decomposition (recommended for 1-level and 2-level)
+
+Before creating issues, spawn specialist agents to write detailed specs. Specs drive issue creation, not the other way around. This produces more precise worker issues and reduces errors during autonomous execution.
+
+### The Flow
+
+```
+Research/Architect agents write specs
+        ↓
+Specs persisted to ~/.mdx/projects/
+        ↓
+Sub-parents created with 1:1 spec mapping
+        ↓
+Small, precise sub-issues derived from each spec
+        ↓
+Nancy executes sub-issues
+        ↓
+Code review agent validates against the spec
+```
+
+### Writing Specs
+
+Spawn specialist agents (architect, researcher, domain expert) to produce spec documents. Each spec covers one natural grouping of work.
+
+**Spec location**: `~/.mdx/projects/{project-name}-spec-{natural-grouping}.md`
+
+Examples:
+- `~/.mdx/projects/context-matters-spec-schema-and-storage.md`
+- `~/.mdx/projects/context-matters-spec-mcp-tools.md`
+- `~/.mdx/projects/context-matters-spec-plugin-integration.md`
+
+Specs should contain:
+- Precise technical decisions (not options, decisions)
+- File paths, function signatures, type definitions
+- Dependencies and ordering constraints
+- Acceptance criteria that sub-issues inherit
+
+### Mapping Specs to Issues
+
+Each sub-parent (1-level) or role parent (2-level) maps 1:1 to a spec document. The spec is the source of truth for what the worker builds.
+
+**Sub-parent description** references its spec:
+```markdown
+## Spec
+`~/.mdx/projects/{project}-spec-{grouping}.md`
+```
+
+**Sub-issues** are derived from the spec. Each sub-issue targets one concrete change described in the spec. The spec provides the context; the issue provides the task boundary.
+
+### Code Review Against Specs
+
+When a sub-parent's issues are complete, spawn a code review agent that references the spec:
+
+```
+helioy-tools:clinical-reviewer or pr-review-toolkit:code-reviewer
+  → reads the spec doc
+  → reviews the implemented code
+  → validates implementation matches spec intent
+  → flags deviations or gaps
+```
+
+This closes the loop: spec defines intent, code implements it, review validates alignment.
+
+### Spec-Driven Checklist
+
+- [ ] Natural groupings identified
+- [ ] Specialist agents spawned to write specs
+- [ ] Specs persisted to `~/.mdx/projects/{project}-spec-{grouping}.md`
+- [ ] Each sub-parent links 1:1 to a spec doc
+- [ ] Sub-issues derived from specs (small, precise, one concern each)
+- [ ] Code review planned against spec docs after completion
+
+---
+
 ## Single (HotFix)
 
 One issue. No parent. Apply the **HotFix** label. This is the sole exception to the parent rule.
@@ -39,7 +113,9 @@ The standard pattern. One parent defines WHAT + WHY. Subs define HOW.
 - This content gets fed into every worker agent as context
 
 **Sub-Issues** = the HOW, each a discrete completable unit
-- ~1-4 hours of focused implementation
+- **Err on the side of more issues, not fewer.** A worker agent reasons better about one clear objective than a multi-step task bundled into one issue. When in doubt, split.
+- One issue = one concrete change to one area of the codebase. If the description contains "and" describing two distinct actions, that is two issues.
+- ~30 minutes to 2 hours of focused implementation. If it feels bigger, split it.
 - Can be completed independently when possible
 - Nancy executes these in manual sort order
 
@@ -67,7 +143,9 @@ All issues go to team **Alphabio** unless specified otherwise.
 
 - [ ] Parent issue exists
 - [ ] Project is set
-- [ ] 3+ subs planned
+- [ ] 3+ subs planned (more is better — no upper limit on sub count)
+- [ ] Each sub targets exactly one change or concern
+- [ ] No sub description contains "and" joining two distinct implementation actions
 - [ ] Each sub is independently completable
 - [ ] Assignee is set on all issues
 
@@ -98,7 +176,7 @@ Master Issue (the project/epic)
 - One role parent per feature-role combination
 - Nancy dispatches these as workstreams to the matching specialist agent
 
-**Subs** = implementation tasks under role parents. Same rules as 1-level subs.
+**Subs** = implementation tasks under role parents. Same rules as 1-level subs. Granular decomposition is correct — a worker agent reasons better about one focused task than a bundled multi-step issue.
 
 ### How to Decompose
 
@@ -161,6 +239,7 @@ Read specs from `~/.mdx/research/<descriptive-name>.md` (output of ALP-ZZZ).
 Pin the filename in the producer. Reference it in every consumer. No agent should have to guess where upstream artifacts live.
 
 Roles that typically produce documents:
+- `architect/researcher agents` → `~/.mdx/projects/` (spec documents, see Step 2)
 - `ux-researcher` → `~/.mdx/research/` (findings, study results, comparison matrices)
 - `ux-designer` → `~/.mdx/design/` (UI specs, interaction specs, wireframes)
 

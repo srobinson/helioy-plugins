@@ -5,27 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd ~/Dev/LLM/DEV/helioy && just preflight >/dev/null 2>&1 && STATUS='Preflight: ok' || STATUS='Preflight: FAILED (run just preflight to debug)'; echo \"${STATUS}\"; echo 'You have persistent geometric memory via the am MCP server. Call am_query NOW with a summary of the first user message to recall relevant context from past sessions. Do this BEFORE responding or exploring the codebase. After meaningful technical responses, call am_activate_response to strengthen memory connections. Memory episodes are created automatically from the session transcript at session end.'"
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Read",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "INPUT=$(cat); FILE=$(echo \"$INPUT\" | jq -r '.tool_input.file_path // empty'); if [ -n \"$FILE\" ] && echo \"$FILE\" | grep -qE '\\.(ts|tsx|js|jsx|py|rs|go|svelte|vue)$'; then SIDECAR=\"${FILE}.fmm\"; if [ -f \"$SIDECAR\" ]; then LOC=$(grep -m1 '^loc:' \"$SIDECAR\" | awk '{print $2}'); if [ -n \"$LOC\" ] && [ \"$LOC\" -gt 300 ] 2>/dev/null; then echo \"[fmm] ${FILE##*/} is $LOC LOC - structural index available.\"; echo 'Use fmm_file_outline(file) for structure, fmm_read_symbol(name) for specific code.'; printf '\\n--- fmm index ---\\n'; cat \"$SIDECAR\"; printf -- '---\\n'; fi; fi; fi; true"
-          }
-        ]
-      },
-      {
-        "matcher": "Glob|Grep",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo '[fmm] prefer fmm_search, fmm_list_files, or fmm_list_exports — check before globbing/grepping'; true"
+            "command": "cd ~/Dev/LLM/DEV/helioy && just preflight >/dev/null 2>&1 && STATUS='Preflight: ok' || STATUS='Preflight: FAILED (run just preflight to debug)'; echo \"${STATUS}\"; echo 'Your primary memory is context-matters (cm) via cx_* MCP tools. Call cx_recall NOW with the dirname you are working in. This ensures you have the most relevant context for your current task. to retrieve relevant context from prior sessions. Do this BEFORE responding or exploring the codebase. After meaningful work, call cx_deposit to persist facts, decisions, and lessons learned.'"
           }
         ]
       }
@@ -36,30 +16,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cat > /tmp/helioy_recent_edits.txt && FILE=$(cat | jq -r '.tool_input.file_path // empty') && [ -n \"$FILE\" ] && [ -f .fmm.db  ] && fmm generate \"$FILE\" 2>/dev/null; true"
+            "command": "fmm generate; true"
           }
         ]
       }
     ],
-    "PreCompact": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "am sync 2>/dev/null; true'"
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "am sync 2>/dev/null; true"
-          }
-        ]
-      }
-    ]
+    "SessionEnd": []
   }
 }

@@ -1,0 +1,169 @@
+helioy-tools:backend-engineer · opus · user memory
+helioy-tools:clinical-reviewer · sonnet · user memory
+helioy-tools:code-reviewer · opus
+helioy-tools:codebase-analyst · opus · user memory
+helioy-tools:coordinator · opus · user memory
+helioy-tools:deep-research · opus · user memory
+helioy-tools:design-brand-guardian · inherit
+helioy-tools:design-image-prompt-engineer · inherit
+helioy-tools:design-inclusive-visuals-specialist · inherit
+helioy-tools:design-ui-designer · inherit
+helioy-tools:design-ux-architect · inherit
+helioy-tools:design-ux-researcher · inherit
+helioy-tools:design-visual-storyteller · inherit
+helioy-tools:design-whimsy-injector · inherit
+helioy-tools:engineering-ai-engineer · inherit
+helioy-tools:engineering-autonomous-optimization-architect · inherit
+helioy-tools:engineering-backend-architect · inherit
+helioy-tools:engineering-code-reviewer · inherit
+helioy-tools:engineering-frontend-developer · inherit
+helioy-tools:engineering-rapid-prototyper · inherit
+helioy-tools:engineering-senior-developer · inherit
+helioy-tools:engineering-software-architect · inherit
+helioy-tools:frontend-engineer · opus · user memory
+helioy-tools:github-researcher · opus · user memory
+helioy-tools:mobile-engineer · opus · user memory
+helioy-tools:orchestrator · opus · user memory
+helioy-tools:project-planner · opus · user memory
+helioy-tools:quick-research · sonnet · user memory
+helioy-tools:research-synthesizer · opus · user memory
+helioy-tools:rust-engineer · opus · user memory
+helioy-tools:ux-designer · opus · user memory
+helioy-tools:ux-researcher · opus · user memory
+helioy-tools:visual-designer · opus · user memory
+pr-review-toolkit:code-reviewer · opus
+pr-review-toolkit:code-simplifier · opus
+pr-review-toolkit:comment-analyzer · inherit
+pr-review-toolkit:pr-test-analyzer · inherit
+pr-review-toolkit:silent-failure-hunter · inherit
+pr-review-toolkit:type-design-analyzer · inherit
+voltagent-biz:business-analyst · opus
+voltagent-biz:content-marketer · haiku
+voltagent-biz:customer-success-manager · opus
+voltagent-biz:legal-advisor · opus
+voltagent-biz:product-manager · haiku
+voltagent-biz:project-manager · haiku
+voltagent-biz:sales-engineer · opus
+voltagent-biz:scrum-master · haiku
+voltagent-biz:technical-writer · haiku
+voltagent-biz:ux-researcher · opus
+voltagent-biz:wordpress-master · opus
+voltagent-core-dev:api-designer · opus
+voltagent-core-dev:backend-developer · opus
+voltagent-core-dev:electron-pro · opus
+voltagent-core-dev:frontend-developer · opus
+voltagent-core-dev:fullstack-developer · opus
+voltagent-core-dev:graphql-architect · opus
+voltagent-core-dev:microservices-architect · opus
+voltagent-core-dev:mobile-developer · opus
+voltagent-core-dev:ui-designer · opus
+voltagent-core-dev:websocket-engineer · opus
+voltagent-data-ai:ai-engineer · opus
+voltagent-data-ai:data-analyst · haiku
+voltagent-data-ai:data-engineer · opus
+voltagent-data-ai:data-scientist · opus
+voltagent-data-ai:database-optimizer · opus
+voltagent-data-ai:llm-architect · opus
+voltagent-data-ai:machine-learning-engineer · opus
+voltagent-data-ai:ml-engineer · opus
+voltagent-data-ai:mlops-engineer · opus
+voltagent-data-ai:nlp-engineer · opus
+voltagent-data-ai:postgres-pro · opus
+voltagent-data-ai:prompt-engineer · opus
+voltagent-dev-exp:build-engineer · haiku
+voltagent-dev-exp:cli-developer · opus
+voltagent-dev-exp:dependency-manager · haiku
+voltagent-dev-exp:documentation-engineer · haiku
+voltagent-dev-exp:dx-optimizer · opus
+voltagent-dev-exp:git-workflow-manager · haiku
+voltagent-dev-exp:legacy-modernizer · opus
+voltagent-dev-exp:mcp-developer · opus
+voltagent-dev-exp:powershell-module-architect · opus
+voltagent-dev-exp:powershell-ui-architect · opus
+voltagent-dev-exp:refactoring-specialist · opus
+voltagent-dev-exp:slack-expert · opus
+voltagent-dev-exp:tooling-engineer · opus
+voltagent-domains:api-documenter · haiku
+voltagent-domains:blockchain-developer · opus
+voltagent-domains:embedded-systems · opus
+voltagent-domains:fintech-engineer · opus
+voltagent-domains:game-developer · opus
+voltagent-domains:iot-engineer · opus
+voltagent-domains:m365-admin · opus
+voltagent-domains:mobile-app-developer · opus
+voltagent-domains:payment-integration · opus
+voltagent-domains:quant-analyst · opus
+voltagent-domains:risk-manager · opus
+voltagent-domains:seo-specialist · haiku
+voltagent-infra:azure-infra-engineer · opus
+voltagent-infra:cloud-architect · opus
+voltagent-infra:database-administrator · opus
+voltagent-infra:deployment-engineer · haiku
+voltagent-infra:devops-engineer · opus
+voltagent-infra:devops-incident-responder · opus
+voltagent-infra:docker-expert · opus
+voltagent-infra:incident-responder · opus
+voltagent-infra:kubernetes-specialist · opus
+voltagent-infra:network-engineer · opus
+voltagent-infra:platform-engineer · opus
+voltagent-infra:security-engineer · opus
+voltagent-infra:sre-engineer · opus
+voltagent-infra:terraform-engineer · opus
+voltagent-infra:terragrunt-expert · opus
+voltagent-infra:windows-infra-admin · opus
+voltagent-lang:angular-architect · opus
+voltagent-lang:cpp-pro · opus
+voltagent-lang:csharp-developer · opus
+voltagent-lang:django-developer · opus
+voltagent-lang:dotnet-core-expert · opus
+voltagent-lang:dotnet-framework-4.8-expert · opus
+voltagent-lang:elixir-expert · opus
+voltagent-lang:flutter-expert · opus
+voltagent-lang:golang-pro · opus
+voltagent-lang:java-architect · opus
+voltagent-lang:javascript-pro · opus
+voltagent-lang:kotlin-specialist · opus
+voltagent-lang:laravel-specialist · opus
+voltagent-lang:nextjs-developer · opus
+voltagent-lang:php-pro · opus
+voltagent-lang:powershell-5.1-expert · opus
+voltagent-lang:powershell-7-expert · opus
+voltagent-lang:python-pro · opus
+voltagent-lang:rails-expert · opus
+voltagent-lang:react-specialist · opus
+voltagent-lang:rust-engineer · opus
+voltagent-lang:spring-boot-engineer · opus
+voltagent-lang:sql-pro · opus
+voltagent-lang:swift-expert · opus
+voltagent-lang:typescript-pro · opus
+voltagent-lang:vue-expert · opus
+voltagent-meta:agent-organizer · opus
+voltagent-meta:context-manager · opus
+voltagent-meta:error-coordinator · opus
+voltagent-meta:it-ops-orchestrator · opus
+voltagent-meta:knowledge-synthesizer · opus
+voltagent-meta:multi-agent-coordinator · opus
+voltagent-meta:performance-monitor · haiku
+voltagent-meta:task-distributor · haiku
+voltagent-meta:workflow-orchestrator · opus
+voltagent-qa-sec:accessibility-tester · haiku
+voltagent-qa-sec:ad-security-reviewer · opus
+voltagent-qa-sec:architect-reviewer · opus
+voltagent-qa-sec:chaos-engineer · opus
+voltagent-qa-sec:code-reviewer · opus
+voltagent-qa-sec:compliance-auditor · opus
+voltagent-qa-sec:debugger · opus
+voltagent-qa-sec:error-detective · opus
+voltagent-qa-sec:penetration-tester · opus
+voltagent-qa-sec:performance-engineer · opus
+voltagent-qa-sec:powershell-security-hardening · opus
+voltagent-qa-sec:qa-expert · opus
+voltagent-qa-sec:security-auditor · opus
+voltagent-qa-sec:test-automator · opus
+voltagent-research:competitive-analyst · haiku
+voltagent-research:data-researcher · haiku
+voltagent-research:market-researcher · haiku
+voltagent-research:research-analyst · opus
+voltagent-research:scientific-literature-researcher · opus
+voltagent-research:search-specialist · haiku
+voltagent-research:trend-analyst · haiku
