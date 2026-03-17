@@ -71,8 +71,9 @@ Every skill in helioy-tools inherits these MCP servers from the plugin's
 | Server | Package | Tools prefix |
 |--------|---------|--------------|
 | am | attention-matters | `mcp__plugin_helioy-tools_am__` |
+| cm | context-matters | `mcp__plugin_helioy-tools_cx__` |
 | fmm | frontmatter-matters | `mcp__plugin_helioy-tools_fmm__` |
-| mdx | mdcontext | `mcp__plugin_helioy-tools_mdx__` |
+| mdm | markdown-matters | `mcp__plugin_helioy-tools_mdm__` |
 | linear-server | Linear HTTP | `mcp__plugin_helioy-tools_linear-server__` |
 
 Reference these in skill instructions when relevant. Example: "Use

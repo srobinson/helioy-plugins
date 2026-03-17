@@ -1,6 +1,6 @@
 ---
 name: session-logger
-description: Log activity for this session
+description: Hand over session activity to another agent for future reference. Logs a summary of the session, including key findings and artifacts produced, to a markdown file and persists it to context-matters.
 ---
 
 Log this session's activity. Follow these steps exactly:
@@ -9,7 +9,7 @@ Log this session's activity. Follow these steps exactly:
 
 Determine the directory name by running `basename $(pwd)`.
 
-Write a session log to `~/.claude/agent-memory/session-logs/${CLAUDE_SESSION_ID}.md` with this structure:
+Write a session log to `~/.claude.nancy/agent-memory/session-logs/${CLAUDE_SESSION_ID}.md` with this structure:
 
 ```markdown
 ---

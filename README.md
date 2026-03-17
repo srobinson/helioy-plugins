@@ -11,8 +11,9 @@ Claude Code plugin for the [Helioy](https://helioy.com) ecosystem.
 | Server | Package | Purpose |
 |---|---|---|
 | `am` | [attention-matters](https://www.npmjs.com/package/attention-matters) | Geometric memory on S3 hypersphere — persistent recall across sessions |
+| `cm` | [context-matters](https://www.npmjs.com/package/context-matters) | SQLite-backed, hierarchical scopes, BLAKE3 content hashing, eight entry kinds with priority ordering |
 | `fmm` | [frontmatter-matters](https://www.npmjs.com/package/frontmatter-matters) | Code metadata navigation — O(1) symbol/file lookups via frontmatter |
-| `mdx` | [mdcontext](https://www.npmjs.com/package/mdcontext) | Document structural intelligence — markdown indexing, search, embeddings |
+| `mdm` | [markdown-matters](https://www.npmjs.com/package/mdcontext) | Document structural intelligence — markdown indexing, search, embeddings |
 | `linear-server` | [Linear](https://mcp.linear.app) (HTTP) | Issue tracking — teams, projects, issues, comments, cycles |
 
 ### Skills

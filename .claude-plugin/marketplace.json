@@ -53,6 +53,63 @@
         "multi-agent",
         "bus"
       ]
+    },
+    {
+      "name": "helioy-nancy",
+      "description": "Nancy multi-agent orchestrator plugin \u2014 hooks and agents for the Nancy orchestration ecosystem",
+      "version": "0.1.0",
+      "author": {
+        "name": "Stuart Robinson",
+        "email": "stuart@alphab.io"
+      },
+      "source": "./plugins/helioy-nancy",
+      "category": "development",
+      "license": "MIT",
+      "keywords": [
+        "orchestration",
+        "multi-agent",
+        "nancy",
+        "hooks",
+        "agents"
+      ]
+    },
+    {
+      "name": "helioy-nancy-pm",
+      "description": "Nancy PM role: planning, Linear workflow, and interactive task creation",
+      "version": "0.1.0",
+      "author": {
+        "name": "Stuart Robinson",
+        "email": "stuart@alphab.io"
+      },
+      "source": "./plugins/helioy-nancy-pm",
+      "category": "development",
+      "license": "MIT",
+      "keywords": [
+        "orchestration",
+        "multi-agent",
+        "nancy",
+        "planning",
+        "pm"
+      ]
+    },
+    {
+      "name": "helioy-nancy-eng",
+      "description": "Nancy engineering role: worker tools, session handover, and code navigation for autonomous execution",
+      "version": "0.1.0",
+      "author": {
+        "name": "Stuart Robinson",
+        "email": "stuart@alphab.io"
+      },
+      "source": "./plugins/helioy-nancy-eng",
+      "category": "development",
+      "license": "MIT",
+      "keywords": [
+        "orchestration",
+        "multi-agent",
+        "nancy",
+        "engineering",
+        "worker"
+      ]
     }
   ]
 }

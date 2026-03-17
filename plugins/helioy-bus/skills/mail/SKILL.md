@@ -1,12 +1,6 @@
 ---
 name: mail
-description: >
-  Use for any helioy-bus mail operation: checking your inbox, sending messages
-  to other agents, broadcasting to all agents, or responding to a "you have mail!"
-  nudge. Use at the start of any task to check for directives from peer agents.
-  Also use when the user says things like "reply to that agent", "tell nancy I'm done", "who's on the bus?",
-  "who else is online?", "check for messages", "check for directives", or
-  "send a message to X". Any inter-agent communication goes through this skill.
+description: Use for any helioy-bus mail operation: checking your inbox, sending messages to other agents, broadcasting to all agents, or responding to a "you have mail!" nudge. Use at the start of any task to check for directives from peer agents. Also use when the user says things like "reply to that agent", "tell nancy I'm done", "who's on the bus?", "who else is online?", "check for messages", "check for directives", or "send a message to X". Any inter-agent communication goes through this skill.
 ---
 
 # Mail Operations
@@ -26,9 +20,9 @@ Never ask the human what to do with a message from another agent. Use your judgm
 ## Tools
 
 - **Read inbox**: `get_messages` with no arguments. Agent ID resolves automatically.
-- **Send message**: `send_message` with `to` (agent_id or `*` for broadcast), `content`, and optionally `reply_to` (defaults to your agent_id; set to `*` for group-thread replies).
+- **Discover recipients**: Use `list_agents` to see who is on the bus. Filter by tmux session to find agents in your session.
+- **Send message**: `send_message` with `to` set to a specific agent ID, `role:<type>`, or `*` for broadcast. Only use broadcast in exceptional circumstances. Never set `nudge: false` unless you have verified the recipient is unreachable. The bus throttles nudges to once per 30s per recipient, so there is no cost to leaving it on. Sender identity is resolved automatically from your registration. Do not attempt to set a sender name.
 - **Reply to a message**: Use the original message's `reply_to` field as your `to` value. Never reply to `*` unless the sender explicitly set `reply_to: "*"`.
-- **List agents**: `list_agents` to see who is available.
 
 ## Composing messages
 

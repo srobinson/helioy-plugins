@@ -1,0 +1,8 @@
+{
+  "name": "helioy-nancy-pm",
+  "description": "A plugin for nancy project management role.",
+  "author": {
+    "name": "Stuart Robinson",
+    "email": "stuart@alphab.io"
+  }
+}

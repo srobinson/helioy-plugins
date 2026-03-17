@@ -38,34 +38,45 @@ A warroom requires specialist agents running in tmux panes, registered on the he
 
 ### Setting up a warroom
 
-If no warroom is running, tell the user to run:
+Use the `helioy-warroom` MCP tools to manage warrooms programmatically:
 
-```bash
-~/.helioy/warroom.sh <window-name> "agent-type-1 agent-type-2 agent-type-3"
+**Discover available agents:**
+```
+warroom_discover(query="security review")
+warroom_discover(namespace="helioy-tools")
 ```
 
-Example with the design team:
-```bash
-~/.helioy/warroom.sh design "helioy-tools:design-ux-researcher helioy-tools:design-ux-architect helioy-tools:design-ui-designer helioy-tools:design-visual-storyteller helioy-tools:design-whimsy-injector helioy-tools:design-brand-guardian helioy-tools:design-inclusive-visuals-specialist helioy-tools:design-image-prompt-engineer"
+**Spawn a warroom:**
+```
+warroom_spawn(name="design", agents=["brand-guardian", "ui-designer", "visual-storyteller"])
+warroom_spawn(name="review", agents=["code-reviewer", "silent-failure-hunter"])
 ```
 
-Multiple warrooms can run concurrently in separate windows:
-```bash
-~/.helioy/warroom.sh engineering "senior-developer frontend-engineer"
-~/.helioy/warroom.sh review "clinical-reviewer code-reviewer"
+**Manage agents in a running warroom:**
+```
+warroom_add(name="design", agent="ux-researcher")
+warroom_remove(name="design", agent="brand-guardian")
 ```
 
-Each named window is idempotent: re-running the same name kills the old window and creates a fresh one. Use `warroom.sh status` to see all active warroom agents, or `warroom.sh kill <name>` to tear down a specific warroom.
+**Monitor and tear down:**
+```
+warroom_status(name="design")
+warroom_kill(name="design")
+```
 
-The script creates a tmux window with one pane per agent, registers each on the bus, and reports when ready.
+**Use presets for common team compositions:**
+```
+warroom_presets()
+warroom_spawn(preset="pr-review", name="review-432")
+```
 
-### Available agents
+Each named warroom is idempotent: spawning with the same name kills the old warroom and creates a fresh one. Multiple warrooms can run concurrently.
 
-See `agents.md` (adjacent to this file) for the full roster of available agent types with their model and capability annotations.
+**Fallback (manual):** If MCP tools are unavailable, tell the user to run `~/.helioy/warroom.sh <name> "type1 type2 ..."` directly.
 
 ### Verifying the warroom
 
-After setup, call `list_agents` on helioy-bus to confirm the expected agents are registered. Use `tmux_filter` to scope to a specific warroom window, e.g. `list_agents(tmux_filter="design")`. Agent IDs follow the pattern `{repo}:{agent-type}:{session}:{window}.{pane}`.
+After spawning, call `warroom_status` to check agent registration and pane liveness. Or use `list_agents(tmux_filter="<window>")` on helioy-bus. Agent IDs follow the pattern `{repo}:{agent-type}:{session}:{window}.{pane}`.
 
 ## Mode 1: Spec-Writing
 
@@ -326,6 +337,7 @@ Monitor proactively when an agent is taking longer than expected.
 
 ## Message Conventions
 
+- **Your agent_id**: Call `whoami` to get your registered agent_id. Use this value in dispatch messages where agents need to reply to you (e.g. `{orchestrator_agent_id}` placeholders).
 - **Topic**: set to `{project}-spec` (spec mode) or `{project}-review` (review mode)
 - **CC pattern**: in spec mode, engineers and architect always CC the orchestrator
 - **Reply-to**: in review mode, reviewers reply directly to the orchestrator

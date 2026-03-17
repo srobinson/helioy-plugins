@@ -6,10 +6,6 @@
           {
             "type": "command",
             "command": "/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/plugin/hooks/bus-register.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/plugin/hooks/token-watcher.sh"
           }
         ]
       }
@@ -21,6 +17,10 @@
           {
             "type": "command",
             "command": "/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/plugin/hooks/check-mail.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/plugin/hooks/token-capture.sh"
           }
         ]
       }
@@ -48,10 +48,6 @@
     "SessionEnd": [
       {
         "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/plugin/hooks/token-watcher-stop.sh"
-          },
           {
             "type": "command",
             "command": "/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/plugin/hooks/bus-unregister.sh"

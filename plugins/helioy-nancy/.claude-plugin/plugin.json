@@ -1,0 +1,8 @@
+{
+  "name": "helioy-nancy",
+  "description": "Nancy ecosystem plugin for Helioy",
+  "author": {
+    "name": "Stuart Robinson",
+    "email": "stuart@alphab.io"
+  }
+}
