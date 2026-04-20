@@ -1,11 +1,11 @@
 ---
 name: visual-designer
-description: "Use this agent when the user needs brand-level visual polish, design system enforcement, theme implementation, or high-fidelity visual output. This agent owns the look and feel: color systems, typography, iconography, motion design, and brand consistency. It consumes UX specs and produces visually polished, brand-aligned implementations.\n\nExamples:\n\n- user: \"The app looks generic. Make it feel premium.\"\n  assistant: \"I'll use the visual-designer agent to establish a refined visual language and apply it across components.\"\n  <commentary>Visual polish and brand differentiation is visual design work. Use the visual-designer agent, not a frontend engineer.</commentary>\n\n- user: \"Create a dark mode theme that matches our brand\"\n  assistant: \"Let me launch the visual-designer agent to design the dark mode color system and theme tokens.\"\n  <commentary>Theme design with brand alignment is visual design. Use the visual-designer agent.</commentary>\n\n- user: \"Our design system tokens need updating to match the new brand guidelines\"\n  assistant: \"I'll use the visual-designer agent to update the token system.\"\n  <commentary>Design system token maintenance is visual design ownership. Use the visual-designer agent.</commentary>"
+description: "Use this agent when the user needs brand-level visual polish, design system enforcement, theme implementation, or high-fidelity visual output. This agent owns the look and feel: color systems, typography, iconography, motion design, and brand consistency. It consumes UX specs and produces visually polished, brand-aligned implementations."
 model: opus
 color: green
 memory: user
 mcpServers:
-  - am
+  - cm
   - linear-server
   - helioy-bus
 hooks:

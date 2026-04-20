@@ -55,6 +55,25 @@ Responding to someone else's post. Adds substance. Never just agrees.
 - Offer specific experience, not abstract opinion
 - Never dunk on people. Disagree with ideas, not humans.
 
+### X / Twitter Post (QT)
+
+Quote-tweet wrapping someone else's post with Stuart's commentary added on top. The original is the anchor; Stuart's text adds substance, not agreement.
+
+**Process:**
+1. Caller provides: source URL, source post text, optional note about why it is being QT'd.
+2. Identify the load-bearing claim or observation in the source.
+3. Draft 1-2 variations of Stuart's wrap-around text.
+4. Apply the voice test.
+5. Present options with character counts (the original post does not count toward the 280 limit; only Stuart's wrap-around text does).
+
+**Rules:**
+- MUST add substance. A QT that just says "this" is a retweet wearing a costume.
+- Stuart's text takes a position: agreement with a specific reason, a counterpoint, an extension of the claim, a real-world test of it. Never neutral.
+- Never dunk. Disagree with the idea, not the person. Be generous with their work.
+- Length: 1-3 sentences. Tighter than an original post because the source is doing some of the work.
+- No "as X said" or "to add to this" preambles. Lead with the addition.
+- If the source is technical, your QT is technical. Match register to source.
+
 ### X / Twitter Thread
 
 Multi-post deep dive. 3-8 posts. Each post stands alone.
@@ -98,10 +117,78 @@ READMEs, PR descriptions, release notes, issue responses.
 Blog posts, articles, newsletter pieces.
 
 **Process:**
-1. Thesis in the first paragraph — no throat-clearing
+1. Thesis in the first paragraph. No throat-clearing.
 2. Each section = one argument with evidence
 3. Ground every claim in personal experience or shipped work
-4. Close with implications, not a summary
+4. Close with implications. No summary.
+
+**Rules:**
+- Tinkerer-register pieces (KnowMoreContext blog, Substack, dev.to,
+  helioy.com long-form) close with a present-tense practice statement
+  plus the editorial tagline. Nothing more. Canonical shape: "I publish
+  the teardowns at knowmorecontext.substack.com. Token matters."
+- Forbidden in Tinkerer closers: "If you want to", "Subscribe to",
+  "Follow along", "Join me", "Let me know what you think", any
+  second-person reader invitation. The work earns the follow.
+- The Tinkerer persona is encoded throughout, not just at the opener.
+  No hand-holding anywhere in a Tinkerer piece. Stuart is The Tinkerer;
+  the persona is his profile and shows up in every paragraph.
+- Audience: KnowMoreContext content addresses the layman AI
+  practitioner, the future Helioy customer. The Tinkerer provides
+  insight; the practitioner walks alongside. Do not write down to them
+  and do not assume engineering depth.
+
+### DM cold
+
+First-time direct message to someone Stuart has not previously engaged with. Hook plus single ask. No preamble.
+
+**Process:**
+1. Caller provides: who (handle), the hook (specific reason for reaching out, often something they said or shipped), the ask (single concrete next step).
+2. Draft one option, terse. DMs are not where you A/B.
+3. Output ready to copy-paste.
+
+**Rules:**
+- No "Hey hope you're doing well" or any boilerplate opener.
+- Lead with a specific reference to their work or words. Verifiable. Recent.
+- Single ask. If you have two, pick one and keep the other for a followup.
+- Length: 2-4 sentences. Anything longer reads as pitch, not message.
+- No links unless the link IS the ask.
+- Match their format — if they post in lowercase, your DM matches. Read their last 5 posts before drafting.
+- End with a question or a clear forward step. Never end with "let me know what you think."
+
+### DM followup
+
+Second or later message in a thread, or after they engaged with Stuart's content.
+
+**Process:**
+1. Caller provides: who, what they engaged with (post URL, reply text, recent shipped work), what is next.
+2. Draft references the specific engagement. One sentence.
+3. Single forward step. Concrete.
+
+**Rules:**
+- Reference what they did — quote a phrase from their reply, name the post they liked, mention the project they shared.
+- Do not recap the previous DM. They have it.
+- Single forward step: a question, a meeting time, a link they asked for.
+- Length: 1-3 sentences. Tighter than a cold DM.
+- If the thread has gone cold (>2 weeks), open with a short reactivation reference, then the forward step.
+
+### DM reply
+
+Stuart received a DM. Caller pastes the incoming message. Skill drafts response.
+
+**Process:**
+1. Caller pastes the incoming DM verbatim.
+2. Identify what they are asking, asserting, or proposing.
+3. Match incoming tone (formal, casual, technical, terse).
+4. Advance the thread — answer the question, accept or decline the proposal, or ask the right next question.
+
+**Rules:**
+- Match length to incoming. A 2-sentence DM gets a 1-3 sentence reply. A long message warrants a longer reply, but never more than they wrote.
+- Match register. Technical for technical, casual for casual. Do not impose Stuart's default voice if it differs from the thread's tone.
+- Answer the actual question asked. Not the question you wished was asked.
+- If declining or saying no, do it directly and warmly. No softening preambles.
+- If accepting, confirm with concrete details (when, where, what).
+- If asking for time to think, say so explicitly with a return-by time.
 
 ## Voice Enforcement
 
@@ -110,7 +197,7 @@ After drafting, run every piece through these checks:
 | Check | Pass? |
 |-------|-------|
 | Could this have been written by any AI for any person? | Must be NO |
-| Does it open with a question to the reader? | Must be NO |
+| Does it open with a performative or rhetorical hook ("Have you ever wondered", "Just shipped", "A thread")? | Must be NO |
 | Does it use any word from the "Never Use" list? | Must be NO |
 | Does it hedge the core claim? | Must be NO |
 | Does it explain what the audience already knows? | Must be NO |
@@ -133,7 +220,14 @@ Characters: N/280 (for X posts)
 Voice check: PASS/FAIL — [note if anything was adjusted]
 ```
 
-When presenting multiple options, label them A, B, C — not "Option 1", "Option 2".
+When presenting multiple options, label them A, B, C. Do not use "Option 1", "Option 2".
+
+When presenting 2-3 options for the same draft, opener structures must
+vary across A/B/C. Different sentence shapes, different leads (scene
+observation, question, first-person practice, declarative). Word-swap
+variations on a single template are not options. Do not anchor every
+option on a single calibration example just because it appears in the
+voice doc.
 
 ## Publishing
 

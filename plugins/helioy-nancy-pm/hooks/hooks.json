@@ -5,7 +5,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "[ -z \"$NANCY_SESSION_ID\" ] && echo 'Your primary memory is context-matters (cm) via cx_* MCP tools. Call cx_browse(scope=\"auto\", limit: 3) NOW. This ensures session continuity. Do this BEFORE responding or exploring the codebase. After meaningful work, call cx_deposit to persist facts, decisions, and lessons learned.'"
+            "command": "[ -n \"$NANCY_SESSION_ID\" ] || echo 'Your primary memory is context-matters (cm) via cx_* MCP tools. Call cx_browse(limit: 3) NOW. This ensures session continuity. Do this BEFORE responding or exploring the codebase. After meaningful work, call cx_deposit to persist facts, decisions, and lessons learned.'"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_ROOT=\"/Users/alphab/Dev/LLM/DEV/helioy/helioy-plugins/plugins/helioy-tools\"; \"$HOOK_ROOT/hooks/fmm-quiet-generate.sh\""
           }
         ]
       }
@@ -16,7 +24,17 @@
         "hooks": [
           {
             "type": "command",
-            "command": "fmm generate; true"
+            "command": "HOOK_ROOT=\"/Users/alphab/Dev/LLM/DEV/helioy/helioy-plugins/plugins/helioy-tools\"; \"$HOOK_ROOT/hooks/fmm-quiet-generate.sh\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_ROOT=\"/Users/alphab/Dev/LLM/DEV/helioy/helioy-plugins/plugins/helioy-tools\"; \"$HOOK_ROOT/hooks/fmm-quiet-generate.sh\""
           }
         ]
       }

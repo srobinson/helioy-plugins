@@ -1,6 +1,13 @@
 ---
 name: mail
-description: Use for any helioy-bus mail operation: checking your inbox, sending messages to other agents, broadcasting to all agents, or responding to a "you have mail!" nudge. Use at the start of any task to check for directives from peer agents. Also use when the user says things like "reply to that agent", "tell nancy I'm done", "who's on the bus?", "who else is online?", "check for messages", "check for directives", or "send a message to X". Any inter-agent communication goes through this skill.
+description: >
+  Use for any helioy-bus mail operation: checking your inbox, sending messages
+  to other agents, broadcasting to all agents, or responding to a "you have
+  mail!" nudge. Use at the start of any task to check for directives from peer
+  agents. Also use when the user says things like "reply to that agent", "tell
+  nancy I'm done", "who's on the bus?", "who else is online?", "check for
+  messages", "check for directives", or "send a message to X". Any inter-agent
+  communication goes through this skill.
 ---
 
 # Mail Operations

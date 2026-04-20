@@ -1,11 +1,11 @@
 ---
 name: quick-research
-description: "Use this agent when the user needs quick research on a topic, concept, or question that can be answered with focused investigation rather than deep multi-hour exploration. This is the lightweight counterpart to deep research.\\n\\nExamples:\\n\\n- user: \"What's the difference between tokio::spawn and tokio::spawn_blocking?\"\\n  assistant: \"Let me use the quick-research agent to investigate this for you.\"\\n  <commentary>The user has a focused technical question that benefits from structured research rather than a quick off-the-cuff answer.</commentary>\\n\\n- user: \"How does the borrow checker handle self-referential structs?\"\\n  assistant: \"I'll launch the quick-research agent to dig into this topic.\"\\n  <commentary>A conceptual question that warrants gathering information and presenting a structured answer.</commentary>\\n\\n- user: \"What are the tradeoffs between SQLite and DuckDB for analytics workloads?\"\\n  assistant: \"Let me use the quick-research agent to compare these for you.\"\\n  <commentary>A comparison question that benefits from organized research and structured output.</commentary>"
+description: "Use this agent when the user needs quick research on a topic, concept, or question that can be answered with focused investigation rather than deep multi-hour exploration. This is the lightweight counterpart to deep research."
 model: sonnet
 color: green
 memory: user
 mcpServers:
-  - am
+  - cm
   - linear-server
   - helioy-bus
 hooks:

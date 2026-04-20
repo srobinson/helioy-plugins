@@ -1,11 +1,11 @@
 ---
 name: ux-designer
-description: "Use this agent when the user needs interaction design, user flow architecture, wireframes, component specifications, or design system foundations. This agent bridges research findings and visual design into structured specs that frontend engineers consume. Use PROACTIVELY to advocate for the user's needs throughout the design process.\n\nExamples:\n\n- user: \"Design the interaction flow for our checkout process\"\n  assistant: \"I'll use the ux-designer agent to map the checkout flow and produce component specifications.\"\n  <commentary>Interaction flow design with component specs is UX design work. Use the ux-designer agent, not a frontend engineer.</commentary>\n\n- user: \"We need a design system for this project\"\n  assistant: \"Let me launch the ux-designer agent to create the design system foundations.\"\n  <commentary>Design system creation (tokens, spacing, typography, component patterns) is UX architecture. Use the ux-designer agent.</commentary>\n\n- user: \"Create wireframes for the settings page\"\n  assistant: \"I'll use the ux-designer agent to produce wireframes and interaction specifications.\"\n  <commentary>Wireframing is a design task producing specs, not implementation code. Use the ux-designer agent.</commentary>"
+description: "Use this agent when the user needs interaction design, user flow architecture, wireframes, component specifications, or design system foundations. This agent bridges research findings and visual design into structured specs that frontend engineers consume. Use PROACTIVELY to advocate for the user's needs throughout the design process."
 model: opus
 color: green
 memory: user
 mcpServers:
-  - am
+  - cm
   - linear-server
   - helioy-bus
 hooks:

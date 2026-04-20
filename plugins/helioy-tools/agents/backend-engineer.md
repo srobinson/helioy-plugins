@@ -5,7 +5,7 @@ model: opus
 color: green
 memory: user
 mcpServers:
-  - am
+  - cm
   - fmm
   - linear-server
   - helioy-bus

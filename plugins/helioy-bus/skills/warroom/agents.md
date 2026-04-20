@@ -1,13 +1,13 @@
-helioy-tools:backend-engineer.md · opus · user memory
-helioy-tools:codebase-analyst.md · opus · user memory
-helioy-tools:coordinator.md · opus · user memory
-helioy-tools:deep-research.md · opus · user memory
-helioy-tools:frontend-engineer.md · opus · user memory
-helioy-tools:github-researcher.md · opus · user memory
-helioy-tools:orchestrator.md · opus · user memory
-helioy-tools:project-planner.md · opus · user memory
-helioy-tools:quick-research.md · opus · user memory
-helioy-tools:research-synthesizer.md · opus · user memory
-helioy-tools:ux-designer.md · opus · user memory
-helioy-tools:ux-researcher.md · opus · user memory
-helioy-tools:visual-designer.md · opus · user memory
+helioy-tools:backend-engineer.md
+helioy-tools:codebase-analyst.md
+helioy-tools:coordinator.md
+helioy-tools:deep-research.md
+helioy-tools:frontend-engineer.md
+helioy-tools:github-researcher.md
+helioy-tools:orchestrator.md
+helioy-tools:project-planner.md
+helioy-tools:quick-research.md
+helioy-tools:research-synthesizer.md
+helioy-tools:ux-designer.md
+helioy-tools:ux-researcher.md
+helioy-tools:visual-designer.md

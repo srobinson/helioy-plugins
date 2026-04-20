@@ -1,0 +1,20 @@
+{
+  "name": "{{NAME}}",
+  "version": "0.0.0",
+  "description": "{{TITLE}} CLI",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/srobinson/{{NAME}}"
+  },
+  "bin": {
+    "{{NAME}}": "./{{NAME}}.js"
+  }
+}

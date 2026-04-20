@@ -1,59 +1,104 @@
 # helioy-plugins
 
-Claude Code plugin for the [Helioy](https://helioy.com) ecosystem.
+Claude Code plugin package for the [Helioy](https://helioy.com) ecosystem. Bundles two plugins that give a Claude Code session persistent memory, code intelligence, inter-agent messaging, and workflow tooling.
 
 ## What's included
 
-**helioy-tools** — one plugin, 11 skills, 4 MCP servers.
+| Plugin | Scope |
+|---|---|
+| `helioy-tools` | Core capabilities: MCP servers, skills, agents, hooks |
+| `helioy-bus` | Inter-agent messaging: bus, warroom, mail |
 
-### MCP Servers
+## helioy-tools
 
-| Server | Package | Purpose |
+### MCP servers
+
+| Server | Source | Purpose |
 |---|---|---|
-| `am` | [attention-matters](https://www.npmjs.com/package/attention-matters) | Geometric memory on S3 hypersphere — persistent recall across sessions |
-| `cm` | [context-matters](https://www.npmjs.com/package/context-matters) | SQLite-backed, hierarchical scopes, BLAKE3 content hashing, eight entry kinds with priority ordering |
-| `fmm` | [frontmatter-matters](https://www.npmjs.com/package/frontmatter-matters) | Code metadata navigation — O(1) symbol/file lookups via frontmatter |
-| `mdm` | [markdown-matters](https://www.npmjs.com/package/mdcontext) | Document structural intelligence — markdown indexing, search, embeddings |
-| `linear-server` | [Linear](https://mcp.linear.app) (HTTP) | Issue tracking — teams, projects, issues, comments, cycles |
+| `am` | [attention-matters](https://github.com/srobinson/attention-matters) (Rust) | Geometric memory on the S³ hypersphere |
+| `cm` | [context-matters](https://github.com/srobinson/context-matters) (Rust) | Structured context store with hierarchical scopes |
+| `fmm` | [frontmatter-matters](https://github.com/srobinson/frontmatter-matters) (Rust) | O(1) symbol and file lookups via frontmatter index |
+| `mdm` | [markdown-matters](https://www.npmjs.com/package/markdown-matters) (npm) | Markdown indexing, search, embeddings |
+| `linear-server` | [Linear MCP](https://mcp.linear.app) (HTTP) | Issue tracking |
+| `supabase` | [@supabase/mcp-server-supabase](https://www.npmjs.com/package/@supabase/mcp-server-supabase) (npm) | Database, edge functions, migrations |
 
 ### Skills
 
-| Skill | Description |
+| Skill | Purpose |
 |---|---|
-| `memory` | Session lifecycle for AM — recall, buffer, strengthen, mark insights |
-| `fmm` | FMM frontmatter conventions and subcommands |
-| `fmm-navigate` | MCP-first code navigation protocol (replaces grep/read) |
-| `knowledge-base` | `~/.mdx` document store — 7 categories, YAML frontmatter, versioning |
-| `linear-workflow` | Helioy ways of working — parent/sub-issue pattern, sizing, metadata |
-| `create-spec` | Interactive requirements elicitation to produce SPEC.md |
-| `nancy-orchestrator` | Nancy agent orchestration — pause, resume, direct, status |
-| `nancy-send-message` | Send messages to Nancy workers |
-| `nancy-update-spec` | Update task specifications for running workers |
-| `nancy-session-history` | Git-based session history lookup |
-| `check-directives` | Poll for orchestrator messages during autonomous work |
+| `context-matters` | Primary session memory via `cx_*` tools |
+| `fmm` | MCP-first code navigation protocol |
+| `linear-workflow` | Parent/sub-issue planning for autonomous work |
+| `create-spec` | Interactive requirements elicitation (SPEC.md) |
+| `pull-request` | Conventional-commit PRs for squash merge |
+| `my-voice` | Writing in Stuart's voice |
+| `skill-creator` | Scaffold new skills with plugin conventions |
+| `session-logger` | Persist session activity |
+| `session-id` | Print current session ID |
+
+### Agents
+
+Specialist subagent definitions grouped by function:
+
+- **Engineering**: backend-engineer, frontend-engineer
+- **Design**: ux-designer, ux-researcher, visual-designer
+- **Research**: deep-research, quick-research, research-synthesizer, github-researcher, codebase-analyst
+- **Orchestration**: orchestrator, coordinator, project-planner
 
 ### Hooks
 
-- **SessionStart** — reminds Claude to call `am_query` before doing anything else
+- `SessionStart` — initialize `context-matters` as primary memory
+- `PostToolUse` (Edit, Write) — regenerate the fmm index
+
+## helioy-bus
+
+### MCP servers
+
+| Server | Purpose |
+|---|---|
+| `helioy-bus` | Agent registration, discovery, messaging |
+| `helioy-warroom` | Multi-agent warroom orchestration via tmux |
+
+### Skills
+
+| Skill | Purpose |
+|---|---|
+| `mail` | Read and send messages between agents |
+| `warroom` | Spin up and drive multi-agent collaborative sessions |
+| `mail-workspace` | Skill iteration workspace with eval benchmarks |
+
+### Hooks
+
+- `SessionStart` — register agent on the bus
+- `PreToolUse` — check for pending mail, capture token usage
+- `UserPromptSubmit` — check for pending mail
+- `Stop` — prompt session logging
+- `SessionEnd` — unregister from the bus
+
+## Session launcher
+
+`bin/helo` generates a UUID session ID and launches Claude Code so bus registration and downstream hooks can coordinate.
+
+```bash
+helo --verbose
+helo -p "task" --model opus
+```
 
 ## Install
 
 ```bash
 claude plugin add /path/to/helioy-plugins
-```
-
-Or from GitHub:
-
-```bash
+# or
 claude plugin add srobinson/helioy-plugins
 ```
 
 ## Prerequisites
 
-- [attention-matters](https://www.npmjs.com/package/attention-matters) (npm) — provides the `am` MCP server
-- [frontmatter-matters](https://www.npmjs.com/package/frontmatter-matters) (npm) — provides the `fmm` MCP server
-- [mdcontext](https://www.npmjs.com/package/mdcontext) (npm) — provides the `mdx` MCP server
-- [Linear](https://linear.app) account — for the linear-workflow skill
+- Rust binaries built locally: `attention-matters`, `context-matters`, `frontmatter-matters`
+- npm packages resolved on demand: `markdown-matters`, `@supabase/mcp-server-supabase`
+- `LINEAR_API_KEY` for `linear-server`
+- `SUPABASE_ACCESS_TOKEN` for `supabase`
+- `helioy-bus` Python server running for inter-agent messaging
 
 ## License
 

@@ -8,6 +8,14 @@
             "command": "git log --oneline -6; echo; echo '(git log --format=full <hash> for deeper context on any commit)'"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_ROOT=\"/Users/alphab/Dev/LLM/DEV/helioy/helioy-plugins/plugins/helioy-tools\"; \"$HOOK_ROOT/hooks/fmm-quiet-generate.sh\""
+          }
+        ]
       }
     ],
     "PostToolUse": [
@@ -16,7 +24,17 @@
         "hooks": [
           {
             "type": "command",
-            "command": "fmm generate; true"
+            "command": "HOOK_ROOT=\"/Users/alphab/Dev/LLM/DEV/helioy/helioy-plugins/plugins/helioy-tools\"; \"$HOOK_ROOT/hooks/fmm-quiet-generate.sh\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_ROOT=\"/Users/alphab/Dev/LLM/DEV/helioy/helioy-plugins/plugins/helioy-tools\"; \"$HOOK_ROOT/hooks/fmm-quiet-generate.sh\""
           }
         ]
       }

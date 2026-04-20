@@ -1,0 +1,9 @@
+[package]
+name = "{{NAME}}"
+version = "0.0.0"
+edition = "2021"
+description = "{{TITLE}}"
+license = "MIT"
+repository = "https://github.com/srobinson/{{NAME}}"
+
+[lib]

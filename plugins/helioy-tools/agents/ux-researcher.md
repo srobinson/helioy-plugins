@@ -1,11 +1,11 @@
 ---
 name: ux-researcher
-description: "Use this agent when the user needs user research, persona development, usability analysis, or evidence-based UX recommendations. This agent produces research artifacts (personas, journey maps, usability protocols, findings reports) grounded in data, not implementation code.\n\nExamples:\n\n- user: \"We need to understand how our users navigate the dashboard\"\n  assistant: \"I'll use the ux-researcher agent to analyze the navigation patterns and produce a findings report.\"\n  <commentary>The user needs behavioral analysis and evidence-based recommendations, not code changes. Use the ux-researcher agent.</commentary>\n\n- user: \"Create user personas for our developer tools product\"\n  assistant: \"Let me launch the ux-researcher agent to develop evidence-grounded personas.\"\n  <commentary>Persona development is a research deliverable. Use the ux-researcher agent, not a designer or engineer.</commentary>\n\n- user: \"Design a usability test for the onboarding flow\"\n  assistant: \"I'll use the ux-researcher agent to create a structured usability testing protocol.\"\n  <commentary>Test protocol design is a research methodology task. Use the ux-researcher agent.</commentary>"
+description: "Use this agent when the user needs user research, persona development, usability analysis, or evidence-based UX recommendations. This agent produces research artifacts (personas, journey maps, usability protocols, findings reports) grounded in data, not implementation code."
 model: opus
 color: green
 memory: user
 mcpServers:
-  - am
+  - cm
   - linear-server
   - helioy-bus
 hooks:

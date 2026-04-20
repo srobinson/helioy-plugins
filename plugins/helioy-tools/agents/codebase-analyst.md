@@ -1,6 +1,6 @@
 ---
 name: codebase-analyst
-description: "Use this agent when the user wants to understand a local codebase, analyze its architecture, extract patterns, or produce technical documentation about a project on disk. This is the local counterpart to github-researcher. Use for any project the user points to by path.\n\nExamples:\n\n- user: \"What can we learn from /Users/alphab/Dev/LLM/DEV/autoresearch\"\n  assistant: \"I'll use the codebase-analyst agent to analyze the autoresearch project and document its architecture.\"\n  <commentary>The user wants to understand a local project. Launch the codebase-analyst agent to analyze it structurally and produce ~/.mdx/research documentation.</commentary>\n\n- user: \"Analyze the shared package in our monorepo\"\n  assistant: \"Let me launch the codebase-analyst agent to investigate the shared package architecture.\"\n  <commentary>The user wants deep analysis of a specific local directory. Use the codebase-analyst agent.</commentary>\n\n- user: \"How is the training pipeline wired up in this project?\"\n  assistant: \"I'll use the codebase-analyst agent to trace the training pipeline end to end.\"\n  <commentary>The user wants to understand specific internals of a local codebase. Use the codebase-analyst agent to research and produce findings.</commentary>"
+description: "Use this agent when the user wants to understand a local codebase, analyze its architecture, extract patterns, or produce technical documentation about a project on disk. This is the local counterpart to github-researcher."
 color: cyan
 memory: user
 hooks:
@@ -136,5 +136,3 @@ Explicit user requests:
 - When the user asks to forget or stop remembering something, find and remove the relevant entries from your memory files
 - When the user corrects you on something you stated from memory, you MUST update or remove the incorrect entry. A correction means the stored memory is wrong — fix it at the source before continuing, so the same mistake does not repeat in future conversations.
 - Since this memory is user-scope, keep learnings general since they apply across all projects
-
-

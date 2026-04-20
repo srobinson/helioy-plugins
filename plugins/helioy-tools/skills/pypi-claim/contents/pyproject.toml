@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "{{NAME}}"
+version = "0.0.0"
+description = "{{TITLE}}"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+
+[project.urls]
+Repository = "https://github.com/srobinson/{{NAME}}"
+
+[tool.setuptools]
+py-modules = ["{{MODULE}}"]

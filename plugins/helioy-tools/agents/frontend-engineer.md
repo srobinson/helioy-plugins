@@ -1,11 +1,11 @@
 ---
 name: frontend-engineer
-description: "Use this agent when the user needs frontend implementation: React/Next.js components, CSS/Tailwind styling, client-side state management, browser API integration, performance optimization, or accessibility compliance. This agent consumes design specs and produces production code.\n\nExamples:\n\n- user: \"Implement the dashboard components from the design spec\"\n  assistant: \"I'll use the frontend-engineer agent to implement the components against the design specification.\"\n  <commentary>Implementation from a design spec is frontend engineering. Use the frontend-engineer agent.</commentary>\n\n- user: \"Our Lighthouse score dropped below 80. Fix the performance issues.\"\n  assistant: \"Let me launch the frontend-engineer agent to diagnose and fix the performance regression.\"\n  <commentary>Frontend performance optimization with Core Web Vitals targets is frontend engineering work.</commentary>\n\n- user: \"Add client-side form validation to the signup flow\"\n  assistant: \"I'll use the frontend-engineer agent to implement the validation logic.\"\n  <commentary>Client-side form behavior is frontend implementation. Use the frontend-engineer agent.</commentary>"
+description: "Use this agent when the user needs frontend implementation: React/Next.js components, CSS/Tailwind styling, client-side state management, browser API integration, performance optimization, or accessibility compliance."
 model: opus
 color: green
 memory: user
 mcpServers:
-  - am
+  - cm
   - fmm
   - linear-server
   - helioy-bus

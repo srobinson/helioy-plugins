@@ -1,11 +1,11 @@
 ---
 name: project-planner
-description: "Use this agent when the user provides a project brief, feature request, or high-level goal that needs to be decomposed into structured deliverables, issues, and sub-issues. This includes planning new features, breaking down epics, creating implementation roadmaps, or organizing work into a Linear-compatible issue hierarchy.\\n\\nExamples:\\n\\n- User: \"I want to add real-time collaboration to the editor\"\\n  Assistant: \"This is a substantial feature that needs proper decomposition. Let me use the project-planner agent to break this down into deliverables and create the issue hierarchy.\"\\n  [Launches project-planner agent]\\n\\n- User: \"Here's the brief for our new auth system: support OAuth2, SAML, and API keys with role-based access control\"\\n  Assistant: \"I'll use the project-planner agent to decompose this brief into a structured plan with parent issues and sub-issues.\"\\n  [Launches project-planner agent]\\n\\n- User: \"We need to migrate from PostgreSQL to CockroachDB. Plan it out.\"\\n  Assistant: \"Let me launch the project-planner agent to create a phased migration plan with concrete deliverables.\"\\n  [Launches project-planner agent]"
+description: "Use this agent when the user provides a project brief, feature request, or high-level goal that needs to be decomposed into structured deliverables, issues, and sub-issues. This includes planning new features, breaking down epics, creating implementation roadmaps, or organizing work into a Linear-compatible issue hierarchy."
 model: opus
 color: blue
 memory: user
 mcpServers:
-  - am
+  - cm
   - linear-server
   - helioy-bus
 hooks:

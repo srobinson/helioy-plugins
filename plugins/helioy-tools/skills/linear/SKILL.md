@@ -1,5 +1,5 @@
 ---
-name: linear-workflow
+name: linear
 description: "Enforces parent/sub-issue structure for all Linear work planning. INVOKE THIS SKILL whenever you are about to create Linear issues, plan features, break down tasks, scope work for Nancy, or organize any unit of work that will be executed autonomously. This skill fires BEFORE the first save_issue call. If you find yourself reaching for save_issue without having invoked this skill first, stop and invoke it. Also use when the user says 'create an issue', 'plan this', 'break this down', 'send this to Nancy', or discusses any feature/bug that needs tracking."
 ---
 
@@ -141,6 +141,7 @@ All issues go to team **Alphabio** unless specified otherwise.
 
 ### Checklist
 
+- [ ] Stable file and symbol references only, no line numbers.
 - [ ] Parent issue exists
 - [ ] Project is set
 - [ ] 3+ subs planned (more is better — no upper limit on sub count)
@@ -257,12 +258,14 @@ Spawn one agent per role tag, all in parallel:
 ```
 helioy-tools:ux-designer      → reviews ux-designer issues
 helioy-tools:ux-researcher    → reviews ux-researcher issues
-helioy-tools:mobile-engineer  → reviews mobile-engineer issues
 helioy-tools:frontend-engineer → reviews frontend-engineer issues
 helioy-tools:backend-engineer  → reviews backend-engineer issues
 ```
 
-Agents return structured feedback. Apply updates after human review.
+### Empower Agents to Update Issues
+
+We want to verify the implementation details looking at if horizonatal and vertically .. where are the seams/touching points .. we like to kepp files no more than 500-700 lines .. are our edits going to push these limits, are we looking at refactoring/decomposing .. keep things DRY, look for existing functions before rollig your own .. etc
+Empower the agents to update issues with corrections and clarifications and create new issues/decompose existing issues where it makes sense .. the idea is to not overlad any single issue with too much work and to keep the work organized in a way that makes it easy to track and manage .. also we want to make sure we are not missing any edge cases or important details in the implementation .. the goal is to have a clear and well-defined set of tasks that can be easily executed and tracked through completion ..
 
 ### 2-Level Checklist
 
@@ -275,16 +278,5 @@ Agents return structured feedback. Apply updates after human review.
 - [ ] Blocking relations encode dependency graph
 - [ ] Documentation handoffs wired (Input/Output sections)
 - [ ] Specialist agents spawned for review
+- [ ] Stable file and symbol references only, no line numbers.
 - [ ] Review feedback applied
-
----
-
-## Querying and Updating
-
-- `mcp__plugin_helioy-tools_linear-server__list_issues` — find existing issues (filter by project, assignee, state, label)
-- `mcp__plugin_helioy-tools_linear-server__get_issue` — get full issue detail including attachments and branch name
-- `mcp__plugin_helioy-tools_linear-server__save_issue` with `id` — update state, assignee, priority, description, or link issues
-- `mcp__plugin_helioy-tools_linear-server__list_projects` / `mcp__plugin_helioy-tools_linear-server__get_project` — find/verify project
-- `mcp__plugin_helioy-tools_linear-server__list_issue_statuses` — discover available states for a team
-- `mcp__plugin_helioy-tools_linear-server__list_issue_labels` — discover available labels
-- `mcp__plugin_helioy-tools_linear-server__list_comments` / `mcp__plugin_helioy-tools_linear-server__save_comment` — read/add comments
