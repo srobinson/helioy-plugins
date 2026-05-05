@@ -145,6 +145,7 @@ When the selector says no eligible issue:
 - Use [Nancy Two Agent Planning Gate](workflows/nancy-two-agent-planning-gate.md) when Linear must be populated or reviewed before implementation, especially when audit, scope discovery, or pre execution blockers may exist.
 - Use [Agent Issue Review Workflow](workflows/agent-issue-review-workflow.md) when issues already exist and need readiness review before Nancy or another worker starts.
 - Use [Post Execution Review Workflow](workflows/post-execution-review-workflow.md) after worker issues have been implemented and need one-target autonomous review outcome recording or corrective issue creation.
+- Use [Tender Production Workflow](workflows/tender-production-workflow.md) when an approved brief and existing background research must be turned into a client-ready showcase pack of polished deliverables.
 
 ## Universal Issue Rules
 
