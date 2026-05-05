@@ -23,8 +23,13 @@ In scope:
 Out of scope:
 
 - Changes to the three existing workflow files.
-- Changes to Nancy's selector logic.
 - Tooling to generate the markdown registry mirror (handled by post-execution review steps in the workflow itself, not separate code).
+
+Provisionally out of scope, flagged as implementation-time checkpoints:
+
+- Changes to Nancy's selector logic. The bootstrap shape is selector compatible on paper, but two areas may surface a real dependency:
+  - Cross-artifact coherence pass. Existing selector modes do not include "review the pack as a whole." Preferred resolution without selector change: fold the coherence pass into the existing `post_execution_review` mode, or encode it as a synthetic Backlog issue at the end of the artifact list. Escalate to a selector change only if neither resolution holds.
+  - Editorial reopen of shipped artifact. If a Worker Done Backlog issue is reopened to Todo after gate authorization, the selector must pick it up again. If it does not, route editorial dissent through a corrective issue under the authorized parent, with the gate `Execute:` list extended to include the corrective issue, mirroring the existing post-execution corrective pattern.
 
 ## Inputs
 
@@ -163,6 +168,8 @@ When the second-to-last Backlog artifact is accepted, an extra Claude turn check
 ### Editorial dissent on shipped artifact
 
 Stuart re-opens the Backlog issue with new edit instructions. Tender deliverables iterate on the artifact, not as downstream corrective issues.
+
+If Nancy's selector does not re-pick a reopened Worker Done Backlog issue under an already-accepted gate, fall back to the corrective pattern: file a corrective issue under the Showcase Pack, extend the gate's `Execute:` list to include it, and let the corrective issue carry the new edit instructions.
 
 ## Discovery Branch
 
