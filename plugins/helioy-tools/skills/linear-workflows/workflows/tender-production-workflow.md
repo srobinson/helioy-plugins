@@ -50,6 +50,8 @@ The kickoff issue is one session sized.
 
 Codex reads the brief, queries cm for prior tender shapes (`kind=pattern`, scope=global, tag=tender-shape), and writes a numbered list of candidate shapes in the issue body. Each candidate states shape name, client kind, artifact count, source project, ship date. The list always includes a `design a new shape` option. Shapes with `shipped` older than 12 months are marked stale.
 
+If cm returns zero matching entries, Codex writes only the `design a new shape` option and notes in the issue body that no prior shapes exist in the registry.
+
 Stuart picks one in the comments.
 
 If Stuart picks an existing shape, Codex seeds the Showcase Pack Backlog from that shape and writes the gate review.

@@ -1,12 +1,25 @@
 # Nancy Two Agent Planning Gate
 
-Use this workflow when Linear must be populated or reviewed before implementation.
+Use this workflow when Linear must be populated from scratch with significant unknowns and you want two agents cross verifying each other before implementation.
+
+## When To Use
+
+This is the heavyweight planning workflow. Use it when:
+
+- Scope is unknown and audit driven discovery is required.
+- The work touches multiple areas where one agent's understanding could miss critical context.
+- You want independent verification between an authoring agent and a reviewing agent.
+- The planning output will gate a long autonomous run.
+
+For lighter weight planning where you and one agent co author the issues directly, use [Single Agent Planning Workflow](single-agent-planning-workflow.md).
+
+For organizing already captured drive by issues without scope discovery, use [Intake and Triage Workflow](intake-and-triage-workflow.md).
 
 ## Purpose
 
 Create a reviewed Linear issue graph before autonomous execution starts.
 
-The planning gate discovers scope, records decisions, collects executable work in Backlog, and ends with one explicit outcome.
+The planning gate discovers scope, records decisions, collects executable work in `Backlog`, and ends with one explicit outcome.
 
 ## Source Of Truth
 
@@ -81,10 +94,7 @@ Backlog candidate status stays Todo during planning. A Backlog issue is executab
 
 When a planning issue creates or updates Backlog candidates, Claude reviews the planning issue and the produced Backlog candidates together. If accepted, Claude marks the source planning issue Worker Done. The Backlog candidates remain Todo and blocked by gate review until authorized.
 
-After a gate is accepted, the `Execute:` list is selector authority. Later
-issues added under Backlog are not selected by Nancy until the accepted gate is
-updated to include them. This includes corrective issues created by post
-execution review.
+Selector authority is governed by the accepted gate's `Execute:` line. See [Accepted Gate Body](../SKILL.md#accepted-gate-body) for the contract.
 
 ## Agent Roles
 
@@ -156,20 +166,13 @@ A planning gate ends in exactly one outcome.
 
 ### Ready For Execution
 
-Use when Backlog contains a reviewed executable set and no prerequisite blockers are required.
+Use when `Backlog` contains a reviewed executable set and no prerequisite blockers are required.
 
 Gate review must:
 
-- Name the authorized Backlog issues.
-- Include every issue Nancy should select in the selector compatible `Execute:`
-  line. Treat the line as a full closed authorization set, not a hint.
-- Create or identify the execution parent.
-- Place authorized executable issues under that parent when they are ready to run.
-- Keep executable issues out of the direct master parent child list. Direct open
-  children that are not `Backlog` or gate review issues remain planning issues
-  to Nancy's selector.
-- State required order.
-- Encode dependencies when order matters.
+- Place the executable set under an execution parent that matches the [Selector Compatible Shape](../SKILL.md#selector-compatible-shape).
+- Record the accepted gate body per [Accepted Gate Body](../SKILL.md#accepted-gate-body).
+- Encode dependencies as Linear blocking relations.
 - Update the master planning parent with the outcome.
 
 ### Pre Execution Blockers Required
@@ -178,18 +181,10 @@ Use when prerequisite work must land before downstream planning or implementatio
 
 Gate review must:
 
-- Name the blocker issues.
-- Include every blocker issue Nancy should select in the selector compatible
-  `Execute blockers only:` line. Treat the line as a full closed authorization
-  set, not a hint.
-- Create or identify the blocker execution parent.
-- Place authorized blocker issues under that parent when they are ready to run.
-- Keep blocker implementation issues out of the direct master parent child list.
-  Direct open children that are not `Backlog` or gate review issues remain
-  planning issues to Nancy's selector.
+- Place the blocker set under a blocker execution parent that matches the [Selector Compatible Shape](../SKILL.md#selector-compatible-shape).
+- Record the accepted gate body per [Accepted Gate Body](../SKILL.md#accepted-gate-body), using the `Execute blockers only:` form.
 - State what each blocker unblocks.
-- State required order.
-- Encode dependencies when order matters.
+- Encode dependencies as Linear blocking relations.
 - Update the master planning parent with the outcome.
 
 ### Needs Human Direction
@@ -218,26 +213,9 @@ Before closing the planning gate, verify:
 
 ## Outcome Text
 
-Ready for execution:
+For Ready for execution and Pre execution blockers required outcomes, write the gate body per [Accepted Gate Body](../SKILL.md#accepted-gate-body) in the skill.
 
-```text
-Planning complete. Outcome: Ready for execution.
-Authorized execution parent: `ISSUE-ID`.
-Execute: ISSUE-1, ISSUE-2, ISSUE-3.
-Required order: ISSUE-1 before ISSUE-2. ISSUE-3 is independent.
-```
-
-Pre execution blockers required:
-
-```text
-Planning complete. Outcome: Pre execution blockers required.
-Authorized blocker parent: `ISSUE-ID`.
-Execute blockers only: ISSUE-1, ISSUE-2, ISSUE-3.
-Required order: ISSUE-1 before ISSUE-2. ISSUE-3 is independent.
-Downstream planning remains blocked until these land and a fresh audit runs.
-```
-
-Needs human direction:
+Needs human direction outcome:
 
 ```text
 Planning paused. Outcome: Needs human direction.

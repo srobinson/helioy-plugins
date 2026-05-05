@@ -31,7 +31,7 @@ Each agent turn reviews exactly one completed worker issue and then ends. Do not
 
 If the selector includes a `Review target` line in the prompt, that is the only worker issue in scope for the current turn.
 
-If the selector returns a shared review issue with no `Review target`, do not inspect source or perform an execution set review. Only reconcile the selected review issue state from existing `Reviewed worker issue:` markers, then end the turn.
+If the selector returns a shared review issue with no `Review target`, do not inspect source or perform an execution set review. Reconcile the selected review issue state from existing `Reviewed worker issue:` markers. If every authorized worker issue has a recorded marker, no corrective issue is open, and no review outcome is `Needs human direction`, mark the review issue `Done` and end the turn. Otherwise record the gap as a comment and end the turn.
 
 ## Loop Order
 

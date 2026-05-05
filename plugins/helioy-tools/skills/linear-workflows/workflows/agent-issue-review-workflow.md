@@ -17,21 +17,12 @@ Use this workflow when:
 - A master issue has group parents and worker issues that need cross checking.
 - The work touches multiple files, platforms, roles, or dependencies.
 - The user asks for issue review, planning review, Nancy readiness, or agent review.
-- The user brings dangling issues from a prior discussion and asks the repo
-  agent to organize them for Nancy.
 
 Skip this workflow for single hotfix issues unless the risk is unusually high.
 
-For Nancy execution, "ready" includes selector compatible placement. Worker
-issues must be under the authorized Backlog or execution parent named by the
-accepted gate. If worker issues are direct children of the master planning
-parent, Nancy will keep selecting them as `planning` and autonomous execution
-will not start.
+This workflow assumes the issues already exist in a selector compatible structure (master parent, `Backlog`, gate review, post execution review). If the issues are dangling stubs without that structure, run the [Intake and Triage Workflow](intake-and-triage-workflow.md) promote protocol first.
 
-If dangling issues are already good enough to execute, do not send them through
-another planning loop. Organize them under Backlog, add the gate review issue,
-authorize the execution parent, add post execution review, encode blockers, and
-then let the selector choose execution.
+The structural contract this workflow checks against is defined in the [Selector Compatible Shape](../SKILL.md#selector-compatible-shape) section of the skill.
 
 ## Inputs
 
@@ -77,12 +68,8 @@ For each issue, verify:
 
 For the set as a whole, verify:
 
-- Parent, group parent, and worker hierarchy matches the intended execution shape.
-- Nancy execution sets have an accepted gate review issue and authorized worker
-  issues under the named Backlog or execution parent.
-- No open worker, corrective, or review issue under the authorized parent is
-  outside the accepted gate `Execute:` list unless it is intentionally not part
-  of the current Nancy run.
+- The parent, group parent, and worker hierarchy matches the [Selector Compatible Shape](../SKILL.md#selector-compatible-shape).
+- Every open worker, corrective, or review issue under the authorized parent appears in the accepted gate's `Execute:` line, unless it is intentionally excluded from the current Nancy run.
 - Manual execution order is dependency safe.
 - Blocking relations match the execution order.
 - Refactoring work that unblocks later tasks is front loaded.

@@ -2,10 +2,9 @@
 name: linear-workflows
 description: >
   Use when planning, reviewing, or routing Linear work for Nancy or other
-  autonomous agents. Applies to issue hierarchy, planning gates, agent issue
+  autonomous agents. Covers issue capture, triage, planning gates, agent issue
   review, execution readiness, and Linear as the source of truth for autonomous
-  work. Also use when a repo agent receives dangling Linear issues created in a
-  prior discussion and must organize them for Nancy.
+  work.
 ---
 
 # Linear Workflows
@@ -16,40 +15,81 @@ This skill routes Linear work into the correct workflow before creating or updat
 
 Linear is the durable planning substrate. Nancy task files are required operational bookkeeping.
 
-Use Linear for planning truth, issue state, gate evidence, comments, and dependency relations. Keep Nancy task files consistent when completing selector work, but do not use local task files to override Linear.
+Use Linear for planning truth, issue state, gate evidence, comments, and dependency relations. Keep Nancy task files consistent when completing selector work. Do not use local task files to override Linear.
 
-Before starting autonomous execution, the active Linear parent must make the current gate unambiguous:
+Before autonomous execution starts, the active Linear parent must make the current gate unambiguous: what work is authorized, what is blocked, which issues are executable, the dependency order, and the evidence that proves readiness.
 
-- What work is authorized.
-- What work is explicitly blocked.
-- Which issues are executable.
-- Which order or dependency constraints apply.
-- What evidence proves the gate is ready.
+## Selector Compatible Shape
 
-Nancy selector compatibility is required. A Linear issue set that is merely
-"ready for execution" is not executable by Nancy unless it matches the selector
-shape:
+Nancy's selector requires this structural shape under any executable master parent:
 
 ```text
-master planning parent
-├── accepted gate review issue
-└── Backlog or execution parent
-    ├── executable issue
-    ├── executable issue
+master parent
+├── gate review issue
+└── execution parent (titled `Backlog` or named explicitly)
+    ├── worker issue
+    ├── worker issue
     └── post execution review issue
 ```
 
-Do not leave executable issues as direct children of the master planning parent.
-Direct open children that are not `Backlog` or gate review issues are treated as
-planning issues by Nancy's selector, which causes planning and review ping pong.
+Per layer:
 
-The accepted gate `Execute:` list is a closed authority set. A new issue created
-later under the authorized parent is not selectable until the accepted gate text
-also authorizes that issue. Current Nancy should pause in
-`needs_human_direction` when an accepted gate has an open Backlog child outside
-the accepted `Execute:` list. If an older prompt shows `Issue: none` while an
-open Backlog child exists, check whether the child is outside the accepted
-`Execute:` list before asking an agent to work it.
+- **Master parent.** Durable container. Stays open while authorized work remains.
+- **Gate review issue.** Direct child of master. Title matches `Gate review` or `execution readiness` (selector regex, case insensitive). Status encodes readiness: `Todo` means a planner must approve before execution; `Worker Done` means accepted gate, body holds authorization.
+- **Execution parent.** Child of master, titled `Backlog` or named in the accepted gate. Wraps the worker issues.
+- **Worker issues.** Children of the execution parent. Encode order with Linear `blocks` and `blockedBy` relations. Each must appear in the accepted gate's `Execute:` line.
+- **Post execution review issue.** Recognizable by title prefix `Post execution review`, label `Post Execution Review`, or description type line starting `Post execution review`. Must appear in the accepted gate's `Execute:` line.
+
+Direct open children of the master that are not `Backlog` and do not match the gate review pattern are treated by the selector as planning issues. This causes planning and review ping pong.
+
+### Accepted Gate Body
+
+Two valid outcome shapes. The selector parses these exact patterns:
+
+```text
+Planning complete. Outcome: Ready for execution.
+Authorized execution parent: `ISSUE-ID`.
+Execute: ISSUE-1, ISSUE-2, ISSUE-3, REVIEW-ID.
+Required order: ISSUE-1 before ISSUE-2. ISSUE-3 is independent.
+```
+
+```text
+Planning complete. Outcome: Pre execution blockers required.
+Authorized blocker parent: `ISSUE-ID`.
+Execute blockers only: ISSUE-1, ISSUE-2, ISSUE-3.
+Required order: ISSUE-1 before ISSUE-2.
+Downstream planning remains blocked until these land and a fresh audit runs.
+```
+
+The `Execute:` line is a closed authorization set. Issues added under the authorized parent later are not selectable until the gate body is updated to include them. This includes corrective issues created during post execution review.
+
+## Issue Lifecycle
+
+Issues move through five named states:
+
+1. **Captured.** Drive by stub recorded by any agent during unrelated work. Status `Todo`. Parent: `Inbox: <project>`.
+2. **Triaged.** Promoted from inbox into a selector compatible master parent. Status `Todo`. Parent: `Backlog` under a real master.
+3. **Authorized.** Listed in the accepted gate's `Execute:` line. Gate review issue is `Worker Done`.
+4. **Executed.** Implementation complete. Status `Worker Done`.
+5. **Reviewed.** Post execution review outcome recorded. Status `Done`.
+
+Capture and triage are separate steps on purpose. Capture stays fast and shallow. Triage adds structure when you revisit the work.
+
+For new feature work where the planning happens up front in a focused session, capture is skipped. Triage happens during the session.
+
+## Workflow Routing
+
+Pick the workflow by where you are in the lifecycle.
+
+| Situation | Workflow |
+|---|---|
+| Recording a drive by issue during unrelated work | [Intake and Triage](workflows/intake-and-triage-workflow.md), capture protocol |
+| Revisiting captured issues, ready to organize for execution | [Intake and Triage](workflows/intake-and-triage-workflow.md), promote protocol |
+| Issues already exist, scope or quality is uncertain | [Agent Issue Review](workflows/agent-issue-review-workflow.md) |
+| Designing new work in a focused co authoring session | [Single Agent Planning](workflows/single-agent-planning-workflow.md) |
+| Discovering scope from scratch with audits and two agent verification | [Nancy Two Agent Planning Gate](workflows/nancy-two-agent-planning-gate.md) |
+| Worker issues have been implemented, awaiting review | [Post Execution Review](workflows/post-execution-review-workflow.md) |
+| Building a client deliverable pack from an approved brief | [Tender Production](workflows/tender-production-workflow.md) |
 
 ## Required Preflight
 
@@ -63,63 +103,6 @@ At session start for any Nancy Linear turn:
 
 If no issue is selected, do not infer work from checkbox order, child issue order, or recent commits. Use the selector closure rule below.
 
-## Dangling Issue Intake
-
-Use this when the user arrives in a repo and names one or more Linear issues
-that were created during a prior discussion, but those issues are not yet in a
-Nancy selector compatible parent graph.
-
-Goal: organize the issues before execution. Do not implement until the graph is
-selector compatible.
-
-1. Identify the repo project from the working directory and fetch each named
-   dangling issue from Linear.
-2. Fetch each issue's parent, children, comments, labels, state, and relations.
-3. Decide whether the issues are worker issues, planning issues, corrective
-   issues, or review issues. Preserve existing descriptions and states unless
-   they are demonstrably wrong.
-4. Find or create the active master parent for the repo task.
-5. Find or create one child parent named `Backlog`, or another explicit execution
-   parent, under the master parent.
-6. Move worker issues under the Backlog or execution parent. Do not leave worker
-   issues as direct children of the master parent.
-7. Encode dependency order with Linear blocking relations.
-8. Create post execution review coverage for each completed worker issue. Use
-   either one shared review issue plus Nancy `Review target` selection, or one
-   per-worker review issue when the accepted gate authorizes that shape.
-9. Create or update one gate review issue under the master parent. Mark it
-   `Worker Done` only when it records selector compatible authorization.
-10. Use selector compatible gate text with a backticked authorized parent ID and
-    an `Execute:` list that includes worker issues and the review issue or
-    review issues Nancy must select.
-11. If a local Nancy task directory exists, update `HANDOVER.md` and `ISSUES.md`
-    as bookkeeping. Linear remains authoritative.
-12. Verify by running Nancy's selector when available. The next selected issue
-    should be `execution`, `corrective_resolution`, or `post_execution_review`,
-    not another planning pass, unless real planning work remains.
-
-For corrective issues discovered after a gate was accepted, repair selector
-authority before restarting Nancy:
-
-1. Put the corrective issue under the authorized execution parent.
-2. Make the issue recognizable as corrective by adding label `Corrective` or by
-   including `Corrective` in the title.
-3. Update the accepted gate issue so its `Execute:` line includes the corrective
-   issue identifier as part of the full current authorized set.
-4. Run the selector and confirm the next mode is `corrective_resolution` with
-   the corrective issue selected.
-
-Minimal repaired shape:
-
-```text
-master parent
-├── Gate review and execution readiness     Worker Done
-└── Backlog                                 Todo
-    ├── first worker issue                  Todo or Worker Done
-    ├── next worker issue                   Todo
-    └── Post execution review               Todo
-```
-
 ## Selector Closure Rule
 
 The Nancy selector is authoritative for the current turn.
@@ -130,29 +113,18 @@ When the selector says no eligible issue:
 
 1. Check unread bus messages.
 2. Fetch the active master parent and authorized execution parent from Linear.
-3. Verify all authorized implementation, review target, review issue, and corrective issues are closed or at their required terminal state.
-4. Check for open children under the authorized parent that are not listed in
-   the accepted gate `Execute:` line. Treat these as selector authority defects,
-   not as worker discretion.
-5. If the selector pauses on `needs_human_direction` for unauthorized Backlog
-   work, repair the accepted gate or record why the issue is intentionally
-   excluded.
+3. Verify every authorized worker, review target, review issue, and corrective issue is closed or at its required terminal state.
+4. Check for open children under the authorized parent that are not listed in the accepted gate `Execute:` line. Treat these as selector authority defects, not as worker discretion.
+5. If the selector pauses on `needs_human_direction` for unauthorized Backlog work, repair the accepted gate or record why the issue is intentionally excluded.
 6. If the active master parent remains open and all gate evidence is satisfied, close the master parent and update required Nancy task bookkeeping.
 7. If evidence is missing, report the exact missing gate evidence and stop.
 
-## Workflow Routing
-
-- Use [Nancy Two Agent Planning Gate](workflows/nancy-two-agent-planning-gate.md) when Linear must be populated or reviewed before implementation, especially when audit, scope discovery, or pre execution blockers may exist.
-- Use [Agent Issue Review Workflow](workflows/agent-issue-review-workflow.md) when issues already exist and need readiness review before Nancy or another worker starts.
-- Use [Post Execution Review Workflow](workflows/post-execution-review-workflow.md) after worker issues have been implemented and need one-target autonomous review outcome recording or corrective issue creation.
-- Use [Tender Production Workflow](workflows/tender-production-workflow.md) when an approved brief and existing background research must be turned into a client-ready showcase pack of polished deliverables.
-
 ## Universal Issue Rules
 
-Every worker issue should:
+Every worker issue must:
 
 - Be completable by one autonomous agent in one session.
-- Reference stable files, modules, commands, or symbols, not line numbers.
+- Reference stable files, modules, commands, or symbols. Avoid line number references.
 - State acceptance criteria and verification.
 - Avoid speculative cleanup.
 - Avoid combining unrelated work.
@@ -162,37 +134,23 @@ Planning issues do not authorize product code changes unless the active workflow
 
 ## State Ownership
 
-Use Linear as the source of truth for issue state.
+Linear is the source of truth for issue state. `Worker Done` carries different meaning by issue type:
 
-- Worker implementation issues end in `Worker Done` unless the task prompt requires `Done`.
-- Review issues end in `Done` after required review comments or evidence are recorded.
-- Corrective issues end in the terminal state required by their selector.
-- Corrective issues created after gate acceptance must be under the authorized
-  parent, recognizable as corrective, and included in the accepted gate
-  `Execute:` list before Nancy can select them.
-- Gate issues end in `Worker Done` when they record authorization or gate acceptance.
-- Master parent issues end in `Worker Done` when no authorized child, review, or corrective work remains open and the selector has no eligible issue.
+| Issue type | `Worker Done` means |
+|---|---|
+| Worker (executable) | Implementation complete, awaiting post execution review. |
+| Gate review | Authorization recorded. Body holds accepted `Execute:` list. |
+| Planning | Planning content reviewed and accepted by the reviewer agent. |
+| Corrective | Corrective fix complete, awaiting review. |
+| Master parent | All authorized children terminal, no eligible selector work. |
 
-## Selector Compatible Gate Text
+`Done` means:
 
-When recording a ready gate, include backticks around the authorized parent ID.
-The Bash selector currently parses the parent from this exact shape:
+| Issue type | `Done` means |
+|---|---|
+| Worker | Post execution review recorded `Review Passed` outcome. |
+| Post execution review | All review outcomes recorded, no open corrective, no unresolved human direction. |
+| Corrective | Selector terminal state per its workflow. |
+| Gate review | Not used. Gate review terminates at `Worker Done`. |
 
-```text
-Planning complete. Outcome: Ready for execution.
-Authorized execution parent: `ISSUE-ID`.
-Execute: ISSUE-1, ISSUE-2, ISSUE-3.
-```
-
-For blocker gates:
-
-```text
-Planning complete. Outcome: Pre execution blockers required.
-Authorized blocker parent: `ISSUE-ID`.
-Execute blockers only: ISSUE-1, ISSUE-2, ISSUE-3.
-```
-
-When repairing authority for later corrective work, update the accepted gate
-description with the full current authorized issue set. Do not replace the
-existing execution set with only the new corrective issue unless all prior
-authorized work is intentionally removed from selector authority.
+Corrective issues created after a gate is accepted must be added to the gate's `Execute:` line before Nancy can select them. See [Post Execution Review Workflow](workflows/post-execution-review-workflow.md) for the repair procedure.
