@@ -6,7 +6,7 @@ Use this workflow when an approved brief and existing background research must b
 
 Produce a reviewed Linear issue graph, then run two-agent autonomous execution that turns curated research into a client-ready artifact set under one Showcase Pack execution parent.
 
-This workflow is the editorial counterpart to `nancy-two-agent-planning-gate`. It assumes background research has already been done. It does not authorize new research. It authorizes synthesis, drafting, review, and shipping.
+This workflow is the editorial counterpart to `nancy-two-agent-planning-gate`. It assumes background research is complete. Scope is limited to synthesis, drafting, review, and shipping.
 
 ## Trigger
 
@@ -124,7 +124,7 @@ When the second-to-last Showcase Pack artifact is accepted, Claude runs an extra
 
 Issues found here route back as contests on specific Showcase Pack issues.
 
-The coherence pass folds into the existing `post_execution_review` selector mode rather than introducing a new selector mode.
+The coherence pass runs under the existing `post_execution_review` selector mode.
 
 ## Discovery Branch
 
