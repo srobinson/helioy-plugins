@@ -35,7 +35,7 @@ Provisionally out of scope, flagged as implementation-time checkpoints:
 
 - A brief written by Stuart into the master parent description. Required fields: client, engagement frame, voice and register, research location, success criteria, constraints, out of scope.
 - Existing background research at the absolute path stated in the brief (typically `~/.mdx/private/<project>/`).
-- A persistent registry of prior tender shapes, queryable in cm and visible as `~/.agents/skills/linear-workflows/tender-shapes.md`.
+- A persistent registry of prior tender shapes, queryable in cm and visible as `/Users/alphab/Dev/LLM/DEV/helioy/helioy-plugins/plugins/helioy-tools/linear-workflows/tender-shapes.md`.
 
 ## Outputs
 
@@ -88,7 +88,7 @@ shipped: <YYYY-MM-DD>
 
 ### Markdown mirror
 
-Path: `~/.agents/skills/linear-workflows/tender-shapes.md`.
+Path: `/Users/alphab/Dev/LLM/DEV/helioy/helioy-plugins/plugins/helioy-tools/linear-workflows/tender-shapes.md`.
 
 Auto-regenerated at the end of every post-execution review by the workflow steps. Hand edits are not authoritative. Stuart edits the cm entry via `cx_update`; the next post-execution review pass regenerates the file.
 
