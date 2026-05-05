@@ -8,6 +8,10 @@ Produce a reviewed Linear issue graph, then run two-agent autonomous execution t
 
 This workflow is the editorial counterpart to `nancy-two-agent-planning-gate`. It assumes background research has already been done. It does not authorize new research. It authorizes synthesis, drafting, review, and shipping.
 
+## Trigger
+
+Stuart creates the master parent issue with the brief in the description and tells Nancy to run the tender production workflow against it.
+
 ## Source Of Truth
 
 Linear is durable state.
@@ -120,7 +124,7 @@ When the second-to-last Showcase Pack artifact is accepted, Claude runs an extra
 
 Issues found here route back as contests on specific Showcase Pack issues.
 
-The coherence pass is folded into the existing `post_execution_review` selector mode. It is not a new mode.
+The coherence pass folds into the existing `post_execution_review` selector mode rather than introducing a new selector mode.
 
 ## Discovery Branch
 
@@ -185,7 +189,7 @@ This mirrors corrective issue handling in `post-execution-review-workflow`.
 
 Stuart re-opens the Showcase Pack issue with new edit instructions.
 
-Tender deliverables iterate on the artifact, not as downstream corrective issues.
+Tender deliverables iterate on the artifact itself. Downstream corrective issues are reserved for the selector fallback below.
 
 If Nancy's selector does not re-pick a reopened Worker Done issue under an already-accepted gate, fall back to the corrective pattern: file a corrective issue under Showcase Pack and extend the gate `Execute:` list to include it. The corrective issue carries the new edit instructions.
 
