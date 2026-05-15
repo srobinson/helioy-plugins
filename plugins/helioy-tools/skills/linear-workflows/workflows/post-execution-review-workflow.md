@@ -130,6 +130,50 @@ Evidence: [what was inspected]
 Action: [none, corrective issue IDs, or human direction needed]
 ```
 
+## Outcome Classification
+
+Stable anchor: `#outcome-classification`.
+
+When the outcome is `Needs human direction`, extend the outcome comment with one `Classification:` line. The line must stand alone and use exactly one of these values:
+
+```markdown
+Classification: loop
+Classification: decision
+```
+
+`loop` means the agent is stuck in a repeated technical or workflow loop and needs Stuart to break the loop. Required body fields:
+
+```markdown
+Reviewed worker issue: ISSUE-ID
+Outcome: Needs human direction
+Classification: loop
+Reviewed by: Codex | Claude | [agent name]
+Evidence: [what was inspected]
+What was tried: [specific repair or review attempts]
+What kept repeating: [the repeated failure, selection, or state transition]
+Last two relevant issue IDs: ISSUE-ID, ISSUE-ID
+Smallest unblock the agent can imagine: [the smallest human action that would unblock the loop]
+Action: Human direction needed
+```
+
+`decision` means the agent has reached a product, scope, or architecture question that cannot be resolved from the current issue contracts. Required body fields:
+
+```markdown
+Reviewed worker issue: ISSUE-ID
+Outcome: Needs human direction
+Classification: decision
+Reviewed by: Codex | Claude | [agent name]
+Evidence: [what was inspected]
+Question: [the exact unresolved question]
+Agent position: [the agent's recommended answer]
+Alternative positions: [other plausible answers and consequences]
+Smallest decision needed: [the smallest Stuart decision that unblocks work]
+Safe work while waiting: [work that remains safe, or none]
+Action: Human direction needed
+```
+
+A later Linear comment starting with `Human direction:` records Stuart's answer and resolves the pause for selector purposes.
+
 ## Outcomes
 
 A post execution review turn must end in exactly one outcome.
