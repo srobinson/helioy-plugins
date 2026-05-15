@@ -115,7 +115,7 @@ When the selector says no eligible issue:
 2. Fetch the active master parent and authorized execution parent from Linear.
 3. Verify every authorized worker, review target, review issue, and corrective issue is closed or at its required terminal state.
 4. Check for open children under the authorized parent that are not listed in the accepted gate `Execute:` line. Treat these as selector authority defects, not as worker discretion.
-5. If the selector pauses on `needs_human_direction` for unauthorized Backlog work, repair the accepted gate or record why the issue is intentionally excluded.
+5. If unauthorized Backlog work exists, treat it as selector authority drift. Nancy auto routes it through `workflow_repair`; see [Workflow Repair Routing](workflows/post-execution-review-workflow.md#workflow-repair-routing).
 6. If the active master parent remains open and all gate evidence is satisfied, close the master parent and update required Nancy task bookkeeping.
 7. If evidence is missing, report the exact missing gate evidence and stop.
 

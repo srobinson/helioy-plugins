@@ -49,7 +49,7 @@ Do not continue reviewing more completed work while known corrective issues rema
 
 Do not mark a shared post execution review issue `Done` or `Worker Done` while a `Review target` is present.
 
-Needs human direction does not mean task complete. Record the required evidence in Linear, leave the post execution review issue open, and end the turn. The selector should pause on `needs_human_direction` until Stuart resolves the review decision. A later Linear comment starting with `Human direction:` records the answer and lets the selector return to `post_execution_review`.
+Needs human direction does not mean task complete. Record the required evidence in Linear, leave the post execution review issue open, and end the turn. Use [Outcome Classification](#outcome-classification) so the selector can distinguish an agent loop from a product or scope decision. Route gate authority drift through [Workflow Repair Routing](#workflow-repair-routing). A later Linear comment starting with `Human direction:` records Stuart's answer and lets the selector return to `post_execution_review`.
 
 ## Review Scope
 
@@ -109,12 +109,59 @@ Corrective issues must:
 
 Do not create vague cleanup backlog items. If the finding is not actionable, record it as a comment or mark it Needs human direction.
 
-If the reviewer creates a corrective issue after the original gate was accepted,
-it must also repair selector authority or explicitly hand off that repair. A
-Todo corrective issue under Backlog but outside the accepted `Execute:` list
-should make current Nancy pause in `needs_human_direction` until the gate is
-repaired. If an older runtime gives agents `Selected Work: Issue: none`, the
-agent must still refuse to infer authority from `ISSUES.md`.
+## Corrective Authority Repair
+
+If the reviewer creates a corrective issue after the original gate was accepted, the accepted gate must authorize it before Nancy can select it.
+
+Prefer repairing selector authority in the same turn by extending the accepted gate `Execute:` line. If the reviewer misses that step, the selector emits `workflow_repair` and routes a reviewer agent through [Workflow Repair Routing](#workflow-repair-routing). Treat this as workflow drift that agents can repair.
+
+If an older runtime gives agents `Selected Work: Issue: none`, the agent must still refuse to infer authority from `ISSUES.md`.
+
+## Workflow Repair Routing
+
+Stable anchor: `#workflow-repair-routing`.
+
+This section answers: what does Nancy do when I forget to update the gate?
+
+Nancy emits `workflow_repair` for Layer A selector authority defects:
+
+- A Todo or in progress child exists under the authorized execution parent but is missing from the accepted gate `Execute:` line.
+- A post execution review issue was closed while an authorized worker lacks a `Reviewed worker issue:` marker.
+- The Linear hierarchy is deeper than the selector supports.
+
+The selected prompt still names a real issue. It looks like:
+
+```markdown
+## Selected Work
+
+- Mode: `workflow_repair`
+- Issue: `REVIEW-ID` Post execution review
+- Repair instruction: Extend accepted gate `GATE-ID` Execute line to include `ISSUE-ID`.
+- Eligibility: Workflow repair required: open Backlog issue outside accepted gate Execute list
+```
+
+The mode instructions reuse post execution review. When `Repair instruction:` is present, the agent must repair only gate authority:
+
+1. Fetch the selected post execution review issue and the named accepted gate.
+2. Extend the gate `Execute:` line to include the missing identifier or identifiers.
+3. Record the documented repair resolution comment.
+4. End the turn without worker review, source review, or reconciliation.
+
+Before rendering the prompt, Nancy records one durable attempt comment on the selected post execution review issue. If no review issue exists, Nancy records it on the master parent. The comment body is exactly one JSON line:
+
+```json
+{"repair_attempts":{"target_issue":"ISSUE-ID","repair_instruction":"TEXT","iteration_timestamp":"YYYY-MM-DDTHH:MM:SSZ"}}
+```
+
+`target_issue` is the selected post execution review issue when one exists. Required fields are `target_issue`, `repair_instruction`, and `iteration_timestamp`. The selector treats two consecutive identical attempts, same `target_issue` and same `repair_instruction`, with no later resolution as a loop. On the next selector run it emits `agent_stuck` instead of routing another `workflow_repair` turn.
+
+A human or agent clears the counter by adding this exact one line resolution comment after the repair is complete:
+
+```json
+{"repair_attempts_resolved":{"target_issue":"ISSUE-ID","repair_instruction":"TEXT","iteration_timestamp":"YYYY-MM-DDTHH:MM:SSZ","resolution":"TEXT"}}
+```
+
+The repair agent uses that resolution JSON line as the confirmation comment on the accepted gate for the successful edit. A human can use the same line on the accepted gate or the attempt stream. The selector clears the counter when it reads a matching resolution line after the attempts.
 
 ## Review Comments
 
@@ -172,7 +219,7 @@ Safe work while waiting: [work that remains safe, or none]
 Action: Human direction needed
 ```
 
-A later Linear comment starting with `Human direction:` records Stuart's answer and resolves the pause for selector purposes.
+A later Linear comment starting with `Human direction:` records Stuart's answer and resolves the pause for selector purposes. Use the `repair_attempts_resolved` JSON line in [Workflow Repair Routing](#workflow-repair-routing) for gate authority loops instead.
 
 ## Outcomes
 
@@ -203,7 +250,7 @@ Required Linear evidence:
 
 ### Needs Human Direction
 
-Use only when the agent cannot reach a defensible position or the correct fix requires a product, scope, or architecture decision.
+Use only when the agent cannot reach a defensible position after the [Outcome Classification](#outcome-classification) test, or the correct fix requires a product, scope, or architecture decision. Do not use this outcome for gate authority drift covered by [Workflow Repair Routing](#workflow-repair-routing).
 
 Required Linear evidence:
 
