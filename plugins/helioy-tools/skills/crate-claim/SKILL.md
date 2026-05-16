@@ -27,7 +27,14 @@ Run:
 curl -s -o /dev/null -w "%{http_code}" "https://crates.io/api/v1/crates/$ARGUMENTS"
 ```
 
-- If output is `200`: the crate **already exists**. Report and stop.
+- If output is `200`: the crate **already exists**. Fetch the owners and report before stopping:
+
+  ```bash
+  curl -s "https://crates.io/api/v1/crates/$ARGUMENTS/owners" | python3 -c "import sys,json; d=json.load(sys.stdin); print(', '.join(u['login'] for u in d['users']))"
+  ```
+
+  Print: `$ARGUMENTS already exists on crates.io. Owner: <comma-separated logins>`. If an owner matches the user (e.g. `srobinson`), flag it as the user's existing claim ("that's you").
+
 - If output is `404`: the name is **available**. Continue.
 - Any other code: report the status and stop.
 
@@ -40,14 +47,16 @@ Set these substitution values:
 Then run these bash commands:
 
 ```bash
-mkdir -p /tmp/claim-$ARGUMENTS/src
-sed 's/{{NAME}}/$ARGUMENTS/g; s/{{TITLE}}/$ARGUMENTS_TITLE_CASE/g' $SKILL_DIR/contents/Cargo.toml > /tmp/claim-$ARGUMENTS/Cargo.toml
-sed 's/{{NAME}}/$ARGUMENTS/g' $SKILL_DIR/contents/lib.rs > /tmp/claim-$ARGUMENTS/src/lib.rs
-sed 's/{{NAME}}/$ARGUMENTS/g' $SKILL_DIR/contents/publish.sh > /tmp/claim-$ARGUMENTS/publish.sh
-chmod +x /tmp/claim-$ARGUMENTS/publish.sh
+mkdir -p ~/.name-claim/$ARGUMENTS/src
+sed 's/{{NAME}}/$ARGUMENTS/g; s/{{TITLE}}/$ARGUMENTS_TITLE_CASE/g' $SKILL_DIR/contents/Cargo.toml > ~/.name-claim/$ARGUMENTS/Cargo.toml
+sed 's/{{NAME}}/$ARGUMENTS/g' $SKILL_DIR/contents/lib.rs > ~/.name-claim/$ARGUMENTS/src/lib.rs
+sed 's/{{NAME}}/$ARGUMENTS/g' $SKILL_DIR/contents/publish.sh > ~/.name-claim/$ARGUMENTS/publish.sh
+chmod +x ~/.name-claim/$ARGUMENTS/publish.sh
 ```
 
 Replace `$ARGUMENTS` and `$ARGUMENTS_TITLE_CASE` with the actual values in the sed commands.
+
+Why `~/.name-claim/` and not `/tmp/` or `~/.claude/`: `cargo publish` walks up from `Cargo.toml` until it finds a `.git` directory; if it finds one with uncommitted changes, it refuses to publish. `~/.claude/` is a dotfiles repo so it triggers the dirty check. `~/` is not a git repo, so `~/.name-claim/` sidesteps the check entirely. The path is also shared with sister skills `npm-claim`, `pypi-claim`, and the orchestrator `name-claim`.
 
 ### 4. Print next steps
 
@@ -57,6 +66,6 @@ $ARGUMENTS is available!
 
 Warning: crates.io publishes are permanent. Yank only, no unpublish.
 
-/tmp/claim-$ARGUMENTS/publish.sh
+~/.name-claim/$ARGUMENTS/publish.sh
 
 Note: publishing requires `cargo login <token>` to have been run with a token from https://crates.io/settings/tokens.

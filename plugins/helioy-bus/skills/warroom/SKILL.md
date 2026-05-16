@@ -1,364 +1,261 @@
 ---
 name: warroom
 description: >
-  Orchestrate a multi-agent warroom for collaborative work via helioy-bus. You are the orchestrator.
-  You drive agents. You do not build things yourself. Your context is the most expensive resource
-  in the system: use it for briefing, phasing, monitoring, synthesizing, deciding, and course-correcting.
-  Common patterns include brainstorm, spec-writing, code-review, and engineering, but the warroom
-  supports any workflow. Match the pattern to the task.
-  Use when the user says "warroom", "spin up a warroom", "spec this out", "let's plan with agents",
-  "use the warroom to review", "review the code", "brainstorm this", "build this", or when dispatching
-  parallel work to tmux agents.
+  Orchestrate a multi-agent warroom for collaborative work via helioy-bus. You are the orchestrator;
+  agents do the building. Patterns: peer-consensus (most valuable — mixture of experts pairing one
+  Claude pane and one Codex pane to cross-check an artifact with explicit sign-off), brainstorm,
+  spec-writing, code-review, engineering. Match pattern to task.
+  Use when the user says "warroom", "mixture of experts", "MoE review", "claude and codex review this",
+  "get them to sign off", "reach consensus", "peer review this", "spec this out", "brainstorm this",
+  "review the code", or otherwise dispatches parallel work to tmux agents.
 ---
 
 # Warroom: Multi-Agent Collaboration via helioy-bus
 
 ## What This Is
 
-A warroom is a set of specialist agents running in tmux panes, connected via helioy-bus, collaborating on a shared goal. You are the orchestrator. You drive agents. You do not build things yourself.
-
-Your context window is the most expensive resource in the system. Use it for: briefing, phasing, monitoring, synthesizing, deciding, and course-correcting. All implementation work goes to agents.
+A warroom is a set of specialist agents running in tmux panes, connected via helioy-bus, collaborating on a shared goal. You are the orchestrator: brief, phase, monitor, synthesize, decide, course-correct. All implementation work goes to the agents — your context is the most expensive resource in the system, so spend it on driving them, not on building.
 
 ## Common Patterns
 
-The warroom supports any workflow. These are proven patterns, not an exhaustive list:
-
 | Pattern | When | Flow |
 |---------|------|------|
+| **Peer Consensus** ⭐ | Cross-checking a substantial artifact you drafted (Linear plan, spec, design, code) | Two panes audit independently, debate peer-to-peer, both sign off with an exact phrase. Best as a **mixture of experts**: same agent on Claude and Codex so two different models cross-check the same artifact. Orchestrator on CC only; orchestrator applies any agreed changes. |
 | **Brainstorm** | Exploring a problem space | Parallel: same brief to all → collect → synthesize convergence |
 | **Spec-writing** | Planning before implementation | Phased: write → review → iterate → approve |
-| **Engineering** | Building features or assets | Phased or parallel: dispatch tasks → monitor → collect → review |
+| **Engineering** | Building features or assets | Phased or parallel: dispatch → monitor → collect → review |
 | **Code-review** | Verifying implementation | Parallel: dispatch all → collect findings → synthesize |
 
-Mix patterns as needed. A project might start with a brainstorm, transition to spec-writing, then dispatch engineering work, and finish with a code review. The orchestrator decides the flow based on the task.
+Peer Consensus is the most valuable pattern: cheapest defensible quality bar (two adversarial readers, fixed sign-off phrase, two rounds typical) and catches what a solo drafter misses precisely when confidence is high. Mix patterns as needed — a project might start with brainstorm, transition to spec-writing, dispatch engineering, run code-review, and end with a peer-consensus sign-off.
 
-## Prerequisites
+## Setting up a warroom
 
-A warroom requires specialist agents running in tmux panes, registered on the helioy-bus.
+Use the `helioy-warroom` MCP tools.
 
-### Setting up a warroom
-
-Use the `helioy-warroom` MCP tools to manage warrooms programmatically:
-
-**Discover available agents:**
 ```
-warroom_discover(query="security review")
+warroom_discover(query="security review")     # find available agents
 warroom_discover(namespace="helioy-tools")
-```
 
-**Spawn a warroom:**
-```
-warroom_spawn(name="design", agents=["brand-guardian", "ui-designer", "visual-storyteller"])
-warroom_spawn(name="review", agents=["code-reviewer", "silent-failure-hunter"])
-```
+warroom_spawn(name="design", agents=["brand-guardian", "ui-designer"])
 
-**Manage agents in a running warroom:**
-```
-warroom_add(name="design", agent="ux-researcher")
-warroom_remove(name="design", agent="brand-guardian")
-```
+# MoE: same agent prompt, one pane per runtime
+warroom_spawn(name="moe", agents=["helioy-tools:codebase-analyst"])
+warroom_add(name="moe", agent="helioy-tools:codebase-analyst", runtime="codex")
 
-**Monitor and tear down:**
-```
 warroom_status(name="design")
 warroom_kill(name="design")
 ```
 
-**Use presets for common team compositions:**
+Notes:
+
+- Qualified names (`<namespace>:<agent>`) select the namespace's prompt; the `runtime` argument controls which adapter loads it. `helioy-tools:codebase-analyst` runs cleanly on either runtime, which is what makes MoE work end-to-end.
+- Named warrooms are idempotent: spawning with the same name kills the old warroom first.
+- After spawning, `warroom_status(name=…)` confirms agent registration and pane liveness. Agent IDs follow `{repo}:{agent-type}:{session}:{window}.{pane}`.
+- If MCP tools are unavailable, fall back to `~/.helioy/warroom.sh <name> "type1 type2 …"`.
+
+## Mode 1: Peer Consensus ⭐
+
+Use after drafting a substantial artifact (Linear plan, spec, design doc, non-trivial PR) and you want it cross-checked before treating it as final. Especially valuable when your own drafting confidence is high — that is exactly the state where subtle defects ship.
+
+### Mixture of experts: the default composition
+
+Run **the same agent prompt on Claude and on Codex**. Two different models, trained on overlapping but distinct data, with different code-style priors and different blind spots, audit the same artifact. This is the load-bearing reason peer consensus catches defects that same-model review misses:
+
+- Each model's training cutoff is different. Patterns canonical to one may be deprecated to the other.
+- Each model has its own confident-failure modes. Two same-model panes can reinforce the same error; two different models almost never do.
+- Same prompt + different model controls the variable: any disagreement is signal about the artifact, not noise from differing personas.
+
+Default composition (after the helioy-bus runtime patch):
+
 ```
-warroom_presets()
-warroom_spawn(preset="pr-review", name="review-432")
+warroom_spawn(name="moe-{topic}", agents=["helioy-tools:codebase-analyst"])
+warroom_add(name="moe-{topic}", agent="helioy-tools:codebase-analyst", runtime="codex")
 ```
 
-Each named warroom is idempotent: spawning with the same name kills the old warroom and creates a fresh one. Multiple warrooms can run concurrently.
+### Variants (in order of preference)
 
-**Fallback (manual):** If MCP tools are unavailable, tell the user to run `~/.helioy/warroom.sh <name> "type1 type2 ..."` directly.
+1. **Mixture of experts (default)** — same `helioy-tools:*` agent on both adapters as shown above.
+2. **Cross-role same-runtime** — two Claude panes with deliberately different agent types (e.g. `code-reviewer` + `silent-failure-hunter`). Recoups some diversity through role specialization when only one runtime is available.
+3. **Two same-runtime same-role panes** — cheapest, lowest diversity. Same-model agreement is weak signal; use only as a last resort.
+4. **Three-pane variant** — adds a third pane to break ties or triangulate when stakes are high. Sign-off protocol scales without change.
 
-### Verifying the warroom
+### Step 1: Route replies peer-to-peer
 
-After spawning, call `warroom_status` to check agent registration and pane liveness. Or use `list_agents(tmux_filter="<window>")` on helioy-bus. Agent IDs follow the pattern `{repo}:{agent-type}:{session}:{window}.{pane}`.
+For each pane, send a brief with `reply_to` set to **the other pane's agent_id**, not the orchestrator. That is what makes them debate each other instead of pulling you into the middle.
 
-## Mode 1: Spec-Writing
+```
+send_message(to=A, reply_to=B, topic="{project}-signoff", content=brief)
+send_message(to=B, reply_to=A, topic="{project}-signoff", content=brief)
+```
+
+Each brief tells the agent: *"Talk directly to your peer. CC me on every message but route the debate to them. I will not relay."*
+
+### Step 2: The brief
+
+Every brief must contain:
+
+1. **Peer agent_id** — address of the other pane.
+2. **Artifact under review** — explicit Linear IDs, file paths, PR numbers. Agents fetch via MCP, never trust the brief alone.
+3. **Audit checklist** — concrete rules the artifact must satisfy. Cite the relevant skill (e.g. `helioy-tools:linear-workflows`).
+4. **Adversarial discipline** — *"Find at least one substantive issue or positively justify 'none found.' Don't perform agreement."*
+5. **Sign-off phrases** — the exact strings:
+   - **"I sign off on X as currently filed"** — clean.
+   - **"I sign off conditional on the following changes:"** + numbered list — orchestrator applies the changes.
+6. **Iteration bound** — *"Escalate to me after 2 rounds if you cannot converge."*
+7. **Write boundary** — *"Propose to your peer, reach agreement, then I apply. Do not write yourself."*
+
+### Step 3: Monitor the debate
+
+You receive CC'd messages on every exchange. **Do not relay between them.** Intervene only if they stall, irreconcilably disagree, or the user asks for status.
+
+Typical flow:
+
+```
+A → critique to B (cc orchestrator)
+B → response to A (cc orchestrator)
+A → revised position (cc orchestrator)
+B → final position (cc orchestrator)
+A → "I sign off conditional on the following changes: …"
+B → "I sign off conditional on the following changes: …"
+```
+
+Convergence = both panes send a clean `"I sign off …"` on the **same shape** (either both as-currently-filed, or both on the same change set after edits).
+
+### Step 4: Apply changes, ask for clean sign-off
+
+If both signed off conditional on a change set, you apply the changes — never delegate the writes. Then nudge both:
+
+```
+"All N consensus changes are applied. Please re-read the artifact via MCP
+(do not work from memory) and either send your clean 'I sign off on X as
+currently filed' message, or escalate any remaining concerns. This is the
+final sign-off, not a peer-debate round."
+```
+
+Both panes re-fetch live state, verify the edits landed, and emit clean sign-off.
+
+### Step 5: Persist the consensus
+
+Store the result via `cx_store` or `cx_deposit` so the decision survives session boundaries. Include what was reviewed (stable IDs), the change set consensus produced, and the lesson (if any) the exchange surfaced — that lesson is often the highest-value artifact.
+
+### When NOT to use Peer Consensus
+
+- Pure information-gathering tasks — use Brainstorm; you want divergence, not convergence.
+- Trivial artifacts with low blast radius and existing high confidence.
+- When you don't have two capable agents available.
+
+### Lesson from practice
+
+Peer review after a confident solo draft is where the orchestrator's own discipline leaks. Common defects two adversarial readers catch in one round:
+
+- Implementation-prescriptive language in worker bodies that should be behavioural signposts.
+- Acceptance criteria that contradict project verification contracts (e.g. a "fails on main" test breaking `just test`).
+- Hand-named constructor/symbol references that should be left to the worker.
+- Cross-spec gaps where one worker assumes a capability another doesn't deliver.
+- Catch-22s between worker acceptance criteria and repo gate constraints.
+
+High drafting confidence is precisely when a peer-consensus pass earns its keep.
+
+## Mode 2: Spec-Writing
 
 Use when planning non-trivial implementation work before creating Linear issues.
 
-### Step 1: Identify spec groupings
+### Step 1: Group and phase
 
-Break the work into natural groupings. Each grouping becomes one spec document and maps 1:1 to a future Linear sub-parent. Good groupings are independent enough that different engineers can write them, but related enough that they need architect review for consistency.
+Break the work into natural spec groupings (each becomes one document and maps 1:1 to a future Linear sub-parent). Group dependent specs into later phases. Within a phase, independent specs run in parallel — one engineer per spec.
 
-### Step 2: Identify phases
+### Step 2: Dispatch a phase
 
-Specs may depend on each other. Group into phases:
+Send to each engineer (one per spec, parallel) and one architect simultaneously. Every dispatch must specify:
 
-```
-Phase 1 (parallel): specs with no dependencies on each other
-Phase 2: specs that depend on Phase 1 decisions
-Phase N: ...
-```
+- **Output path** for the spec doc (`~/.mdx/projects/{project}-spec-{grouping}.md`).
+- **Required inputs** the agent must read first (research docs, approved prior-phase specs).
+- **Decisions already made** so the engineer does not re-debate them.
+- **What the spec must contain** as a precise numbered list (be specific: *"exact SQL DDL for all tables"*, not *"describe the schema"*).
+- **Reply discipline**: engineer notifies orchestrator + architect when written; architect reviews directly, sends fixes to engineer with orchestrator CC'd, iterates with engineer until consensus; architect notifies orchestrator on phase completion.
 
-Independent specs within a phase run in parallel (one engineer per spec). Dependent specs run in later phases after their dependencies are approved.
+The architect's brief lists the engineer agent_ids, the expected output paths, the review criteria (precision, completeness, ecosystem alignment, internal and cross-spec consistency), and the same reply-and-CC discipline.
 
-### Step 3: Dispatch Phase 1
+### Step 3: Monitor the review loop
 
-Send three types of messages simultaneously:
+Engineers and architect iterate directly. You receive CC'd messages. Do not relay. Intervene only on stalls, disputes, or status requests.
 
-**Task messages to engineers** (one per spec, parallel):
+### Step 4: Advance phases until complete, then file Linear
 
-```
-To: engineer pane agent_id
-Topic: {project}-spec
-Content:
-  ## Task: Write spec for {grouping}
-  ### Output
-  Write to: ~/.mdx/projects/{project}-spec-{grouping}.md
-  ### Input (read these first)
-  - [list research docs and/or approved specs from prior phases]
-  ### Decisions already made (do not revisit)
-  - [list all architectural decisions so the engineer doesn't waste time re-debating]
-  ### What the spec must contain
-  - [precise numbered list of required sections]
-  - [be specific: "exact SQL DDL", "exact Rust type definitions", not "describe the schema"]
-  ### When done
-  1. Reply to {orchestrator_agent_id} (orchestrator) confirming the spec is written
-  2. Reply to {architect_agent_id} (architect-reviewer) asking them to review it
-  The architect may send you feedback. Apply fixes and notify them until you reach consensus.
-```
+When all phases are approved:
 
-**Briefing message to architect**:
+1. Each spec maps 1:1 to a Linear sub-parent.
+2. Derive small, precise sub-issues from each spec.
+3. Follow `helioy-tools:linear-workflows` for issue creation.
+4. Reference the spec doc in each sub-parent description.
+5. Consider a **Peer Consensus** pass on the filed tree before treating it as final.
 
-```
-To: architect pane agent_id
-Topic: {project}-spec
-Content:
-  ## Phase N: {description}
-  {engineer_agent_id_1} is writing ~/.mdx/projects/{project}-spec-{grouping1}.md
-  {engineer_agent_id_2} is writing ~/.mdx/projects/{project}-spec-{grouping2}.md
-  They will notify you when ready.
-  ### Your job
-  1. Wait for engineers to notify you
-  2. Read the spec
-  3. Review for: precision, completeness, ecosystem alignment, internal consistency, cross-spec consistency
-  4. Send fixes DIRECTLY to the engineer. CC {orchestrator_agent_id} on all messages.
-  5. Iterate until consensus.
-  6. When ALL specs in this phase are approved, notify {orchestrator_agent_id}.
-  ### Research context
-  - [list research docs so architect has full background]
-```
+## Mode 3: Code-Review
 
-### Step 4: Monitor the review loop
+Use when implementation exists and needs verification against specs. Reviewers run in parallel.
 
-The architect and engineers iterate directly. You receive CC'd messages. Do NOT relay messages between them. Only intervene if:
-- An agent appears stuck (no messages for an extended period)
-- There is a disagreement you need to resolve
-- The user asks for a status update
+### Step 1: Baseline
 
-```
-Engineer writes spec → notifies architect + orchestrator
-Architect reviews → sends fixes to engineer (cc orchestrator)
-Engineer applies fixes → notifies architect (cc orchestrator)
-... repeat until consensus ...
-Architect signs off → notifies orchestrator "Phase N complete"
-```
+Run `cargo check` / `cargo test` (or equivalent) first. Report baseline to the user. Reviewers should not waste time on code that doesn't compile.
 
-### Step 5: Advance to next phase
+### Step 2: Confirm focus with the user
 
-When the architect confirms Phase N is complete:
-1. Acknowledge to the user
-2. Dispatch Phase N+1 (engineers read approved Phase N specs as input)
-3. Repeat Steps 3-5
+Before dispatching, confirm review depth:
 
-### Step 6: Create Linear issues
+| Level | Flag | Skip |
+|-------|------|------|
+| **Functionality** | Missing features, incorrect implementation, bugs | Style, naming, formatting, docs |
+| **Full** | Everything above + style, patterns, documentation | — |
+| **Security** | Vulnerabilities, input validation, auth gaps | Non-security concerns |
 
-When all phases are complete and all specs approved:
-1. Each spec maps 1:1 to a Linear sub-parent
-2. Derive small, precise sub-issues from each spec
-3. Follow the linear-workflow skill for issue creation
-4. Reference the spec doc in each sub-parent description
+### Step 3: Dispatch (1:1 reviewer per issue)
 
-## Mode 2: Code Review
-
-Use when implementation exists and needs verification against specs. All reviewers run in parallel.
-
-### Step 1: Verify the code compiles and tests pass
-
-Before dispatching reviewers, run `cargo check` and `cargo test` (or equivalent). Report the baseline to the user. Reviewers should not waste time on code that does not compile.
-
-### Step 2: Map reviewers to issues
-
-Each reviewer gets exactly one Linear issue to review. The mapping is 1:1: one agent per issue, one issue per agent.
-
-| Agent | Issue | Spec | Code Path |
-|-------|-------|------|-----------|
-| agent_id_1 | ALP-XXXX | spec path | code directory |
-| agent_id_2 | ALP-YYYY | spec path | code directory |
-
-### Step 3: Dispatch all reviewers in parallel
-
-Send one message per reviewer. Every dispatch message must contain:
-
-1. **SPEC path** — the authoritative spec to review against
-2. **CODE path** — the exact directory or files to review
-3. **LINEAR issue** — the issue ID for status updates
-4. **SCOPE** — what parts of the code to examine
-5. **FOCUS** — what severity level to review at (always clarify with the user first)
-6. **KEY THINGS TO CHECK** — numbered list of specific verification points derived from the spec
-7. **ACTIONS** — what to do with findings (e.g., create sub-issues, set status, append to description)
-8. **Reply instruction** — reply to the orchestrator on helioy-bus when done
-
-Template:
-
-```
-REVIEW TASK: {issue_id} — {issue_title}
-
-SPEC: {spec_path}
-CODE: {code_path}
-LINEAR ISSUE: {issue_id}
-
-SCOPE: {what to examine}
-
-FOCUS:
-- {severity guidance from user, e.g. "missing functionality, incorrect implementation, bugs only"}
-
-DO NOT flag: {exclusions, e.g. "style nits, naming preferences, minor formatting"}
-
-KEY THINGS TO CHECK:
-1. {specific verification point}
-2. {specific verification point}
-...
-
-ACTIONS:
-- If genuine issues found: {what to do — create sub-issues under the parent, set status, append findings}
-- If clean: reply confirming, no Linear update needed
-
-Reply to me on helioy-bus when done.
-```
+Every dispatch must specify: SPEC path, CODE path, LINEAR issue, SCOPE (what to examine), FOCUS (from the level above), explicit *do-not-flag* list, KEY THINGS TO CHECK (numbered, derived from the spec), ACTIONS (what to do with findings — e.g. create sub-issues under the parent, append to description), and the reply instruction (`reply to orchestrator on helioy-bus when done`).
 
 ### Step 4: Collect and synthesize
 
-As reviewers report back, build a consolidated summary:
+Build a consolidated table — issue, reviewer, verdict (clean / issues found), short summary — and present to the user. Highlight clean issues, issues with genuine problems (with new sub-issue links if created), and any cross-cutting concerns multiple reviewers flagged.
 
-| Issue | Reviewer | Verdict | Findings |
-|-------|----------|---------|----------|
-| ALP-XXXX | agent_id | Clean / Issues found | Brief summary |
+## Mode 4: Brainstorm
 
-When all reviewers have reported, present the synthesis to the user. Highlight:
-- Which issues are clean
-- Which have genuine problems (with links to new sub-issues if created)
-- Any cross-cutting concerns that multiple reviewers flagged
-
-### Important: Review focus must come from the user
-
-Always confirm the review focus with the user before dispatching. Common levels:
-
-| Level | What to flag | What to skip |
-|-------|-------------|--------------|
-| **Functionality** | Missing features, incorrect implementation, bugs | Style, naming, formatting, documentation |
-| **Full** | All of the above plus style, patterns, documentation | Nothing |
-| **Security** | Vulnerabilities, input validation, auth gaps | Non-security concerns |
-
-## Mode 3: Brainstorm / Ideation
-
-Use when exploring a problem space and gathering diverse perspectives before committing to a direction.
+Use when exploring a problem space and gathering diverse perspectives before committing.
 
 ### Flow
 
-```
-Phase 0 (parallel): All agents get the same brief, dump ideas from their unique lens
-  → Each writes to a dedicated file: ~/.mdx/projects/{project}-{agent-role}--brainstorm.md
-  → Each replies to orchestrator when done
-Phase 1+ (phased): Synthesize, execute, review — using spec-writing patterns
-```
+Same brief, parallel dispatch. Each agent writes to a dedicated file: `~/.mdx/projects/{project}-{agent-role}--brainstorm.md`. Each replies to the orchestrator with a one-line completion. **Tell them not to coordinate with peers** — independent reads give convergence signal when you compare.
 
-### Step 1: Dispatch the brief
+The brief is identical across agents except for the *"Your task"* section, which is tailored to each agent's expertise.
 
-Send the same context and task to every agent simultaneously. Each message should:
-- Describe the project, goals, and constraints
-- Ask the agent to brainstorm from their specific perspective
-- Specify the output file path
-- Request a bus reply when done
+### After collection
 
-The brief is identical except for the "Your Task" section, which is tailored to each agent's expertise.
+Track convergence: themes that emerge independently across agents (strongest signal), unique ideas from individual perspectives, contradictions that need resolution. Present a convergence summary to the user before transitioning. Then switch to spec-writing (Mode 2) or direct execution. When you file the resulting artifact, consider a **Peer Consensus** pass before treating it as final.
 
-### Step 2: Collect and synthesize
+## Shared Conventions
 
-As agents reply, track convergence. Note:
-- Themes that emerge independently across multiple agents (strongest signal)
-- Unique ideas from individual perspectives
-- Contradictions that need resolution
+These apply across all modes.
 
-Present a convergence summary to the user before proceeding to structured phases.
-
-### Step 3: Transition to structured work
-
-Once the brainstorm surfaces a direction, switch to spec-writing mode (Mode 1) or direct execution, feeding the brainstorm outputs as input to subsequent phases.
-
-## Context Economy
-
-Your context is precious. Protect it.
-
-### Terse replies from agents
-
-Every dispatch message must include: **"Reply with a single line confirming completion. Do not summarize your work unless asked."**
-
-Agents write their output to files. You read the files when you need details. Their bus replies should be cheap to process: "Done. Written to ~/.mdx/projects/foo.md" is the ideal reply.
-
-### Monitoring via tmux capture
-
-You can read any agent's terminal output directly without messaging them:
-
-```bash
-tmux capture-pane -t {tmux_target} -p
-```
-
-The `tmux_target` is available from `list_agents`. Use this to:
-- Check progress without asking (saves both your context and theirs)
-- Detect rabbit holes (agent looping, stuck, or going off-brief)
-- Get details without requesting a verbose reply
-
-Monitor proactively when an agent is taking longer than expected.
-
-### When to read output files vs. capture panes
-
-- **Read the output file** when the agent has confirmed completion and you need the deliverable
-- **Capture the pane** when the agent has not replied yet and you want to check status
+- **`whoami` first.** Call it on session start to get your registered agent_id. Use that value when telling agents how to reply to you.
+- **Topics.** `{project}-signoff` (peer-consensus), `{project}-spec` (spec-writing), `{project}-review` (code-review), `{project}-brainstorm` (brainstorm).
+- **CC pattern.** Any time agents talk directly to each other (peer-consensus, spec-writing), they CC the orchestrator on every message so you can observe without relaying.
+- **Reply-to pattern.**
+  - **Peer-consensus** — `reply_to` is the *other* pane's agent_id; orchestrator on CC only.
+  - **Spec-writing** — `reply_to` is the counterpart (engineer ↔ architect).
+  - **Code-review / Brainstorm** — `reply_to` defaults to the orchestrator.
+- **Terse replies.** Every brief must include: *"Reply with a single line confirming completion. Do not summarize your work unless asked."* Agents write deliverables to files; bus replies should be cheap to process.
+- **Read files, capture panes.** After completion, `Read` the output file. While work is in flight, `tmux capture-pane -t {tmux_target} -p` lets you check progress without messaging the agent — saves both their context and yours, and detects rabbit holes.
+- **Fresh reads between rounds.** Re-fetch live state (Linear MCP, file Read, `git log`) before each iteration. Memory-only reads are how false consensus happens.
 
 ## Anti-Patterns
 
 | Do NOT | Instead |
 |--------|---------|
-| Use background subagents | They cannot receive bus messages or iterate |
-| Relay messages between agents | Let them talk directly (spec-writing mode) |
-| Skip the architect in spec-writing | Cross-spec inconsistencies are caught in review |
-| Bundle specs with dependencies into one phase | Phase them so each builds on approved specs |
-| Write vague spec requirements ("describe the approach") | Be precise ("exact SQL DDL for all tables") |
-| Forget reply instructions in dispatch messages | Agents will not CC others unless explicitly told to |
-| Dispatch code reviewers without confirming focus level | Ask the user what severity to review at first |
-| Change sub-parent issue status for review findings | Create new child work issues under the sub-parent |
-
-## Message Conventions
-
-- **Your agent_id**: Call `whoami` to get your registered agent_id. Use this value in dispatch messages where agents need to reply to you (e.g. `{orchestrator_agent_id}` placeholders).
-- **Topic**: set to `{project}-spec` (spec mode) or `{project}-review` (review mode)
-- **CC pattern**: in spec mode, engineers and architect always CC the orchestrator
-- **Reply-to**: in review mode, reviewers reply directly to the orchestrator
-
-## Status Tracking
-
-**Spec-writing mode:**
-
-```
-Phase 1: [complete/in progress]
-  - spec-name-1: [writing/in review (round N)/approved]
-  - spec-name-2: [writing/in review (round N)/approved]
-Phase 2: [waiting/in progress]
-  - spec-name-3: [not started/writing/in review/approved]
-```
-
-**Code-review mode:**
-
-```
-Reviews dispatched: N/N
-  - ALP-XXXX (agent): [in progress/clean/issues found]
-  - ALP-YYYY (agent): [in progress/clean/issues found]
-  - ALP-ZZZZ (agent): [in progress/clean/issues found]
-```
+| Use background subagents | They cannot receive bus messages or iterate. |
+| Relay messages between agents | Wire `reply_to` peer-to-peer (peer-consensus, spec-writing) by design. |
+| Skip peer review on a confident solo draft | High confidence is exactly when prescription and catch-22s leak. Run Mode 1 before treating the draft as final. |
+| Let agents apply Linear / file writes during peer-consensus | They propose, you apply. Keeps the artifact under one authoritative writer. |
+| Use free-form sign-off language | The exact phrases `"I sign off on X as currently filed"` / `"I sign off conditional on the following changes:"` are the parseable consensus signal. |
+| Bundle dependent specs into one phase | Phase them so each builds on approved specs. |
+| Write vague spec requirements (*"describe the approach"*) | Be precise (*"exact SQL DDL for all tables"*). |
+| Dispatch code reviewers without confirming focus level | Ask the user what severity to review at first. |
+| Change sub-parent issue status for review findings | Create new child work issues under the sub-parent. |
+| Work from memory across rounds | Always re-fetch live state. |

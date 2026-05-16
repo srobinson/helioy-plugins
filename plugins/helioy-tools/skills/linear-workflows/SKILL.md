@@ -46,6 +46,11 @@ Direct open children of the master that are not `Backlog` and do not match the g
 
 Two valid outcome shapes. The selector parses these exact patterns:
 
+The selector regex is unanchored and matches the FIRST occurrence in the body. Two hygiene rules follow from this:
+
+- Do not bold or italicize the Outcome value. `Outcome: **Ready for execution**` fails the match; `Outcome: Ready for execution` succeeds.
+- Do not re-use the keywords `Outcome:`, `Execute:`, `Authorized execution parent:`, or `Authorized blocker parent:` anywhere in the body except on their canonical lines. A prose mention like "per the Execute: line below" captures first and yields zero authorized IDs, which silently routes the gate into `workflow_repair`. If you need to refer to the Execute list in prose, call it "the authorization list" or rewrite the sentence.
+
 ```text
 Planning complete. Outcome: Ready for execution.
 Authorized execution parent: `ISSUE-ID`.
@@ -63,12 +68,24 @@ Downstream planning remains blocked until these land and a fresh audit runs.
 
 The `Execute:` line is a closed authorization set. Issues added under the authorized parent later are not selectable until the gate body is updated to include them. This includes corrective issues created during post execution review.
 
+#### Open design calls
+
+If any worker carries an unresolved design question at promote time, the gate body resolves it before authorizing the worker. Format:
+
+```
+## Design call resolution: <topic>
+
+<Resolution statement. Marked binding for the worker. One-line rationale.>
+```
+
+The worker body MUST restate the resolution. Workers read their own issue first; chaining back to the gate to discover binding choices is exactly how relitigation leaks in.
+
 ## Issue Lifecycle
 
 Issues move through five named states:
 
-1. **Captured.** Drive by stub recorded by any agent during unrelated work. Status `Todo`. Parent: `Inbox: <project>`.
-2. **Triaged.** Promoted from inbox into a selector compatible master parent. Status `Todo`. Parent: `Backlog` under a real master.
+1. **Captured.** Drive by stub recorded by any agent during unrelated work. Status `Todo`. Parent: `Inbox: <project>`. The stub stays in the inbox during triage and closes out at triage sign-off (`Done` with parent removed, or `Canceled` if the design reframed it away). The stub is source material for triage, not the triaged worker itself.
+2. **Triaged.** A worker issue authored during triage, informed by one or more captured stubs and/or direct observations the user provides. Status `Todo`. Parent: `Backlog` under a real master. Triaged workers are new issues, not reparented stubs — one stub may decompose into multiple workers, several stubs may collapse into one, and stubs may be reframed entirely.
 3. **Authorized.** Listed in the accepted gate's `Execute:` line. Gate review issue is `Worker Done`.
 4. **Executed.** Implementation complete. Status `Worker Done`.
 5. **Reviewed.** Post execution review outcome recorded. Status `Done`.
@@ -86,7 +103,9 @@ Pick the workflow by where you are in the lifecycle.
 | Recording a drive by issue during unrelated work | [Intake and Triage](workflows/intake-and-triage-workflow.md), capture protocol |
 | Revisiting captured issues, ready to organize for execution | [Intake and Triage](workflows/intake-and-triage-workflow.md), promote protocol |
 | Issues already exist, scope or quality is uncertain | [Agent Issue Review](workflows/agent-issue-review-workflow.md) |
+| High-confidence or high-blast-radius issue set needs iterated fresh-eyes audit until exhaustion | [MoE Issue Review](workflows/moe-issue-review-workflow.md) |
 | Designing new work in a focused co authoring session | [Single Agent Planning](workflows/single-agent-planning-workflow.md) |
+| Designing work that benefits from walking skeleton + pass-by-pass refinement instead of layer-by-layer construction | [Progressive Refinement](workflows/progressive-refinement-workflow.md) |
 | Discovering scope from scratch with audits and two agent verification | [Nancy Two Agent Planning Gate](workflows/nancy-two-agent-planning-gate.md) |
 | Worker issues have been implemented, awaiting review | [Post Execution Review](workflows/post-execution-review-workflow.md) |
 | Building a client deliverable pack from an approved brief | [Tender Production](workflows/tender-production-workflow.md) |
@@ -124,13 +143,34 @@ When the selector says no eligible issue:
 Every worker issue must:
 
 - Be completable by one autonomous agent in one session.
-- Reference stable files, modules, commands, or symbols. Avoid line number references.
-- State acceptance criteria and verification.
+- Reference stable files, modules, commands, or symbols. Never use line numbers — they rot the moment the file changes.
+- Frame file and symbol references as entry points the worker reads in current source. Not exhaustive lists, not pinned anchors.
+- Verify every cited path against the live filesystem before promoting. Capture-era references rot when files move or are renamed.
+- Describe capability and observable behavior. Do not prescribe implementation. No code blocks defining structs, enums, function bodies, or wire shapes — the worker chooses the shape from current source.
+- State acceptance criteria as observable behavior. State verification as commands.
 - Avoid speculative cleanup.
 - Avoid combining unrelated work.
 - Name dependencies when order matters.
+- Strip planning-session narrative. See [Strip Planning Context from Worker Bodies](#strip-planning-context-from-worker-bodies) below for the rule and concrete rewrites.
 
 Planning issues do not authorize product code changes unless the active workflow and parent issue explicitly say so.
+
+## Strip Planning Context from Worker Bodies
+
+Every token in a worker body costs the executing agent context budget. Planning narrative burns budget the worker needs for current source, and invites relitigation: the worker reads the planner's argument and re-runs the analysis instead of executing the agreed outcome. PER agents pay the same tax.
+
+Worker bodies state capability, constraints, acceptance, and verification. They do not narrate how the planner got there.
+
+Patterns to strip:
+
+- **Historical recap.** "Prior worker did X. Field test showed Y." Reduce to: `Source: ALP-XXXX field test. Symptom: Y.`
+- **Comparative reasoning.** "kubectl/git/etc. does X, therefore...". Binding decisions belong in the gate's `Design call resolution`, not re-derived in the worker.
+- **Mechanism explanations.** "The asymmetry is visible because X was introduced by ALP-YYYY but Z was never migrated." Replace with the entry point. Let the worker read current source.
+- **Scope-policing rationale.** "X is unaffected because it already does Y." One bullet under `## Out of scope` is enough.
+- **Structural-choice justification.** "Why one master, not two", "Why this beats X", "Sequencing rationale". Encoded already in Linear relations and the gate's `Required order:` line.
+- **Cross-references inside narrative.** Cross-references inside prose force the worker to chase them. Bind decisions in the gate body. Treat the worker body as self-sufficient.
+
+Heuristic: if you find yourself writing `because`, `which is inconsistent with`, or `the prior worker did X, so` — you are writing planning context. Cut it.
 
 ## State Ownership
 

@@ -5,11 +5,12 @@
       "args": ["serve"]
     },
     "cm": {
-      "command": "/Users/alphab/Dev/LLM/DEV/helioy/context-matters/target/release/cm",
-      "args": ["serve"]
+      "command": "/Users/alphab/.cargo/bin/cm",
+      "args": ["serve"],
+      "alwaysLoad": true 
     },
     "fmm": {
-      "command": "/Users/alphab/Dev/LLM/DEV/helioy/fmm/target/release/fmm",
+      "command": "/Users/alphab/.cargo/bin/fmm",
       "args": ["serve"]
     },
     "mdm": {

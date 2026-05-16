@@ -10,41 +10,6 @@
         ]
       }
     ],
-    "PreToolUse": [
-      {
-        "matcher": "TodoWrite|ToolSearch|WebFetch|WebSearch|Agent|Read|Write|Edit|Glob|Bash|Grep|Skill",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/plugin/hooks/check-mail.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/plugin/hooks/token-capture.sh"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/plugin/hooks/check-mail.sh"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo 'Session stopped. Use your session-logger skill to onboard the next agent.'"
-          }
-        ]
-      }
-    ],
     "SessionEnd": [
       {
         "hooks": [

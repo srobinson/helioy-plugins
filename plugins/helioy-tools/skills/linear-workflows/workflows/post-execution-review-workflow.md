@@ -261,6 +261,32 @@ Required Linear evidence:
 - Work that remains safe to do, if any.
 - The post execution review issue remains open.
 
+## Re-opening PER on Gate Amendment After Closure
+
+A master has one PER per cycle. When the master's accepted gate is amended with new workers *after* the PER has closed (status `Done`), the PER must be reopened to cover the union surface. The selector cannot replay a `Done` PER — `Done` is terminal.
+
+Common triggers:
+
+- Road testing surfaces new defects after PER closed (workers were added to the gate's `Execute:` line under the active master).
+- A new design call resolution lands in the gate body and authorizes additional implementation workers.
+- A late-arrival corrective wave is filed under the existing master rather than spawning a new master.
+
+The repair procedure:
+
+1. **Reopen the existing PER issue.** Move status from `Done` to `Todo` (or another non-terminal state). Do not file a second PER; there is one PER per master.
+2. **Amend the PER acceptance** to mirror the union of the original-cycle scope and the new wave's surface. Every new docs criterion, help inspection, source stub, generated-artifact parity check, and verification surface introduced by the amended gate must appear in the PER acceptance, alongside the original-cycle bullets.
+3. **Update PER `blockedBy`** to include the new wave's terminal workers (typically a road-test audit umbrella or the last worker of the new wave). The PER must not be selectable until the new wave's last worker is `Worker Done`.
+4. **Record the reopen in the gate body and the PER body.** The gate-body `Required order` line and `Worker mapping` entry for the PER state that the PER is reopened and covers the union surface. The PER body's `Dependencies` section names the new blockers and notes the previous closure timestamp covered the original-cycle scope only.
+5. **Record the reopen as a Linear comment on the PER** so the audit trail is durable: `Reopened on YYYY-MM-DD to cover <new wave name>; original closure at <timestamp> covered the original-cycle scope only.`
+
+Why one PER per master, not a new PER per wave:
+
+- The PER's role is to confirm the integrated result against the master's accepted contract. The contract is the gate body, and the gate body now encodes both waves. A second PER would either duplicate the original-cycle bullets or leave them unverified after the amendment.
+- Linear's `Reviewed worker issue:` selector state and the `Post Execution Review` label point at one PER artifact per master. Splitting into two PERs requires labeling discipline that the current selector does not enforce.
+- The original PER's prior closure is preserved in its history and acceptance changelog. Reopening is additive: the original-cycle review outcomes stay valid; the new wave's surface gets added.
+
+If the reopen lifecycle is not the right shape — for example, the new wave is so large it warrants its own master parent — file a new master with its own gate, PER, and Backlog, and treat the new work as an independent execution unit. That is a separate workflow choice; this section covers the case where the existing master keeps the wave.
+
 ## Exit Criteria
 
 The current post execution review turn is complete when exactly one selected worker issue has one recorded outcome and the agent ends the turn.

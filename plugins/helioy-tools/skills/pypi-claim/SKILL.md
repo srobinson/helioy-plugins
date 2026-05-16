@@ -26,7 +26,14 @@ Run:
 curl -s -o /dev/null -w "%{http_code}" "https://pypi.org/pypi/$ARGUMENTS/json"
 ```
 
-- If output is `200`: the package **already exists**. Report and stop.
+- If output is `200`: the package **already exists**. Fetch metadata and report the owner before stopping:
+
+  ```bash
+  curl -s "https://pypi.org/pypi/$ARGUMENTS/json" | python3 -c "import sys,json; d=json.load(sys.stdin)['info']; print(d.get('author') or d.get('maintainer') or 'unknown')"
+  ```
+
+  Print: `$ARGUMENTS already exists on PyPI. Owner: <author or maintainer>`. If the owner matches the user (e.g. `srobinson` or matching email), flag it as the user's existing claim ("that's you").
+
 - If output is `404`: the name is **available**. Continue.
 - Any other code: report the status and stop.
 
@@ -40,14 +47,16 @@ Set these substitution values:
 Then run these bash commands:
 
 ```bash
-mkdir -p /tmp/claim-$ARGUMENTS
-sed 's/{{NAME}}/$ARGUMENTS/g; s/{{TITLE}}/$ARGUMENTS_TITLE_CASE/g; s/{{MODULE}}/$MODULE/g' $SKILL_DIR/contents/pyproject.toml > /tmp/claim-$ARGUMENTS/pyproject.toml
-sed 's/{{NAME}}/$ARGUMENTS/g' $SKILL_DIR/contents/placeholder.py > /tmp/claim-$ARGUMENTS/$MODULE.py
-sed 's/{{NAME}}/$ARGUMENTS/g' $SKILL_DIR/contents/publish.sh > /tmp/claim-$ARGUMENTS/publish.sh
-chmod +x /tmp/claim-$ARGUMENTS/publish.sh
+mkdir -p ~/.name-claim/$ARGUMENTS
+sed 's/{{NAME}}/$ARGUMENTS/g; s/{{TITLE}}/$ARGUMENTS_TITLE_CASE/g; s/{{MODULE}}/$MODULE/g' $SKILL_DIR/contents/pyproject.toml > ~/.name-claim/$ARGUMENTS/pyproject.toml
+sed 's/{{NAME}}/$ARGUMENTS/g' $SKILL_DIR/contents/placeholder.py > ~/.name-claim/$ARGUMENTS/$MODULE.py
+sed 's/{{NAME}}/$ARGUMENTS/g' $SKILL_DIR/contents/publish.sh > ~/.name-claim/$ARGUMENTS/publish.sh
+chmod +x ~/.name-claim/$ARGUMENTS/publish.sh
 ```
 
 Replace `$ARGUMENTS`, `$ARGUMENTS_TITLE_CASE`, and `$MODULE` with the actual values in the sed commands.
+
+Why `~/.name-claim/` and not `/tmp/`: the path is shared with sister skills `npm-claim`, `crate-claim`, and the multi-registry orchestrator `name-claim`. `/tmp/` would survive a single publish but get reaped between sessions; `~/.name-claim/` persists for retries.
 
 ### 4. Print next steps
 
@@ -55,6 +64,6 @@ Output the following exactly as shown, substituting the actual package name. Do 
 
 $ARGUMENTS is available!
 
-/tmp/claim-$ARGUMENTS/publish.sh
+~/.name-claim/$ARGUMENTS/publish.sh
 
 Note: publishing requires a PyPI API token configured in `~/.pypirc` or the `TWINE_PASSWORD` env var.

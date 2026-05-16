@@ -15,7 +15,7 @@
     {
       "name": "helioy-tools",
       "description": "All Helioy capabilities in one plugin \u2014 attention-matters memory, FMM code navigation, ~/.mdx knowledge base, Linear workflow, and Nancy orchestration",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "author": {
         "name": "Stuart Robinson",
         "email": "stuart@alphab.io"

@@ -2,4 +2,4 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 cargo publish
-rm -rf /tmp/claim-{{NAME}}
+rm -rf ~/.name-claim/{{NAME}}
