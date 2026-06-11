@@ -259,7 +259,8 @@ Deletion slices require a forward-removal map first: delete, keep, trim, and ext
 ## Shared Practices
 
 - Use `tmux capture-pane -t %NNN -p` to check progress without messaging agents.
-- Pin the baseline for citation checks. A spec or doc review that verifies file:line references must name the ref it verifies against (`git show main:path`, never the bare working tree): the shared checkout often sits on an open PR branch, and reviewing citations against the wrong ref produces confidently false findings that contaminate the correction round. The orchestrator should also return the shared checkout to the baseline branch after gating a PR, before dispatching any unrelated review.
+- Specs and docs cite symbols, never file:line. Line numbers rot with every commit; a file path plus symbol name (`run_routes.py _http_error_from_manager`) survives and is greppable. Brief spec writers to express traceability as field -> file+symbol, and brief reviewers to flag line anchors as findings. Bus review verdicts still use `path:line` for code findings; those are read once against a named sha, not stored.
+- Pin the baseline for citation checks. A spec or doc review that verifies code references must name the ref it verifies against (`git show main:path`, never the bare working tree): the shared checkout often sits on an open PR branch, and reviewing against the wrong ref produces confidently false findings that contaminate the correction round. The orchestrator should also return the shared checkout to the baseline branch after gating a PR, before dispatching any unrelated review.
 - Read artifact files after completion. The bus is not the artifact.
 - Store durable outcomes with `cx_store` or `cx_deposit` when a decision, lesson, consensus result, or reusable pattern emerges.
 - Use `warroom_kill` plus fresh spawn when context is heavy, agents drift, panes get noisy, or the next phase changes role composition.
