@@ -242,6 +242,8 @@ Use when an approved spec must land as small, PR-sized slices.
 
 Default composition: one engineer pane on the stronger build model and one reviewer pane on the adversarial reader. Escalate the reviewer to Peer Consensus only for high-blast-radius slices: durability, identity, rekeying, deletion, migration, or commit seams.
 
+Review weight scales with blast radius, even inside a running warroom. A small mechanical PR (handful of files, clear gate, no contract change) gets the orchestrator's own diff read plus the gate, not a queued adversarial pass; the reviewer pane existing is not a reason to use it. Reserve the full loop for slices that change contracts, persistence, identity, deletion, or cross-surface seams. The same applies to spec reviews: one architect pass plus one correction round, then orchestrator spot-checks; never a third full round over citation mechanics.
+
 Per slice:
 
 1. Brief the engineer with numbered deliverables, spec section, extraction or removal map, branch expectations, tests, and done line: `done: <branch> <sha> PR#<n>` or `blocked: <one sentence>`.
