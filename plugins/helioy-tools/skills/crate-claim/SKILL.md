@@ -24,18 +24,21 @@ If `$ARGUMENTS` is empty or whitespace, tell the user to provide a name and stop
 Run:
 
 ```bash
-curl -s -o /dev/null -w "%{http_code}" "https://crates.io/api/v1/crates/$ARGUMENTS"
+curl -s -o /dev/null -w "%{http_code}" -A "helioy-crate-claim (https://github.com/littleorgans)" "https://crates.io/api/v1/crates/$ARGUMENTS"
 ```
+
+The `-A` User-Agent flag is mandatory. crates.io rejects every request without a User-Agent header and returns `403`, which would otherwise read as a false negative (an available name reported as taken). Keep the flag on every crates.io call.
 
 - If output is `200`: the crate **already exists**. Fetch the owners and report before stopping:
 
   ```bash
-  curl -s "https://crates.io/api/v1/crates/$ARGUMENTS/owners" | python3 -c "import sys,json; d=json.load(sys.stdin); print(', '.join(u['login'] for u in d['users']))"
+  curl -s -A "helioy-crate-claim (https://github.com/littleorgans)" "https://crates.io/api/v1/crates/$ARGUMENTS/owners" | python3 -c "import sys,json; d=json.load(sys.stdin); print(', '.join(u['login'] for u in d['users']))"
   ```
 
   Print: `$ARGUMENTS already exists on crates.io. Owner: <comma-separated logins>`. If an owner matches the user (e.g. `srobinson`), flag it as the user's existing claim ("that's you").
 
 - If output is `404`: the name is **available**. Continue.
+- If output is `403`: the User-Agent header was dropped. Re-run the command with the `-A` flag exactly as shown, do not treat `403` as a verdict.
 - Any other code: report the status and stop.
 
 ### 3. Scaffold

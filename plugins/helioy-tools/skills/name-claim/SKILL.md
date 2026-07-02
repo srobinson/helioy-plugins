@@ -56,8 +56,13 @@ curl -s -o /dev/null -w "%{http_code}" "https://pypi.org/pypi/$ARGUMENTS/json"
 
 ```bash
 # crates.io
-curl -s -o /dev/null -w "%{http_code}" "https://crates.io/api/v1/crates/$ARGUMENTS"
+curl -s -o /dev/null -w "%{http_code}" -A "helioy-name-claim (https://github.com/littleorgans)" "https://crates.io/api/v1/crates/$ARGUMENTS"
 ```
+
+The crates.io `-A` User-Agent flag is mandatory. crates.io returns `403` for any
+request without a User-Agent header, so a flag-less call would misreport an
+available name as unknown/taken. Keep `-A` on every crates.io call here and in
+step 2b.
 
 Interpret each:
 
@@ -67,6 +72,8 @@ Interpret each:
 | PyPI      | `404`                  | `200`                  |
 | crates.io | `404`                  | `200`                  |
 
+If crates.io returns `403`, the User-Agent header was dropped: re-run the
+command with the `-A` flag exactly as shown rather than recording a verdict.
 Any other status: report as `unknown` and treat as taken for this run (do not
 scaffold an unknown registry).
 
@@ -91,7 +98,7 @@ curl -s "https://pypi.org/pypi/$ARGUMENTS/json" | python3 -c "import sys,json; d
 **crate**:
 
 ```bash
-curl -s "https://crates.io/api/v1/crates/$ARGUMENTS/owners" | python3 -c "import sys,json; d=json.load(sys.stdin); print(', '.join(u['login'] for u in d['users']))"
+curl -s -A "helioy-name-claim (https://github.com/littleorgans)" "https://crates.io/api/v1/crates/$ARGUMENTS/owners" | python3 -c "import sys,json; d=json.load(sys.stdin); print(', '.join(u['login'] for u in d['users']))"
 ```
 
 Skip this step entirely if all three registries are available.

@@ -41,8 +41,6 @@ Each pass is an independent peer-consensus round with these additional disciplin
 5. **Persist to cm between passes.** After each pass closes, write a `cx_store` decision recording catches, defect classes touched, count, and operative lessons. The accumulated cm record is the empirical defect curve.
 6. **Compact bus protocol.** Bus messages carry findings, agreement, sign-off, and verification only. Do not paste the workflow, the full defect catalog, issue descriptions, or prior pass findings into the bus thread.
 7. **Code evidence required.** Every substantive finding must cite current code, tests, generated output, command surface, runtime contract, or a concrete missing proof. Title-only and Linear-only review is insufficient.
-8. **Multi-recipient sends.** Dispatch each pass card and each VERIFY nudge once via `to: "<claude-id>;<codex-id>"` semicolon-separated addressing. Sending the same card to each pane as two separate `send_message` calls doubles the brief bulk and provides no value — the panes receive byte-identical content either way. Reserve separate sends for content that genuinely differs per pane (e.g. naming the peer agent_id).
-9. **Batch orchestrator edits per pass.** Linear `save_issue` has no patch semantics — every amendment re-sends the full description body. After the panes' round-1 close, batch all converged edits into a single sequence of `save_issue` calls (one per touched issue), then send VERIFY. Avoid editing the same issue twice within a pass; if a later finding refines an earlier edit, fold them into one save.
 
 ## Iteration sequence
 
@@ -50,36 +48,16 @@ Each pass is an independent peer-consensus round with these additional disciplin
 loop:
   kill prior warroom
   spawn new warroom (same composition, new name)
-  dispatch compact pass card via one multi-recipient send on the new bus topic
-  observe round-1 F messages from both panes
-  observe round-1 A messages from both panes
-  observe round-1 S (conditional or clean) from both panes
-  orchestrator (and optionally the user) triages each finding against
-    the artifact's stated intent (master objective + binding decisions)
+  dispatch compact pass card on new bus topic
+  observe round-1 conditional sign-offs
     if both panes sign clean (zero conditional items):
-      exit (formal round-1-zero)
-    else if findings are all cosmetic (wording / redundancy / formatting):
-      exit (smell-test; document the call in cm)
-    else if majority of findings reject intent claims or invent constraints
-        beyond the intent:
-      apply the accepted under-spec findings; record rejections in a new
-      gate design call resolution; exit (over-spec inflection;
-      document the call in cm)
+      exit
     else:
-      orchestrator applies converged consensus changes — batch all edits
-        per issue into one save_issue call; gate body absorbs new MoE
-        Design call resolutions in the same batch
-      send one VERIFY nudge via one multi-recipient send
-      observe V (clean) or E (specific remaining gap) from both panes
-        if E: orchestrator applies the named amendment, re-VERIFY
+      orchestrator applies consensus changes
+      send compact verify nudge
+      observe round-2 clean sign-offs
   persist consensus to cm
   prompt user for continue/stop or proceed automatically
-
-closing-action (after final pass, on user acceptance):
-  move gate review issue to Worker Done. This is the orchestrator-action
-  that closes the MoE cycle and authorizes execution; codex pane typically
-  flags it as a procedural finding in every pass. Do not treat it as a
-  per-pass artifact-body amendment.
 ```
 
 ## Token Economy Protocol
@@ -183,48 +161,13 @@ Lesson: <one sentence, only if reusable>
 
 ## Exit condition
 
-Three valid exits:
+Both panes' round-1 sign-off is clean (zero conditional items) on the same pass. This is "exhaustion" — the artifact has no remaining defects that fresh-eyes peer-consensus can surface.
 
-1. **Formal round-1 zero.** Both panes' round-1 sign-off is clean (zero conditional items) on the same pass. The artifact has no remaining defects that fresh-eyes peer-consensus can surface. Pure case; rare.
-2. **Smell-test (cosmetic-only).** Round-1 produces only cosmetic findings (wording / redundancy / formatting / no execution-or-review-breaking impact). The orchestrator declares the cosmetic transition and stops. See [Practical exit](#practical-exit-the-smell-test).
-3. **Over-spec inflection.** Round-1 surfaces findings that the orchestrator (or the user grounding the review against the artifact's stated intent) rejects as reviewer-invented constraints. The artifact has converged; further iteration accretes constraint without value. See [Over-spec exit](#over-spec-exit).
-
-A pass that returns to clean only after orchestrator edits is *not* a formal-zero exit. Run another pass. The condition is round-1 cleanliness for that variant. The smell-test and over-spec variants can fire at round-1 regardless of orchestrator edits.
+A pass that returns to clean only after orchestrator edits is *not* an exit. Run another pass. The condition is round-1 cleanliness, because that demonstrates the artifact has no remaining defects, not that the current panes happened to converge on a fix.
 
 ## Keep on Trucking
 
 Do not pause or stop between iterations. Keep going automatically unless the experts are truly contested and a human decision is required.
-
-## Over-spec exit
-
-Empirically, after 3-5 productive passes the panes start running out of legitimate under-spec to find. The next failure mode is **inventing constraints the artifact's stated intent never required.** Symptoms:
-
-- Findings that *reject a core intent claim* by adding contradictory behavior. Example from ALP-2817 Pass 5: an F asking `lilo doctor` to warn on pre-existing legacy directories, after the user explicitly called for "as if they never existed" semantics. The finding contradicts the intent it's allegedly defending.
-- Findings that *narrow executor discretion* beyond what the intent specifies. Examples: pinning exact crash-mid-Tx-B fixture content when the master only requires the discriminator semantic; pinning the conventional-commit subject format when the worker only needs Linear ID traceability.
-- Findings that *invent reviewability surface*. Example: requiring the doctor to surface evidence about state the operator doesn't need to act on.
-- The defect curve goes **non-monotonic** — a pass surfaces more findings than the previous, but they all have the over-spec shape above.
-
-### How to recognize and call it
-
-Before applying a pass's consensus edits, the orchestrator (or the user, if grounding) walks each finding against the artifact's stated intent. For ALP-2817 the intent was six load-bearing claims; for any artifact the intent is whatever the master body declares as its objective + binding decisions.
-
-For each finding:
-
-- Does it fix an under-spec gap against an explicit intent claim? **Accept.**
-- Does it add a constraint nowhere in the intent? **Reject.**
-- Does it contradict an intent claim (positive feature where the intent declares absence, or vice versa)? **Reject and flag.**
-
-If the majority of the pass's findings are rejects, the artifact is at the over-spec inflection. Apply the accepted findings; record the rejections in a new gate design call resolution so a future pass doesn't re-surface them; declare exit.
-
-### Why this matters
-
-Iterating past over-spec accretes reviewer-invented constraints into the artifact. Each constraint narrows the executor's discretion and increases the surface a PER reviewer must verify. The artifact's intent is fixed; constraints that don't trace back to the intent are noise. The peer-consensus mechanism is fresh-eyes review against the intent, not aggregation of every plausible additional check.
-
-The over-spec exit is the orchestrator's responsibility, not the panes'. Panes are instructed to be honest about "none found" but they cannot easily distinguish "no under-spec remains" from "I should keep looking." Grounding the triage against the intent is what closes the cycle.
-
-### Recording the rejection
-
-When the orchestrator rejects an over-spec finding, add a `Design call resolution: Pass-N over-spec rejections` block to the gate body. Enumerate each rejected finding, the intent claim it contradicted or extended, and the rationale. Future MoE passes against the same artifact read the gate body cold and will see the rejections, preventing the same surface from being re-surfaced.
 
 ## Practical exit: the smell test
 
@@ -262,16 +205,6 @@ Standard peer-consensus brief from [Warroom Mode 1](../../../../helioy-bus/skill
 
 The orchestrator drafts probe questions fresh each pass. Repeating last pass's probes wastes a pass.
 
-### Recommended probes by pass
-
-These are not mandatory, but empirically high-yield on Phase-7-class artifacts:
-
-- **Pass 1**: factory and capability citations against current source; PER bullet-for-bullet mirroring; gate body's binding-decision completeness; design-improvement opportunities a reviewer with current source would surface.
-- **Pass 2**: copy-paste safety of verification commands (zsh + bash, set -e behavior); cross-platform tool behavior (SQLite PRAGMA wire shapes, BSD vs GNU defaults, macOS uuidgen casing); file-size cap pressure on the largest touched files; implicit preconditions in verification (network, agent config, prior daemon state).
-- **Pass 3**: contract-level invariants the master names but no worker enforces (event log idempotency, transaction model, audit ordering); workspace-level wiring beyond crate creation (`[workspace.dependencies]`, `[workspace.members]` ordering, `lilo-db.workspace = true` consumer references); pre-existing test harness coupling that breaks under the worker changes.
-- **Pass 4**: name-grep audit (every named binary, symbol, file, env var, table, function, command in the 7 amended artifacts must resolve in current source); PER cross-worker rule clause-(b) coherence with master H2s; out-of-scope honesty (no acceptance bullet contradicts the worker's own out-of-scope); reviewability budget (each PER bullet is a single falsifiable check, not a compound assertion).
-- **Pass 5+**: depends on the curve. If Pass 4 still surfaced substantive items, the next pass probes whatever class wasn't yet covered. If Pass 4 was cosmetic-only, declare the smell-test exit and stop.
-
 ## Defect classes
 
 Catalog of defect classes empirically surfaced by this pattern. The probe directions in each pass should test surfaces across this catalog the artifact has not yet been audited against:
@@ -286,10 +219,6 @@ Catalog of defect classes empirically surfaced by this pattern. The probe direct
 8. **Teardown discipline.** Verification sequences that leave operator state dirty (daemon still running, container still bound, socket still present) without a stop step.
 9. **Code-contract mismatch.** Issue text, acceptance criteria, verification, or ordering contradicts current source, tests, generated surfaces, command definitions, schemas, or runtime contracts.
 10. **Design improvement opportunity.** Current code reveals a simpler, safer, more durable, or better-factored approach than the filed issue authorizes. Escalate material alternatives with `E|ALT`.
-11. **Naming-drift.** A name in the master, gate, or worker body (binary, symbol, file path, env var, SQL table, function, CLI command) does not resolve in current source. Often appears as a misnomer the planner wrote from a mental model that didn't match the code (e.g. master says daemon binaries are `rmd`/`smd` but the actual installable bins are `rtm` and `sm`). A `name-grep audit` probe should run by Pass 3 at the latest; iterating concept-only review can ratify naming drift for several rounds before someone greps the literal token.
-12. **Verification command leaks daemon / process / tmpdir.** Verification blocks that start a daemon, run a check, then stop the daemon will leak the daemon if any intermediate step fails. Required pattern: build once; export `LILO_HOME` (or equivalent) to a fresh tmpdir; register an EXIT trap that unconditionally stops the daemon and removes the tmpdir; start daemon in background; wait for readiness; run the test; stop daemon; assert no orphan state survives. Inline-comment "then run + stop" pseudocode is literal shell, not a placeholder — it will not execute.
-13. **Cross-worker rule clause-(b) drift.** The PER's cross-worker rule has two trace branches: (a) gate decisions and (b) master scope sections. Clause (b) often lists scope-section names that aren't verbatim H2 headers in the master, especially after the gate accumulates many MoE-pass amendments. A reviewer following the rule literally cannot trace legitimate work back to a master section that doesn't exist. Audit clause (b) explicitly: every name in it should either match a master H2 or be deleted and routed via clause (a) onto an existing gate Design call resolution.
-14. **`cargo publish --dry-run` against unpublished sibling versions.** When the workspace bumps to `X.Y.0` atomically at release, `cargo publish --dry-run -p <published-crate>` runs verify-build and resolves dependency versions against crates.io. Sibling `lilo-*` `X.Y.0` crates don't exist yet, so the dry-run fails on resolution. The Phase-level acceptance should use `cargo package --no-verify` + a packaged-tarball manifest grep, and defer the version-resolving dry-run to the release-phase gate.
 
 ## Persistence between passes
 
@@ -305,19 +234,9 @@ The accumulated cm record is the empirical defect curve. Its shape is the user's
 
 Pattern empirically observed across multi-pass MoE review cycles:
 
-- Early passes (1-3): structural and lifecycle defects. Defect count 4-9 per pass.
-- Middle passes (4-6): cross-platform, copy-paste safety, and naming-drift defects. Defect count 2-4 per pass.
+- Early passes (1-3): structural and lifecycle defects. Defect count 4-8 per pass.
+- Middle passes (4-6): cross-platform and copy-paste safety defects. Defect count 3-4 per pass.
 - Late passes (7+): single-finding passes or zero-finding exit.
-
-Empirical curve from one full ALP-2817 Phase-7 cycle (4 passes ran, smell-test exit not yet reached):
-
-| Pass | Substantive (perceived) | Net (intent-grounded) | Defect classes hit |
-|---|---|---|---|
-| 1 | 9 | 9 | factory citation, factory-signature reshape, integration-tests workspace crate, lilo-im-store API independence, LiloPaths reuse, Phase 6/7 ordering, PER mirroring, rusqlite orphan, gate-state procedural |
-| 2 | 5 | 5 | PRAGMA wire-shape, smoke teardown, cargo publish dry-run unsatisfiable, W5 PER mirror executability, `then run + stop` inline-comment never executed |
-| 3 | 4 | 4 | d9 JSONL post-Tx-B + idempotency, `lilo-db` workspace dep declaration, rmd/smd vs rtm/sm naming drift, test-harness rewrite enumeration |
-| 4 | 3 | 3 | second runtime-app harness file (docker_e2e), session SKILL.md docs sweep + daemon-name leakage grep, PER clause (b) coherence |
-| 5 | 6 | 3 | total env-var erasure (delete doctor warner), W5 HOME isolation + `.im`, BSD grep `\s` portability → `[[:space:]]`. The other 3 findings (warn on legacy dirs, pin crash-mid-Tx-B fixtures, pin commit subject format) were over-spec — reviewer-invented constraints beyond the master's intent — and rejected. **Over-spec inflection reached; cycle exits at Pass 5.** |
 
 A non-monotonic curve (defect count rises) is normal mid-cycle. A pass may uncover a defect class earlier passes did not test against. Keep iterating until the round-1 zero condition holds.
 
@@ -341,9 +260,6 @@ A defect that escapes review and surfaces at execution time costs: worker rework
 | Repeat prior passes' probe directions | Wastes the pass. Fresh probes per pass shift the audit to new surfaces. |
 | Skip the honesty clause in the brief | Fresh panes feel adversarial pressure and invent low-quality findings. |
 | Iterate past the cosmetic transition | Once findings shift from execution-breaking to wording-tightening, the artifact is done. Continuing burns context and pane time for no marginal defect protection. Apply the smell test (see [Practical exit](#practical-exit-the-smell-test)) and stop. |
-| Dispatch the same pass card to each pane as separate `send_message` calls | The bus supports `to: "<claude-id>;<codex-id>"` for one-call multi-recipient delivery. Two sends doubles the brief bulk per pass for no signal gain — both panes receive byte-identical content either way. Reserve separate sends only for content that differs per pane. |
-| Edit the same Linear issue twice within one pass | `save_issue` has no patch semantics; each call rewrites the full description body. If a later finding refines an earlier consensus edit, fold them into one save. Sequence: collect all converged consensus edits → batch save → VERIFY. |
-| Treat the gate-state move as a per-pass artifact finding | The procedural move of the gate review issue from `Backlog` to `Worker Done` is the closing orchestrator-action of the entire MoE cycle, not a per-pass artifact-body amendment. Codex panes consistently flag this; route it to the closing action, not to the per-pass edit batch. |
 
 ## Relationship to other workflows
 

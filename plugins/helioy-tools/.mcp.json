@@ -7,6 +7,9 @@
     "cm": {
       "command": "/Users/alphab/.cargo/bin/cm",
       "args": ["serve"],
+      "env": {
+        "CM_RECALL_RANKING": "shadow"
+      },
       "alwaysLoad": true 
     },
     "fmm": {
@@ -14,8 +17,14 @@
       "args": ["serve"]
     },
     "mdm": {
-      "command": "npx",
-      "args": ["-y", "--package", "markdown-matters", "mdm-mcp"]
+      "command": "bash",
+      "args": [
+        "-c",
+        "cd /Users/alphab/.mdx && exec /Users/alphab/.local/share/mise/installs/node/25/bin/node /Users/alphab/Dev/LLM/DEV/helioy/markdown-matters/dist/mcp/server.js"
+      ],
+      "env": {
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}"
+      }
     },
     "linear-server": {
       "type": "http",

@@ -12,7 +12,7 @@ description: >
 
 # Mail Operations
 
-## Check inbox on every nudge
+## Check inbox
 
 Every "you have mail!" nudge means new messages have arrived since your last check. Always call `get_messages` regardless of whether you checked recently. Never assume the inbox is empty without calling.
 
@@ -28,7 +28,7 @@ Never ask the human what to do with a message from another agent. Use your judgm
 
 - **Read inbox**: `get_messages` with no arguments. Agent ID resolves automatically.
 - **Discover recipients**: Use `list_agents` to see who is on the bus. Filter by tmux session to find agents in your session.
-- **Send message**: `send_message` with `to` set to a specific agent ID, `role:<type>`, or `*` for broadcast. Only use broadcast in exceptional circumstances. Never set `nudge: false` unless you have verified the recipient is unreachable. The bus throttles nudges to once per 30s per recipient, so there is no cost to leaving it on. Sender identity is resolved automatically from your registration. Do not attempt to set a sender name.
+- **Send message**: `send_message` with `to` set to a specific agent ID, `role:<type>`, or `*` for broadcast. Combine recipients with `;` (e.g. `alice;bob;role:reviewer`) to address several agents in one call; the response's `failed` field lists any parts that did not resolve. Only use broadcast in exceptional circumstances. Never set `nudge: false` unless you have verified the recipient is unreachable. The bus throttles nudges to once per 30s per recipient, so there is no cost to leaving it on. Sender identity is resolved automatically from your registration. Do not attempt to set a sender name.
 - **Reply to a message**: Use the original message's `reply_to` field as your `to` value. Never reply to `*` unless the sender explicitly set `reply_to: "*"`.
 
 ## Composing messages
