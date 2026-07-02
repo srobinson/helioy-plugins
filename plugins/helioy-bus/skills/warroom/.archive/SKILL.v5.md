@@ -54,25 +54,16 @@ Otherwise use a warroom when parallel agents improve correctness, coverage, spee
 
 Peer review spends tokens to buy quality. Cut prose and ceremony first, never quality discipline (see Why We Spend Tokens On Review).
 
-## Runtimes
+## Agents
 
-The single home for per-runtime facts; other sections reference this table. Context sizes as of 2026-07-02.
+Choose runtime by task shape:
 
-| Runtime id | Model | Context | Skill invocation | Best For |
-|------------|-------|---------|------------------|----------|
-| `claude` | Fable 5 | 1m | Type `/name` | UI work, design synthesis, broad research, long specs, or any task where large context is the main constraint. |
-| `codex` | Codex default | 250k | Type `$name` | Backend work, implementation, tests, refactors, and codebase changes where code execution and patch quality dominate. |
-| `grok` | Grok Build | 512k | Plain-English load line | Implementation or review needing large context; a third model family for MoE. |
-| `grok-fast` | Composer 2.5 Fast | 200k | Plain-English load line | Fast mechanical slices; a cheap extra consensus vote. |
+| Runtime | Context | Best For |
+|---------|---------|----------|
+| Claude | 1m context window | UI work, design synthesis, broad research, long specs, or any task where large context is the main constraint. |
+| Codex | 250k context window | Backend work, implementation, tests, refactors, and codebase changes where code execution and patch quality dominate. |
 
-Runtime quirks (validated live 2026-07-02):
-
-- `/compact` works on ALL runtimes — always `/compact`, never `$compact` (on a Codex pane `$compact` opens a non-existent skill and does nothing).
-- Grok has NO typed skill commands (neither `/name` nor `$name` autocompletes). Skills are model-invoked: send a plain instruction ("Load your code-review skill now; review nothing yet") and confirm the `◆ Skill <name>` line via `capture-pane`.
-- **Grok's footer lies until the first response.** The `-m` launch flag IS honored (verified via self-ID and transcript model_id), but the footer and `/model` picker display `~/.grok/config.toml [models].default` until the first response arrives, then update. Never verify a fresh grok pane's model from the footer; if the model matters, ask the pane to self-ID or read the session transcript. Side effect: a grok pane's first turn persists its model as the user's new global default in config.toml.
-- Grok overlays (scrollback/select mode) can eat typed input exactly like copy-mode; the capture-and-recheck discipline in Priming & Compaction applies unchanged.
-
-For MoE, mix model families (claude / codex / grok) when the artifact benefits from diversity. For focused execution, pick the runtime that fits the work instead of defaulting to mixed panes.
+For MoE, use both when the artifact benefits from model diversity. For focused execution, pick the runtime that fits the work instead of defaulting to mixed panes.
 
 ## Setup
 
@@ -84,21 +75,19 @@ warroom_discover(namespace="helioy-tools")
 
 warroom_spawn(name="design", agents=["brand-guardian", "ui-designer"])
 
-# MoE: same prompt, one pane per model family.
+# MoE: same prompt, one pane per runtime.
 warroom_spawn(name="moe", agents=["helioy-tools:codebase-analyst"])
 warroom_add(name="moe", agent="helioy-tools:codebase-analyst", runtime="codex")
-warroom_add(name="moe", agent="helioy-tools:codebase-analyst", runtime="grok")
 
 warroom_status(name="moe")
 warroom_kill(name="moe")
 ```
 
 - Qualified names (`<namespace>:<agent>`) select the namespace prompt; `runtime` controls the adapter.
-- Runtime ids: `claude`, `codex`, `grok`, `grok-fast` (Runtimes). For grok, the model IS the runtime id; the adapter's `-m` flag pins it (do not judge it by the pane footer — Runtimes quirks).
-- Passing the same plugin-qualified agent twice does not create MoE; both panes use the default adapter. Spawn once, then `warroom_add` the extra panes with explicit `runtime=`.
+- Passing the same plugin-qualified agent twice does not create MoE; both panes use the default adapter. Spawn once, then `warroom_add` the second pane with `runtime="codex"`.
 - Named warrooms are idempotent; spawning the same name kills the old one first.
 - Prefer a clean upfront spawn. If membership changes mid-build, call `warroom_status` and address only the fresh IDs.
-- If MCP tools are unavailable, fall back to `~/.helioy/warroom.sh <name> "type1 type2 ..."` (default runtime only; it cannot express runtime choice).
+- If MCP tools are unavailable, fall back to `~/.helioy/warroom.sh <name> "type1 type2 ..."`.
 
 ## Non-Negotiables
 
@@ -106,7 +95,7 @@ warroom_kill(name="moe")
 - Run `warroom_status` after any membership change (spawn, add, remove, recycle). Never reuse agent IDs after add or remove; panes renumber and bus IDs churn. Use `pane_id` (`%NNN`) for `tmux capture-pane` and `/compact` — it survives renumbering.
 - Route replies to the orchestrator only. Do not wire agent-to-agent `reply_to` by default.
 - Bus messages are single-sentence factual signals. Cite IDs, paths, SHAs, PRs, test names, and `file:line` evidence. If a message does not request a reply, do not reply.
-- Bus pings wake you; they are not truth. Confirm `done`, `green`, `merged`, and `clean` before each verdict through cheap signals or a commissioned check (Orchestrator Context Is The Budget). Memory-only consensus is false consensus.
+- Bus pings wake you; they are not truth. Confirm `done`, `green`, `merged`, and `clean` before each verdict — through cheap signals you can afford (a `gh pr checks` line, a `git log -1` sha, a CI exit code) or a commissioned verification agent, never by reading the full diff, log, or artifact yourself (Orchestrator Context Is The Budget). Memory-only consensus is false consensus.
 - **Scout before you build.** Any work touching existing code starts with a Scout & Plan pass and a reuse map. A plan that introduces a new helper, type, table, runner, or command for a capability the reuse map already lists is a defect.
 - Every completed phase and every merged slice is a hard boundary: compact (confirm via `capture-pane`) or recycle the continuing pane BEFORE the next brief. Re-briefing a stale pane is a defect, not an optimization. See Priming & Compaction.
 
@@ -114,7 +103,7 @@ warroom_kill(name="moe")
 
 The single home for the tmux choreography. Every other section points here.
 
-**Skill invocation differs by runtime — see Runtimes.** This doc writes `/name`; on a Codex pane swap `$` for skill names only (`/compact` stays `/` on every runtime). On a grok pane there are no typed skill commands: use the plain-English load line below and confirm the `◆ Skill` marker.
+**Prefix rule.** `/compact` compacts BOTH runtimes — always `/compact`, never `$compact` (on a Codex pane `$compact` opens a non-existent skill and does nothing). SKILL names differ by runtime: Claude `/code-review`, Codex `$code-review` (`$` is Codex's skill prefix). This doc writes `/name`; on a Codex pane swap `$` for skill names only, never for `/compact`.
 
 **Swallowed Enter.** The first Enter is often eaten (command palettes, paste buffers). After any send-keys line, if `capture-pane` shows text still at the prompt, send a bare `Enter` and re-check. Verify each line submitted before sending the next.
 
@@ -128,13 +117,6 @@ sleep 2; tmux send-keys -t %PANE Enter                 # submit the standby line
 sleep 1; tmux send-keys -t %PANE "/code-review" Enter   # queues behind standby, loads into the frame (no ad hoc pass)
 sleep 1; tmux send-keys -t %PANE "/code-hygiene" Enter
 sleep 2; tmux capture-pane -t %PANE -p | tail -5        # confirm all three landed; bare Enter if any sits at the prompt
-```
-
-Grok panes: replace the two skill lines with one load instruction, then verify both the skill markers and the pinned model (Runtimes):
-
-```bash
-tmux send-keys -t %PANE "Load your code-review and code-hygiene skills now; review nothing yet." Enter
-sleep 5; tmux capture-pane -t %PANE -p | tail -8        # expect "◆ Skill code-review" / "◆ Skill code-hygiene"
 ```
 
 The expiry clause ("proceed immediately when the brief arrives") is mandatory — without it a cautious pane stalls on a confirmation menu nobody is watching. The no-writes rule extends to any subagent the reviewer spawns: verify the tree is pristine before delivering a verdict.
@@ -198,7 +180,7 @@ Each mode instantiates one shared loop: **brief independently → agents re-read
 
 Use before any spec or first slice whenever the work touches an area with existing code or infra. Skip only for genuine greenfield with no adjacent system. The scout's job is not to design the solution; it is to map what already exists so the plan reuses it instead of reinventing it.
 
-Composition: one or two scouts on the area. Pick by context need (Runtimes): claude or grok for large or cross-cutting areas; codex or grok-fast for a focused backend module. Prime EACH scout with `/code-review` and `/code-hygiene` first (Priming & Compaction) — these are the disciplines the scout runs on: the reuse/simplification lens from `/code-review`, and the duplication / dead-code / boundary / sizing lenses (Health Signals) from `/code-hygiene`. Apply them EARLY, on the existing area, before any new code — not only at review time.
+Composition: one or two scouts on the area. Claude for large or cross-cutting areas (1m context); Codex for a focused backend module. Prime EACH scout with `/code-review` and `/code-hygiene` first (Priming & Compaction) — these are the disciplines the scout runs on: the reuse/simplification lens from `/code-review`, and the duplication / dead-code / boundary / sizing lenses (Health Signals) from `/code-hygiene`. Apply them EARLY, on the existing area, before any new code — not only at review time.
 
 Required scout report, written to `~/.mdx/projects/{project}-scout-{area}.md` with one `done:` line, in this shape:
 
@@ -280,7 +262,7 @@ Use when implementation exists and needs verification against a spec, issue, or 
 
 Use after drafting a substantial artifact (Linear plan, spec, design doc, PR, or risky decision) and before treating it as final.
 
-Default composition: the same agent prompt on two different model families (claude, codex, grok — see Runtimes). Variants in preference order: (1) same `helioy-tools:*` prompt on two families; (2) cross-role same-runtime, such as `code-reviewer` plus `silent-failure-hunter`; (3) two same-runtime same-role panes, only when nothing better exists; (4) three panes across all three families for high-stakes tie-breaking.
+Default composition: the same agent prompt on Claude and Codex (model diversity). Variants in preference order: (1) same `helioy-tools:*` prompt on both runtimes; (2) cross-role same-runtime, such as `code-reviewer` plus `silent-failure-hunter`; (3) two same-runtime same-role panes, only when nothing better exists; (4) three panes for high-stakes tie-breaking.
 
 Brief both agents independently — do not ask them to debate; the orchestrator synthesizes their bounded verdicts. The brief must include: the artifact under review (exact IDs, files, PRs, SHAs); the baseline ref; rules (concrete checklist plus relevant skill); discipline (find at least one substantive issue or positively justify none found); boundary (agents propose, orchestrator applies writes); reply shape; the sign-off strings (`I sign off on X as currently filed` / `I sign off conditional on the following changes:`); and an iteration bound (one critique round, one correction round, then sign off or escalate).
 
@@ -310,7 +292,7 @@ Leanness applies to prose and structure. It never applies to this discipline.
 - Use `tmux capture-pane -t %NNN -p` to check progress without messaging agents (also detects rabbit-holing).
 - Specs and docs cite symbols, never `file:line`. Line numbers rot with every commit; `path + symbol` (`run_routes.py _http_error_from_manager`) survives and is greppable. Brief spec writers to express traceability as field → file+symbol, and brief reviewers to flag line anchors as findings. Bus review verdicts still use `path:line` for code findings; those are read once against a named sha, not stored.
 - Pin the baseline for citation checks. A spec or code review that verifies references must name the ref it checks against (`git show main:path`, never the bare working tree — the shared checkout often sits on an open PR branch, and the wrong ref produces confidently false findings). Return the checkout to baseline after gating a PR, before any unrelated review.
-- Write a review file ONLY when an agent will read it to drive fixes; a clean or short verdict rides the bus. When a fix needs the detail, commission a reader (Orchestrator Context Is The Budget).
+- Act on bounded replies and cheap signals, not artifacts you ingest yourself; commission a reader when a fix needs the detail. Write a review file ONLY when an agent will read it to drive fixes; a clean or short verdict rides the bus.
 - Store durable outcomes (a decision, lesson, consensus result, or reusable pattern) with `cx_store` or `cx_deposit`.
 
 ## Anti-Patterns
@@ -328,8 +310,10 @@ Leanness applies to prose and structure. It never applies to this discipline.
 | Send long prose, diffs, or logs over the bus | One sentence with IDs, paths, SHAs, tests, `file:line`. |
 | Reply to FYI or no-reply messages | Do not reply unless the message asks for one or blocks progress. |
 | Start the next phase or slice in a stale pane | Compact (confirm via capture-pane) or recycle first, regardless of your own budget. |
-| Trust a `done`, `green`, `clean`, or `merged` bus line | Verify via cheap signals (`gh pr checks`, a `git log -1` sha, a CI exit code) or a commissioned check. |
-| Read the source, diff, log, or report yourself — for answers or QC | Commission an agent for a bounded answer or verdict; you judge it (Orchestrator Context Is The Budget). |
+| Trust a `done`, `green`, `clean`, or `merged` bus line | Verify via cheap signals (`gh pr checks`, a `git log -1` sha, a CI exit code) or a commissioned check — never by reading the diff, log, or artifact yourself. |
+| Answer a direct question by reading the source, spec, or log yourself | Spin up an agent to find it and reply one line. |
+| Run QC or verification by ingesting the diff, log, or report | Commission a verification agent; you judge its bounded verdict. |
+| Spend orchestrator context on artifact reads | Act on cheap signals plus delegated reads. |
 | Run a full adversarial loop on a mechanical PR | Scale review weight to blast radius. |
 | Reuse agent IDs after add or remove | Run `warroom_status` and use the fresh IDs. |
 | Ship fix rounds without tests | Pair fixes with failing-before and passing-after evidence where feasible. |
