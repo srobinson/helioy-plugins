@@ -56,11 +56,12 @@ Peer review spends tokens to buy quality. Cut prose and ceremony first, never qu
 
 ## Runtimes
 
-The single home for per-runtime facts; other sections reference this table. Context sizes as of 2026-07-02.
+The single home for per-runtime facts; other sections reference this table. Context sizes as of 2026-07-04.
 
 | Runtime id | Model | Context | Skill invocation | Best For |
 |------------|-------|---------|------------------|----------|
 | `claude` | Fable 5 | 1m | Type `/name` | UI work, design synthesis, broad research, long specs, or any task where large context is the main constraint. |
+| `claude-opus` | Opus 4.8 | 200k | Type `/name` | Solid implementation and review; a second Anthropic-family MoE vote when fable capacity should stay free. Same claude CLI and skill surface as `claude`. |
 | `codex` | Codex default | 250k | Type `$name` | Backend work, implementation, tests, refactors, and codebase changes where code execution and patch quality dominate. |
 | `grok` | Grok Build | 512k | Plain-English load line | Implementation or review needing large context; a third model family for MoE. |
 | `grok-fast` | Composer 2.5 Fast | 200k | Plain-English load line | Fast mechanical slices; a cheap extra consensus vote. |
@@ -84,6 +85,11 @@ warroom_discover(namespace="helioy-tools")
 
 warroom_spawn(name="design", agents=["brand-guardian", "ui-designer"])
 
+# Raw panes: the reserved name "general" launches the bare runtime with
+# no specialist role. Preferred unless a task needs a specialist.
+warroom_spawn(name="crew", agents=["general", "general"])
+warroom_add(name="crew", agent="general", runtime="grok")
+
 # MoE: same prompt, one pane per model family.
 warroom_spawn(name="moe", agents=["helioy-tools:codebase-analyst"])
 warroom_add(name="moe", agent="helioy-tools:codebase-analyst", runtime="codex")
@@ -94,7 +100,8 @@ warroom_kill(name="moe")
 ```
 
 - Qualified names (`<namespace>:<agent>`) select the namespace prompt; `runtime` controls the adapter.
-- Runtime ids: `claude`, `codex`, `grok`, `grok-fast` (Runtimes). For grok, the model IS the runtime id; the adapter's `-m` flag pins it (do not judge it by the pane footer — Runtimes quirks).
+- The reserved name `general` (listed first by `warroom_discover`) spawns a raw pane with no `--agent` binding. It works with `warroom_spawn` and `warroom_add` on every runtime; pair with `runtime=` for raw non-default panes.
+- Runtime ids: `claude`, `claude-opus`, `codex`, `grok`, `grok-fast` (Runtimes). For grok, the model IS the runtime id; the adapter's `-m` flag pins it (do not judge it by the pane footer — Runtimes quirks).
 - Passing the same plugin-qualified agent twice does not create MoE; both panes use the default adapter. Spawn once, then `warroom_add` the extra panes with explicit `runtime=`.
 - Named warrooms are idempotent; spawning the same name kills the old one first.
 - Prefer a clean upfront spawn. If membership changes mid-build, call `warroom_status` and address only the fresh IDs.
