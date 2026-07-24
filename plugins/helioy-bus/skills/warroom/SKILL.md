@@ -56,12 +56,12 @@ Peer review spends tokens to buy quality. Cut prose and ceremony first, never qu
 
 ## Runtimes
 
-The single home for per-runtime facts; other sections reference this table. Context sizes as of 2026-07-04.
+The single home for per-runtime facts; other sections reference this table. Context sizes as of 2026-07-25.
 
 | Runtime id | Model | Context | Skill invocation | Best For |
 |------------|-------|---------|------------------|----------|
 | `claude` | Fable 5 | 1m | Type `/name` | UI work, design synthesis, broad research, long specs, or any task where large context is the main constraint. |
-| `claude-opus` | Opus 4.8 | 200k | Type `/name` | Solid implementation and review; a second Anthropic-family MoE vote when fable capacity should stay free. Same claude CLI and skill surface as `claude`. |
+| `claude-opus` | Opus 5 | 1m | Type `/name` | Solid implementation and review; a second Anthropic-family MoE vote when fable capacity should stay free. Same claude CLI and skill surface as `claude`. |
 | `codex` | GPT-5.6 Sol (pinned, xhigh) | 250k | Type `$name` | Backend work, implementation, tests, refactors, and codebase changes where code execution and patch quality dominate. |
 | `grok` | Grok Build | 512k | Plain-English load line | Implementation or review needing large context; a third model family for MoE. |
 | `grok-fast` | Composer 2.5 Fast | 200k | Plain-English load line | Fast mechanical slices; a cheap extra consensus vote. |

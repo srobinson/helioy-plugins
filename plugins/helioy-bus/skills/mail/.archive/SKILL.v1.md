@@ -3,10 +3,11 @@ name: mail
 description: >
   Use for any helioy-bus mail operation: checking your inbox, sending messages
   to other agents, broadcasting to all agents, or responding to a "you have
-  mail!" nudge. Also use when the user says things like "reply to that agent",
-  "tell the reviewer I'm done", "who's on the bus?", "who else is online?", "check
-  for messages", "check for directives", or "send a message to X". Any
-  inter-agent communication goes through this skill.
+  mail!" nudge. Use at the start of any task to check for directives from peer
+  agents. Also use when the user says things like "reply to that agent", "tell
+  nancy I'm done", "who's on the bus?", "who else is online?", "check for
+  messages", "check for directives", or "send a message to X". Any inter-agent
+  communication goes through this skill.
 ---
 
 # Mail Operations
@@ -15,7 +16,7 @@ description: >
 
 Every "you have mail!" nudge means new messages have arrived since your last check. Always call `get_messages` regardless of whether you checked recently. Never assume the inbox is empty without calling.
 
-Check the inbox only after a "you have mail!" nudge or an explicit user request. Do not poll at the start of a task, at the start of a turn, or between turns. The bus sends a nudge when mail arrives.
+At the start of any new task, check for messages. Directives from peer agents or the orchestrator may change your priorities.
 
 ## When to reply
 
@@ -30,12 +31,6 @@ Never ask the human what to do with a message from another agent. Use your judgm
 - **Send message**: `send_message` with `to` set to a specific agent ID, `role:<type>`, or `*` for broadcast. Combine recipients with `;` (e.g. `alice;bob;role:reviewer`) to address several agents in one call; the response's `failed` field lists any parts that did not resolve. Only use broadcast in exceptional circumstances. Never set `nudge: false` unless you have verified the recipient is unreachable. The bus throttles nudges to once per 30s per recipient, so there is no cost to leaving it on. Sender identity is resolved automatically from your registration. Do not attempt to set a sender name.
 - **Reply to a message**: Use the original message's `reply_to` field as your `to` value. Never reply to `*` unless the sender explicitly set `reply_to: "*"`.
 
-## Identity and pane readdressing
-
-Agent IDs use `{repo}:{agent_type}:{tmux_target}`. A tmux target such as `1:2.3` means session 1, window 2, pane index 3. A pane ID such as `%3` is a separate stable identifier that survives pane renumbering.
-
-If tmux readdresses the current pane, call `whoami`. When the registered `tmux_target` is stale, call `register_agent` again with the current working directory, runtime, tmux target, and stable pane ID. Use the returned agent ID for later replies.
-
 ## Composing messages
 
 Write concise, actionable messages. A good pattern: current status + what you need or what's next. Skip greetings and pleasantries. Other agents parse these programmatically.
@@ -46,7 +41,7 @@ When `list_agents` returns results, render them as a markdown table. Use whateve
 
 | Agent ID | Name | Status | Last Seen |
 |----------|------|--------|-----------|
-| `transport-matters:general:1:2.1` | general | online | 2 min ago |
+| `abc123` | nancy | online | 2 min ago |
 
 If the response includes additional fields (role, queue depth, etc.), add them as columns. Never dump raw JSON.
 
@@ -56,7 +51,7 @@ Render received messages as a markdown table. Typical shape:
 
 | From | Content | Sent |
 |------|---------|------|
-| `transport-matters:general:1:2.1` | Task ALP-42 complete | 14:03:21 |
+| `nancy` | Task ALP-42 complete | 14:03:21 |
 
 If the inbox is empty, continue without comment. Never dump raw JSON.
 

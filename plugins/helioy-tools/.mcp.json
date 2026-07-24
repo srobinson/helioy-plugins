@@ -17,20 +17,12 @@
       "args": ["serve"]
     },
     "mdm": {
-      "command": "bash",
+      "command": "/Users/alphab/.local/share/mise/installs/node/25/bin/node",
       "args": [
-        "-c",
-        "cd /Users/alphab/.mdx && exec /Users/alphab/.local/share/mise/installs/node/25/bin/node /Users/alphab/Dev/LLM/DEV/helioy/markdown-matters/dist/mcp/server.js"
+        "/Users/alphab/Dev/LLM/DEV/helioy/markdown-matters/dist/mcp/server.js"
       ],
       "env": {
         "OPENAI_API_KEY": "${OPENAI_API_KEY}"
-      }
-    },
-    "linear-server": {
-      "type": "http",
-      "url": "https://mcp.linear.app/mcp",
-      "headers": {
-        "Authorization": "Bearer ${LINEAR_API_KEY}"
       }
     },
     "supabase": {
