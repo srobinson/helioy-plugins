@@ -16,11 +16,11 @@ Display each message clearly, showing sender, content, and timestamp. Example te
 
 > You have 2 messages:
 >
-> **From:** nancy-orchestrator | **Time:** 2026-03-07T14:22:00Z
-> Run the integration tests on nancy-driver and report results.
+> **From:** coordinator | **Time:** 2026-03-07T14:22:00Z
+> Run the integration tests on runtime-driver and report results.
 >
 > **From:** fmm-indexer | **Time:** 2026-03-07T14:18:00Z
-> Sidecar regeneration complete for nancyr workspace.
+> Sidecar regeneration complete for runtime workspace.
 
 Then proceed to act on any directives contained in the messages (the skill says "Use at the start of any task to check for directives from peer agents").
 

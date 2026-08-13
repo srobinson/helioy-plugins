@@ -53,60 +53,23 @@
       ]
     },
     {
-      "name": "helioy-nancy",
-      "description": "Nancy multi-agent orchestrator plugin \u2014 hooks and agents for the Nancy orchestration ecosystem",
-      "version": "0.1.1",
+      "name": "helioy-pstack",
+      "description": "The full pstack engineering workflow system, adapted for Claude Code, Codex, and Helioy warrooms",
+      "version": "0.1.0",
       "author": {
-        "name": "Stuart Robinson",
-        "email": "stuart@alphab.io"
+        "name": "Lauren Tan and Helioy"
       },
-      "source": "./plugins/helioy-nancy",
+      "source": "./plugins/helioy-pstack",
       "category": "development",
       "license": "MIT",
       "keywords": [
-        "orchestration",
+        "pstack",
+        "poteto-mode",
+        "workflow",
+        "principles",
+        "verification",
         "multi-agent",
-        "nancy",
-        "hooks",
-        "agents"
-      ]
-    },
-    {
-      "name": "helioy-nancy-pm",
-      "description": "Nancy PM role: planning and interactive task shaping",
-      "version": "0.1.2",
-      "author": {
-        "name": "Stuart Robinson",
-        "email": "stuart@alphab.io"
-      },
-      "source": "./plugins/helioy-nancy-pm",
-      "category": "development",
-      "license": "MIT",
-      "keywords": [
-        "orchestration",
-        "multi-agent",
-        "nancy",
-        "planning",
-        "pm"
-      ]
-    },
-    {
-      "name": "helioy-nancy-eng",
-      "description": "Nancy engineering role: worker tools, session handover, and code navigation for autonomous execution",
-      "version": "0.1.2",
-      "author": {
-        "name": "Stuart Robinson",
-        "email": "stuart@alphab.io"
-      },
-      "source": "./plugins/helioy-nancy-eng",
-      "category": "development",
-      "license": "MIT",
-      "keywords": [
-        "orchestration",
-        "multi-agent",
-        "nancy",
-        "engineering",
-        "worker"
+        "warroom"
       ]
     }
   ]

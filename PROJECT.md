@@ -1,6 +1,6 @@
 # helioy-plugins
 
-Claude Code plugin package for the Helioy ecosystem. Ships five plugins that give Claude sessions persistent memory, code navigation, knowledge management, inter-agent messaging, and workflow orchestration.
+Claude Code plugin package for the Helioy ecosystem. Ships three plugins that give Claude sessions persistent memory, code navigation, knowledge management, inter-agent messaging, engineering workflows, and workflow orchestration.
 
 ## Architecture
 
@@ -11,9 +11,7 @@ helioy-plugins/
   plugins/
     helioy-tools/       # core capabilities: MCP servers, skills, agents, hooks
     helioy-bus/         # inter-agent messaging: bus, warroom, mail
-    helioy-nancy/       # Nancy orchestrator hooks and shared skills
-    helioy-nancy-pm/    # Nancy PM role: planning and task shaping
-    helioy-nancy-eng/   # Nancy engineering role: worker tools, handover
+    helioy-pstack/      # experimental pstack workflows on Helioy warrooms
 ```
 
 ### Plugin: helioy-tools
@@ -56,7 +54,7 @@ Thirteen specialist subagents grouped by function:
 
 **Hooks**
 
-- `SessionStart`: reminds Claude to initialize context-matters (skipped when `NANCY_SESSION_ID` is set)
+- `SessionStart`: reminds Claude to initialize context-matters
 - `PostToolUse` (Edit|Write): regenerates the fmm index
 
 ### Plugin: helioy-bus
@@ -85,13 +83,11 @@ Inter-agent communication layer. Two MCP servers, three skills, and lifecycle ho
 - `UserPromptSubmit`: check for pending mail
 - `SessionEnd`: unregister from the bus
 
-### Plugins: helioy-nancy, helioy-nancy-pm, helioy-nancy-eng
+### Plugin: helioy-pstack
 
-Nancy orchestrator integration, split into three plugins so roles can be enabled independently.
+Experimental full port of pstack 0.14.0 from Cursor's plugin marketplace. The plugin retains all 44 skills, both agents, 23 Poteto Mode playbooks, and upstream verification scripts. Its runtime adapter assigns orchestration lifecycle and communication to `helioy-warroom` and `helioy-bus`.
 
-- `helioy-nancy`: shared hooks (session reminder, fmm regeneration) and shared skills (`fmm`, `session-id`, `session-logger`)
-- `helioy-nancy-pm`: PM role — planning and interactive task shaping
-- `helioy-nancy-eng`: engineering role — worker tools, session handover, code navigation for autonomous execution
+The source import is pinned and attributed. `plugins/helioy-pstack/HELIOY.md` records the adaptation boundary and runtime mapping.
 
 ## Session launcher
 

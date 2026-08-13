@@ -4,17 +4,14 @@ helioy-plugins is a Claude Code plugin package that extends Claude sessions with
 
 ## What it is
 
-Five plugins bundled in one installable package:
+Three plugins bundled in one installable package:
 
 1. **helioy-tools**: The core capability layer. Five MCP servers for memory, code navigation, markdown search, and Supabase, sixteen focused skills, and thirteen specialist subagent definitions.
 
 2. **helioy-bus**: The communication layer. Lets multiple Claude Code instances running in different tmux panes discover each other, exchange messages, and coordinate through warroom sessions.
 
-3. **helioy-nancy**: Shared hooks and skills for the Nancy multi-agent orchestrator.
+3. **helioy-pstack**: An experimental full pstack port. Its engineering principles and playbooks are retained while multi-agent execution routes through the Helioy warroom and bus.
 
-4. **helioy-nancy-pm**: Nancy's PM role. Planning and interactive task shaping.
-
-5. **helioy-nancy-eng**: Nancy's engineering role. Worker tools, session handover, and code navigation for autonomous execution.
 
 ## Why it exists
 
@@ -27,8 +24,6 @@ The Helioy ecosystem runs multiple Claude Code agents concurrently across differ
 **Code navigation**: `frontmatter-matters` (fmm) pre-indexes codebases into a SQLite database. Skills and hooks keep the index current on every file edit. Agents use fmm instead of grep/read for O(1) symbol lookups.
 
 **Messaging**: The helioy-bus plugin registers each Claude session on a shared bus at startup and unregisters on exit. Hooks check for pending mail before every tool call. The warroom skill orchestrates multi-agent collaborative sessions via tmux.
-
-**Orchestration**: The three helioy-nancy plugins split orchestrator, PM, and engineer roles so each persona can be enabled independently on a given workstation.
 
 **Skills**: Markdown prompt files that expand into focused instructions when invoked. They guide Claude through mail, PR creation, code navigation, content workflows, and specialist operations.
 

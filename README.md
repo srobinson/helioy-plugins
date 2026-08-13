@@ -1,6 +1,6 @@
 # helioy-plugins
 
-Claude Code plugin package for the [Helioy](https://helioy.com) ecosystem. Bundles five plugins for memory, code navigation, knowledge management, inter-agent messaging, content workflows, and Nancy orchestration.
+Claude Code plugin package for the [Helioy](https://helioy.com) ecosystem. Bundles three plugins for memory, code navigation, knowledge management, inter-agent messaging, engineering workflows, and content workflows.
 
 ## What's included
 
@@ -8,9 +8,7 @@ Claude Code plugin package for the [Helioy](https://helioy.com) ecosystem. Bundl
 |---|---|
 | `helioy-tools` | Core capabilities: MCP servers, skills, agents, hooks |
 | `helioy-bus` | Inter-agent messaging: bus, warroom, mail |
-| `helioy-nancy` | Nancy shared hooks and skills |
-| `helioy-nancy-pm` | Nancy planning role |
-| `helioy-nancy-eng` | Nancy engineering role |
+| `helioy-pstack` | Experimental pstack engineering workflows adapted to Helioy warrooms |
 
 ## helioy-tools
 
@@ -50,8 +48,8 @@ Specialist subagent definitions grouped by function:
 
 ### Hooks
 
-- `SessionStart` — initialize `context-matters` as primary memory
-- `PostToolUse` (Edit, Write) — regenerate the fmm index
+- `SessionStart` : initialize `context-matters` as primary memory
+- `PostToolUse` (Edit, Write) : regenerate the fmm index
 
 ## helioy-bus
 
@@ -72,10 +70,16 @@ Specialist subagent definitions grouped by function:
 
 ### Hooks
 
-- `SessionStart` — register agent on the bus
-- `PreToolUse` — check for pending mail, capture token usage
-- `UserPromptSubmit` — check for pending mail
-- `SessionEnd` — unregister from the bus
+- `SessionStart` : register agent on the bus
+- `PreToolUse` : check for pending mail, capture token usage
+- `UserPromptSubmit` : check for pending mail
+- `SessionEnd` : unregister from the bus
+
+## helioy-pstack
+
+An experimental full port of Lauren Tan's pstack 0.14.0. It includes all 44 skills, both agents, 23 Poteto Mode playbooks, and the upstream verification scripts. A Helioy runtime adapter maps Arena, Swarm, and Orchestrate execution onto `helioy-bus` and `helioy-warroom` while preserving pstack's method layer.
+
+The import is pinned and attributed in `plugins/helioy-pstack/UPSTREAM.md`. Helioy adaptations are documented in `plugins/helioy-pstack/HELIOY.md`.
 
 ## Session launcher
 

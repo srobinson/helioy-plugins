@@ -66,7 +66,7 @@ perf(cm-store): optimize scope ancestor walk query
 Branch commits do NOT need conventional commit format. The existing convention works fine:
 
 ```
-nancy[ALP-1400]: Implement tools.toml codegen pipeline
+worker[ALP-1400]: Implement tools.toml codegen pipeline
 review[ALP-1367]: Fix MCP instructions placement
 ```
 

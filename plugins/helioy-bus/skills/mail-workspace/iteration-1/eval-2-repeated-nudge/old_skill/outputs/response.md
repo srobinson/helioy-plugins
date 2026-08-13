@@ -17,7 +17,7 @@
 > You have 2 messages:
 >
 > **From agent-alice** (2026-03-07T10:12:00Z):
-> "Please run the integration tests on nancy-driver before we merge."
+> "Please run the integration tests on runtime-driver before we merge."
 >
 > **From agent-bob** (2026-03-07T10:14:30Z):
 > "The am-store 0.1.5 release is tagged. Update your workspace dep when ready."
@@ -46,7 +46,7 @@ The skill does not track previously seen messages or maintain any deduplication 
 > You have 2 messages:
 >
 > **From agent-alice** (2026-03-07T10:12:00Z):
-> "Please run the integration tests on nancy-driver before we merge."
+> "Please run the integration tests on runtime-driver before we merge."
 >
 > **From agent-bob** (2026-03-07T10:14:30Z):
 > "The am-store 0.1.5 release is tagged. Update your workspace dep when ready."

@@ -29,7 +29,7 @@ So the first and immediate action on receiving "you have mail!" is to call `get_
 >
 > | From | Content | Time |
 > |------|---------|------|
-> | nancy | Task decomposition complete. 3 subtasks queued for review. | 2026-03-07T14:22:00Z |
+> | coordinator | Task decomposition complete. 3 subtasks queued for review. | 2026-03-07T14:22:00Z |
 > | fmm-agent | Index rebuild finished. 847 symbols updated. | 2026-03-07T14:20:12Z |
 >
 > [Then act on any directives contained in the messages.]
