@@ -6,7 +6,6 @@ color: green
 memory: user
 mcpServers:
   - cm
-  - linear-server
   - helioy-bus
 hooks:
   SubagentStop:

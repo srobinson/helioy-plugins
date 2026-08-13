@@ -1,5 +1,6 @@
 {
   "name": "helioy-nancy",
+  "version": "0.1.1",
   "description": "Nancy ecosystem plugin for Helioy",
   "author": {
     "name": "Stuart Robinson",

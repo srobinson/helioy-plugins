@@ -5,7 +5,6 @@ model: opus
 color: green
 memory: user
 mcpServers:
-  - linear-server
   - helioy-bus
 hooks:
   SubagentStop:

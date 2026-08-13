@@ -46,7 +46,7 @@ Otherwise use a warroom when parallel agents improve correctness, coverage, spee
 | Need | Mode |
 |------|------|
 | Audit existing code before building | Scout & Plan |
-| Planning before Linear or implementation | Spec Writing |
+| Planning before implementation | Spec Writing |
 | Approved spec implemented as small PRs | Slice Build Loop |
 | Verification of existing code | Code Review |
 | Sign-off on an artifact | Peer Consensus |
@@ -157,7 +157,7 @@ Phasing is the load-bearing orchestration skill. A phase must be large enough to
 Before dispatch, define the phase contract:
 
 - **Goal**: one bounded outcome.
-- **Inputs**: exact files, Linear IDs, PRs, specs, SHAs, or commands to read.
+- **Inputs**: exact files, work item IDs, PRs, specs, SHAs, or commands to read.
 - **Outputs**: one artifact, verdict set, PR, decision batch, or scout report. When planning or implementing, the reuse map is a required output.
 - **Done line**: exact single-sentence reply shape.
 - **Gate**: how you will verify the phase — cheap signals or a commissioned check, not a self artifact read.
@@ -240,14 +240,14 @@ Quality is the goal: code is continuously groomed as it evolves, so reshaping th
 
 ### Mode 2: Spec Writing
 
-Use when planning non-trivial implementation before Linear or code. Run AFTER Scout; the spec consumes the Reuse Map and dispositions.
+Use when planning non-trivial implementation before code. Run AFTER Scout; the spec consumes the Reuse Map and dispositions.
 
-1. Group work into natural spec units, each mapping to one future Linear sub-parent. Phase dependent specs after prerequisites; run independent specs in parallel.
+1. Group work into natural spec units, each mapping to one executable workstream. Phase dependent specs after prerequisites; run independent specs in parallel.
 2. Dispatch one engineer per spec plus one architect reviewer.
 3. Engineers write `~/.mdx/projects/{project}-spec-{grouping}.md` and send one `done:` line. Each spec states required inputs, decisions already made, the Reuse Map and quality dispositions it binds to, exact output path and contents, completion line, and verification gate.
 4. Architect reviews the named files against criteria → `review: clean` or `review: issue`.
 5. One focused fix round per engineer; architect verifies deltas only. Cap spec review at one architect pass plus one correction round, then the orchestrator confirms via a bounded spot-check (a cheap signal or a commissioned read) — never a third full round over citation mechanics.
-6. When approved, file Linear per `helioy-tools:linear-workflows`. Consider Peer Consensus on the filed tree.
+6. When approved, record the accepted work in the active planning system. Consider Peer Consensus on the filed tree.
 
 ### Mode 3: Slice Build Loop
 
@@ -277,7 +277,7 @@ Use when implementation exists and needs verification against a spec, issue, or 
 
 1. Run the baseline gate first (`cargo test`, `pnpm test`, the repo's `just ci`, etc.).
 2. Default focus is functionality unless the user asked for full or security review; ask only when depth is unclear.
-3. Dispatch reviewers in parallel, one per issue, PR, or coherent code area. Each dispatch names SPEC, CODE, the baseline ref, the Linear issue or PR, scope, focus, an explicit do-not-flag list, key checks, the no-writes boundary, and reply shape.
+3. Dispatch reviewers in parallel, one per issue, PR, or coherent code area. Each dispatch names SPEC, CODE, the baseline ref, the work item or PR, scope, focus, an explicit do-not-flag list, key checks, the no-writes boundary, and reply shape.
 4. Prime each reviewer with `/code-review` and `/code-hygiene` before they read any diff (Priming & Compaction). Pin the baseline ref (Shared Practices).
 5. Reviewers reply `review: clean` or `review: issue` to the orchestrator only.
 6. Create follow-up work only for genuine findings; do not change sub-parent status for review findings.
@@ -285,7 +285,7 @@ Use when implementation exists and needs verification against a spec, issue, or 
 
 ### Mode 5: Peer Consensus
 
-Use after drafting a substantial artifact (Linear plan, spec, design doc, PR, or risky decision) and before treating it as final.
+Use after drafting a substantial artifact (execution plan, spec, design doc, PR, or risky decision) and before treating it as final.
 
 Default composition: the same agent prompt on two different model families (claude, codex, grok — see Runtimes). Variants in preference order: (1) same `helioy-tools:*` prompt on two families; (2) cross-role same-runtime, such as `code-reviewer` plus `silent-failure-hunter`; (3) two same-runtime same-role panes, only when nothing better exists; (4) three panes across all three families for high-stakes tie-breaking.
 

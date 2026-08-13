@@ -1,6 +1,6 @@
 # helioy-plugins
 
-Claude Code plugin package for the [Helioy](https://helioy.com) ecosystem. Bundles two plugins that give a Claude Code session persistent memory, code intelligence, inter-agent messaging, and workflow tooling.
+Claude Code plugin package for the [Helioy](https://helioy.com) ecosystem. Bundles five plugins for memory, code navigation, knowledge management, inter-agent messaging, content workflows, and Nancy orchestration.
 
 ## What's included
 
@@ -8,6 +8,9 @@ Claude Code plugin package for the [Helioy](https://helioy.com) ecosystem. Bundl
 |---|---|
 | `helioy-tools` | Core capabilities: MCP servers, skills, agents, hooks |
 | `helioy-bus` | Inter-agent messaging: bus, warroom, mail |
+| `helioy-nancy` | Nancy shared hooks and skills |
+| `helioy-nancy-pm` | Nancy planning role |
+| `helioy-nancy-eng` | Nancy engineering role |
 
 ## helioy-tools
 
@@ -19,7 +22,6 @@ Claude Code plugin package for the [Helioy](https://helioy.com) ecosystem. Bundl
 | `cm` | [context-matters](https://github.com/srobinson/context-matters) (Rust) | Structured context store with hierarchical scopes |
 | `fmm` | [frontmatter-matters](https://github.com/srobinson/frontmatter-matters) (Rust) | O(1) symbol and file lookups via frontmatter index |
 | `mdm` | [markdown-matters](https://www.npmjs.com/package/markdown-matters) (npm) | Markdown indexing, search, embeddings |
-| `linear-server` | [Linear MCP](https://mcp.linear.app) (HTTP) | Issue tracking |
 | `supabase` | [@supabase/mcp-server-supabase](https://www.npmjs.com/package/@supabase/mcp-server-supabase) (npm) | Database, edge functions, migrations |
 
 ### Skills
@@ -28,13 +30,14 @@ Claude Code plugin package for the [Helioy](https://helioy.com) ecosystem. Bundl
 |---|---|
 | `context-matters` | Primary session memory via `cx_*` tools |
 | `fmm` | MCP-first code navigation protocol |
-| `linear-workflow` | Parent/sub-issue planning for autonomous work |
-| `create-spec` | Interactive requirements elicitation (SPEC.md) |
 | `pull-request` | Conventional-commit PRs for squash merge |
 | `my-voice` | Writing in Stuart's voice |
-| `skill-creator` | Scaffold new skills with plugin conventions |
-| `session-logger` | Persist session activity |
-| `session-id` | Print current session ID |
+| `content`, `social-loop` | Social publishing and engagement routing |
+| `code-hygiene`, `codebase-map` | Codebase maintenance and mapping |
+| `imagegen` | Helioy visual generation styles |
+| `name-claim`, `npm-claim`, `pypi-claim`, `crate-claim` | Package name reservation workflows |
+| `kubernetes-fundamentals` | Kubernetes knowledge navigation |
+| `snapshot`, `workflows` | Document preservation and workflow inventory |
 
 ### Agents
 
@@ -72,7 +75,6 @@ Specialist subagent definitions grouped by function:
 - `SessionStart` — register agent on the bus
 - `PreToolUse` — check for pending mail, capture token usage
 - `UserPromptSubmit` — check for pending mail
-- `Stop` — prompt session logging
 - `SessionEnd` — unregister from the bus
 
 ## Session launcher
@@ -96,7 +98,6 @@ claude plugin add srobinson/helioy-plugins
 
 - Rust binaries built locally: `attention-matters`, `context-matters`, `frontmatter-matters`
 - npm packages resolved on demand: `markdown-matters`, `@supabase/mcp-server-supabase`
-- `LINEAR_API_KEY` for `linear-server`
 - `SUPABASE_ACCESS_TOKEN` for `supabase`
 - `helioy-bus` Python server running for inter-agent messaging
 

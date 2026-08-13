@@ -1,5 +1,6 @@
 {
   "name": "helioy-bus",
+  "version": "0.1.1",
   "description": "Inter-agent message bus — register Claude instances, discover peers, send and receive messages across projects",
   "author": {
     "name": "Stuart Robinson",

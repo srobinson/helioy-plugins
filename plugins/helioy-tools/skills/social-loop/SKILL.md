@@ -8,8 +8,8 @@ description: >
   and DMs (cold, followup, reply). Hands prose drafting to my-voice;
   this skill owns taxonomy, context gathering, state writes, and the
   paste-flow publish for v1. Use when the user invokes /content and picks
-  a social action, when blog-architect cascades a blog-promo, or when the
-  user says "tweet this", "reply to that", "DM them", "thread about X",
+  a social action, when content routes a blog-promo, or when the user says
+  "tweet this", "reply to that", "DM them", "thread about X",
   or names any of the 11 type slugs directly.
 ---
 
@@ -36,7 +36,9 @@ target:  X | LinkedIn | both
 handle:  @KnowMoreContext | @HelioyMatters
 ```
 
-When invoked from blog-architect, expect `type=blog-promo` with `context = {url, title, one-line-hook, target}`. Default `handle=@KnowMoreContext` for that case.
+For a routed blog promotion, expect `type=blog-promo` with
+`context = {url, title, one-line-hook, target}`. Default
+`handle=@KnowMoreContext` for that case.
 
 When invoked from `/content` router, all four inputs arrive resolved. When invoked directly by the user, prompt only for what is missing.
 
@@ -81,7 +83,7 @@ Drafted from scratch with context. blog-promo, build-log, product-release.
 
 | Type | Required context |
 |---|---|
-| blog-promo | url, title, one-line hook (reuse from blog-architect Phase 2 first answer when cascading) |
+| blog-promo | url, title, one-line hook |
 | build-log | what shipped, one technical detail worth zooming, so-what |
 | product-release | what released, version or milestone, link, one-line value statement |
 
@@ -178,7 +180,7 @@ The router surfaces stashed targets at the next `/content` invocation. Do not dr
 
 ## Group 3 — Threads
 
-Multi-beat. Same Phase 2 interview pattern as blog-architect, scaled down.
+Multi-beat. Gather the minimum context needed to establish the thread's arc.
 
 ### Mini-interview
 
@@ -254,7 +256,7 @@ For dm-reply, capture the entry ID from the original `cx_store` and use `cx_upda
 
 ## Publish — paste flow (v1)
 
-crosspost MCP is not installed. v1 uses pbcopy + open. Same reasoning as the Substack paste flow in blog-architect.
+crosspost MCP is not installed. v1 uses pbcopy + open.
 
 ### Per-platform commands
 
@@ -445,7 +447,7 @@ my-voice owns the prose. Do not edit my-voice output before showing to the user.
 ## Anti-patterns
 
 - Drafting prose locally instead of invoking my-voice.
-- Asking for handle when blog-architect cascade already supplied context.
+- Asking for handle when routed context already supplied it.
 - Writing `social-last-post` before the user confirms posted.
 - Skipping cadence check on Group 1.
 - Stashing into `social-pending` without `type_hint` (router cannot dispatch).

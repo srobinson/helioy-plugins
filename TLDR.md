@@ -6,13 +6,13 @@ helioy-plugins is a Claude Code plugin package that extends Claude sessions with
 
 Five plugins bundled in one installable package:
 
-1. **helioy-tools**: The core capability layer. Six MCP servers (geometric memory, structured context, code navigation, markdown search, Linear, Supabase), nine skills (from session memory to PR creation), and thirteen specialist subagent definitions spanning engineering, design, research, and orchestration.
+1. **helioy-tools**: The core capability layer. Five MCP servers for memory, code navigation, markdown search, and Supabase, sixteen focused skills, and thirteen specialist subagent definitions.
 
 2. **helioy-bus**: The communication layer. Lets multiple Claude Code instances running in different tmux panes discover each other, exchange messages, and coordinate through warroom sessions.
 
 3. **helioy-nancy**: Shared hooks and skills for the Nancy multi-agent orchestrator.
 
-4. **helioy-nancy-pm**: Nancy's PM role. Planning, Linear workflow, interactive task creation.
+4. **helioy-nancy-pm**: Nancy's PM role. Planning and interactive task shaping.
 
 5. **helioy-nancy-eng**: Nancy's engineering role. Worker tools, session handover, and code navigation for autonomous execution.
 
@@ -30,7 +30,7 @@ The Helioy ecosystem runs multiple Claude Code agents concurrently across differ
 
 **Orchestration**: The three helioy-nancy plugins split orchestrator, PM, and engineer roles so each persona can be enabled independently on a given workstation.
 
-**Skills**: Markdown prompt files (SKILL.md) that expand into full instructions when invoked. They guide Claude through specific workflows: checking mail, creating PRs, writing in a consistent voice, planning Linear issues.
+**Skills**: Markdown prompt files that expand into focused instructions when invoked. They guide Claude through mail, PR creation, code navigation, content workflows, and specialist operations.
 
 **Agents**: Markdown definition files that configure specialized subagent behaviors. When Claude spawns a subagent, the agent definition shapes its expertise and approach.
 

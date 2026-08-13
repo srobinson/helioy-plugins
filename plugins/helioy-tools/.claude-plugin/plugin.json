@@ -1,6 +1,7 @@
 {
   "name": "helioy-tools",
-  "description": "Complete Helioy ecosystem — geometric memory (attention-matters), code navigation (FMM), knowledge base (~/.mdx), Linear workflow, and Nancy orchestration",
+  "version": "0.2.1",
+  "description": "Helioy memory, code navigation, knowledge management, content workflows, and agent tooling",
   "author": {
     "name": "Stuart Robinson",
     "email": "stuart@alphab.io"

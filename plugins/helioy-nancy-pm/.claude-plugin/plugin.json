@@ -1,5 +1,6 @@
 {
   "name": "helioy-nancy-pm",
+  "version": "0.1.2",
   "description": "A plugin for nancy project management role.",
   "author": {
     "name": "Stuart Robinson",

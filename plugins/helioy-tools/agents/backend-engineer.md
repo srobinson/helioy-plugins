@@ -7,7 +7,6 @@ memory: user
 mcpServers:
   - cm
   - fmm
-  - linear-server
   - helioy-bus
 
 hooks:

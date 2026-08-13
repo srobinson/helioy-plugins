@@ -35,16 +35,6 @@
         ]
       }
     ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo 'Session stopped. Use your session-logger skill to onboard the next agent.'"
-          }
-        ]
-      }
-    ],
     "SessionEnd": [
       {
         "hooks": [

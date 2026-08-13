@@ -1,5 +1,6 @@
 {
   "name": "helioy-nancy-eng",
+  "version": "0.1.2",
   "description": "A plugin for nancy engineering role.",
   "author": {
     "name": "Stuart Robinson",
