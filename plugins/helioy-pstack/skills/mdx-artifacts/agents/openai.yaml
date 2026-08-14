@@ -1,0 +1,4 @@
+interface:
+  display_name: "MDX Artifacts"
+  short_description: "Store lasting agent artifacts under ~/.mdx."
+  default_prompt: "Choose and verify the correct persistent path for this artifact."

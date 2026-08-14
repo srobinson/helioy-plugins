@@ -40,9 +40,9 @@ Log decision points and checkpoints, not every action: a fork chosen, a unit com
 
 ## Where it lives
 
-By default the log is a working artifact, not committed. Keep it at `decisions.tsv` in the work dir, or `.audit/<task-slug>.tsv` when several efforts run at once, and leave it out of git. Most work doesn't need a committed trail; the local log still keeps the run honest and can be discarded after.
+Choose the log path via [`mdx-artifacts`](../mdx-artifacts/SKILL.md). By default keep it under `~/.mdx/sessions/` and leave it out of the repository.
 
-Commit it only when the work is ambitious enough that a reviewer needs the trail to trust the result: a large cross-language port, a multi-week migration, anything where confidence has to be shown rather than assumed. A committed log renders as a table in the PR.
+Commit it only when the repository owns the trail and a reviewer needs it to trust the result: a large cross-language port, a multi-week migration, anything where confidence has to be shown rather than assumed. A committed log renders as a table in the PR.
 
 ## Rules
 

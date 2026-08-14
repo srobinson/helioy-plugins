@@ -31,7 +31,7 @@ Each explorer returns file pointers, conventions, dependencies, test infrastruct
 
 ## 4. Write the plan
 
-The user specifies where the plan lives.
+The user specifies where the plan lives. Otherwise choose a persistent design path via [`mdx-artifacts`](../../mdx-artifacts/SKILL.md).
 
 Single file `NN-slug.md` for small plans. For three or more phases, a directory with `overview.md` plus phase files:
 

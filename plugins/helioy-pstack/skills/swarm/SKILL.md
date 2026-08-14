@@ -9,6 +9,8 @@ description: "Fan out N parallel workers, drain them, and return one report. Use
 
 Run this as the Coverage contract in [`../poteto-mode/references/helioy-runtime.md`](../poteto-mode/references/helioy-runtime.md). Use warroom members for workers. Cursor cloud fields and model slugs are descriptive upstream defaults only.
 
+Use [`mdx-artifacts`](../mdx-artifacts/SKILL.md) for worker and final report paths.
+
 Fan out N parallel cloud workers. They may cover separate slices, race the same brief, or mix both. The parent waits, aggregates, and returns one report.
 
 ## Start
@@ -26,7 +28,7 @@ Open a todolist with one entry per phase before launching anything.
 2. Choose the shape. Partition into slices, race N workers on identical briefs, or mix both. For a race or mixed shape, declare `first pass`, `rank all`, or `best-of` before spawning.
 3. Set N from the user or derive it from the shape. N is total workers, not the cloud concurrency limit.
 4. Pick the worker model from `swarm workers` in `~/.config/helioy/pstack-models.md` when present. Otherwise use `grok-4.5-fast-xhigh`. For a model race, name each arm's model up front.
-5. Give each worker its own writable output when it writes. Use a worktree, branch, or `/tmp/swarm-<slug>/worker-<n>/`.
+5. Give each worker its own writable output. Use a worktree, branch, or a unique temporary worker path selected via `mdx-artifacts`.
 
 ## Phase B: Fan out
 

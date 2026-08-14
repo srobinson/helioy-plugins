@@ -32,6 +32,7 @@ Remaining triggers:
 - Bugbot or the agentic security review commented → skeptical posture. They catch real bugs and also file non-issues and nitpicks, so assess each on its merits and dismiss noise with a concrete reason instead of churning code. Triage fix / dismiss / ask per `references/bugbot-triage.md`.
 - Broken skill mid-task → fix it in its own PR. Don't block. Don't silently work around it.
 - Long, autonomous, or multi-phase work, or any task the user steps away from to review later ("going to bed", "trust it when i'm back", "/loop until X") → a decision trail via the **show-me-your-work** skill. Commit it when stakes need an auditable record; keep it local otherwise.
+- Any review, research, design, plan, decision trail, handoff, reusable proof, or delegated report that may matter after this turn → choose its path via the **mdx-artifacts** skill.
 
 ## Principles
 

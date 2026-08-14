@@ -2,6 +2,8 @@
 
 Use this contract whenever pstack asks for a Task, subagent, model panel, cloud worker, background run, wait loop, or Cursor specific control surface.
 
+Read [`mdx-artifacts`](../../mdx-artifacts/SKILL.md) before choosing any output path.
+
 ## Ownership
 
 Pstack owns the method, rubric, playbook, and proof requirements. Helioy warroom owns multi-agent execution, lifecycle, messaging, runtime selection, and cleanup. The parent agent remains the orchestrator and final judge.
@@ -37,7 +39,7 @@ Run `whoami` before the first warroom dispatch. Route replies to the orchestrato
 - goal
 - exact scope and write boundary
 - inputs and grounding paths
-- output path
+- artifact class and output path selected via `mdx-artifacts`
 - acceptance criteria
 - verification command or proof surface
 - typed completion line

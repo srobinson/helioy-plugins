@@ -1,6 +1,6 @@
 {
   "name": "helioy-pstack",
-  "version": "0.1.0",
+  "version": "0.1.0+codex.20260813192113",
   "description": "The full pstack engineering workflow system, adapted for Helioy runtimes",
   "author": {
     "name": "Lauren Tan and Helioy"
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "Helioy Pstack",
     "shortDescription": "Rigorous engineering playbooks for Codex and Claude Code.",
-    "longDescription": "A pinned, MIT licensed adaptation of pstack with 44 skills, Poteto Mode, verification workflows, and Helioy warroom routing.",
+    "longDescription": "A pinned, MIT licensed adaptation of pstack with 45 skills, Poteto Mode, verification workflows, persistent MDX artifacts, and Helioy warroom routing.",
     "developerName": "Lauren Tan and Helioy",
     "category": "Developer Tools",
     "capabilities": [

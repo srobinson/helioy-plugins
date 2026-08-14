@@ -15,7 +15,7 @@ When the work isn't trivial, build the tool that does it instead of doing it by 
 - A deterministic lever beats fan-out. If the tool can process every unit in one pass, run it yourself; don't fan out delegates to hand-apply what a script can do.
 - When you fan work out to subagents, write the lever as a skill they all read: the recipe, the verification contract, and the do-not-touch fences in one artifact, so every delegate inherits the same hardened version instead of re-explaining it per prompt and watching each one drift. Keep it outside the delegates' write scope so they can't quietly edit the contract.
 - Applying this principle produces a file. If you cited it and there is no codemod, script, generator, or delegate skill in the diff, you didn't apply it.
-- Commit the lever when the work outlives the session, so the next run reruns it instead of redoing it.
+- When the lever outlives the session, store it via [`mdx-artifacts`](../mdx-artifacts/SKILL.md). Commit it only when the repository owns it.
 
 **Balance:** The bar is triviality, not repetition. A one-off still earns a lever when the lever is what makes the work checkable. Per the [Laziness Protocol](../principle-laziness-protocol/SKILL.md), build the smallest script that does or proves the job, never a framework.
 

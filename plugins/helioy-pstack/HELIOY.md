@@ -11,7 +11,7 @@ This plugin makes the full pstack 0.14.0 skill collection available to Claude Co
 - License: MIT
 - Helioy plugin version: 0.1.0
 
-The imported source contains all 44 top level skills, both custom agents, 23 Poteto Mode playbooks, the orchestration store, the PR watcher, Benny automation, guide material, tests, and assets.
+The imported source contains all 44 top level skills, both custom agents, 23 Poteto Mode playbooks, the orchestration store, the PR watcher, Benny automation, guide material, tests, and assets. Helioy adds `mdx-artifacts` as the storage owner for lasting agent output.
 
 ## Runtime contract
 
