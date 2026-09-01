@@ -33,6 +33,7 @@ Claude Code plugin package for the [Helioy](https://helioy.com) ecosystem. Bundl
 | `content`, `social-loop` | Social publishing and engagement routing |
 | `code-hygiene`, `codebase-map` | Codebase maintenance and mapping |
 | `imagegen` | Helioy visual generation styles |
+| [`sketch-lab`](https://sketchlab.webdevcody.com/skills/sketch-lab/SKILL.md) | Shareable Sketch Lab architecture diagrams |
 | `name-claim`, `npm-claim`, `pypi-claim`, `crate-claim` | Package name reservation workflows |
 | `kubernetes-fundamentals` | Kubernetes knowledge navigation |
 | `snapshot`, `workflows` | Document preservation and workflow inventory |

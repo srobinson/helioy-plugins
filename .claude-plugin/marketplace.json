@@ -13,7 +13,7 @@
     {
       "name": "helioy-tools",
       "description": "Helioy memory, code navigation, knowledge management, content workflows, and agent tooling",
-      "version": "0.2.1",
+      "version": "0.2.2",
       "author": {
         "name": "Stuart Robinson",
         "email": "stuart@alphab.io"
@@ -27,6 +27,7 @@
         "code-navigation",
         "knowledge-base",
         "orchestration",
+        "diagramming",
         "mcp",
         "fmm",
         "attention-matters"
@@ -54,7 +55,7 @@
     },
     {
       "name": "helioy-pstack",
-      "description": "The full pstack engineering workflow system, adapted for Claude Code, Codex, and Helioy warrooms",
+      "description": "The pstack engineering method (poteto-mode, principles, architect, arena, interrogate) run on Helioy warrooms",
       "version": "0.1.0",
       "author": {
         "name": "Lauren Tan and Helioy"

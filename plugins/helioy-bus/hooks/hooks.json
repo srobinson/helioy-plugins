@@ -15,7 +15,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/plugin/hooks/bus-unregister.sh"
+            "command": "/Users/alphab/Dev/LLM/DEV/helioy/helioy-bus/plugin/hooks/bus-unregister.sh",
+            "timeout": 3
           }
         ]
       }

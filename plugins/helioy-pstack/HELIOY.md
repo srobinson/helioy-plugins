@@ -1,39 +1,31 @@
-# Helioy pstack experiment
+# Helioy pstack
 
-This plugin makes the full pstack 0.14.0 skill collection available to Claude Code and Codex while preserving upstream structure and attribution.
+The pstack engineering method, ported to Claude Code and Codex with helioy warroom as the execution runtime.
 
 ## Provenance
 
-- Upstream repository: `cursor/plugins`
-- Upstream path: `pstack/`
-- Upstream commit: `6dbbdd50cef1bdbfb540f80df8b598d0a546e3aa`
+- Upstream repository: `cursor/plugins`, path `pstack/`, commit `6dbbdd50cef1bdbfb540f80df8b598d0a546e3aa`, version 0.14.0
 - Upstream author: Lauren Tan
 - License: MIT
 - Helioy plugin version: 0.1.0
 
-The imported source contains all 44 top level skills, both custom agents, 23 Poteto Mode playbooks, the orchestration store, the PR watcher, Benny automation, guide material, tests, and assets. Helioy adds `mdx-artifacts` as the storage owner for lasting agent output.
+## What was kept
+
+The method: `poteto-mode` as the hub, the 22 `principle-*` leaves, `architect`, `arena`, `interrogate`, `how`, `why`, `teach`, `blast-radius`, `figure-it-out`, `no-comments` with the Comment Sicko agent, `show-me-your-work`, `unslop`, `technical-writing`, `tdd`, `mdx-artifacts`, and the verification-skill pair. Ten playbooks: investigation, bug fix, perf, feature, refactoring, prototype, visual parity, autonomous run, multi-phase plan, opening a PR.
+
+## What was cut and where it went
+
+| Upstream | Reason | Helioy owner |
+|---|---|---|
+| `setup-pstack`, `pstack-models.md`, Cursor model slugs | Second source of truth for runtime facts | Warroom Runtimes table; skills name runtime ids directly |
+| `swarm` skill | Cursor cloud fields around a coverage table | Swarm contract in the runtime adapter |
+| Shipping, Babysit, Autopilot playbooks, `watch-pr`, Bugbot triage | Graphite stack and Bugbot semantics | `helioy-tools:pull-request`; `gh pr checks` per warroom cheap signals |
+| Orchestrate playbook, `scripts/orch/` | Second lifecycle owner beside bus | Warroom Slice Build Loop plus `show-me-your-work` |
+| Session pickup, Pause safely, `recall` | Cursor session semantics | `context-matters` store, branch, and trail |
+| Perf issue, Hillclimb, Runtime forensics, Trace forensics | Four playbooks, one method | `playbooks/perf.md` with Diagnose, Fix, Climb modes |
+| Authoring a skill, Eval, `automate-me`, `create-skill` routing | Cursor skill tooling | `technical-writing` and `unslop` |
+| Worktree cleanup, `bro`, `typescript-best-practices`, Benny automations, guide | Utility or Cursor-only | dropped |
 
 ## Runtime contract
 
-Pstack chooses the engineering method. Helioy warroom owns multi-agent execution. Read [`skills/poteto-mode/references/helioy-runtime.md`](./skills/poteto-mode/references/helioy-runtime.md) whenever a pstack workflow delegates, races candidates, opens a panel, waits for workers, or manages a long program.
-
-The adapter preserves pstack concepts and maps host operations:
-
-| Pstack concept | Helioy execution |
-|---|---|
-| Cursor Task or cloud agent | Warroom member or bounded local subagent |
-| Task model slug | Warroom runtime id |
-| Task completion | Bus `done`, `blocked`, or `review` signal plus an artifact |
-| TaskOutput polling | Bus notification, warroom status, or pane capture |
-| Arena | Warroom Bakeoff contract |
-| Swarm | Warroom Coverage contract |
-| Orchestrate | Warroom program mode backed by bus events |
-| Cursor `/loop` | Product wait or monitoring mechanism |
-| Cursor UI and CLI control | Available browser, computer, terminal, or project verification skill |
-| Cursor model rule | `~/.config/helioy/pstack-models.md` |
-
-## Experiment boundary
-
-This first release keeps upstream playbooks and scripts visible so their behavior can be evaluated. Host specific operations must pass through the runtime adapter. Graphite, Bugbot, Slack, ticket mutation, merges, deploys, force pushes, and destructive cleanup remain unavailable unless the current runtime exposes them and the user grants the required authority.
-
-Do not add a second implementation of warroom or bus. Record any useful pstack improvement in the existing owner after the experiment proves it.
+Pstack chooses the engineering method. Helioy warroom owns multi-agent execution. Read [`skills/poteto-mode/references/helioy-runtime.md`](./skills/poteto-mode/references/helioy-runtime.md) whenever a pstack workflow delegates, races candidates, opens a panel, waits for workers, or manages a long program. Do not add a second implementation of warroom or bus.

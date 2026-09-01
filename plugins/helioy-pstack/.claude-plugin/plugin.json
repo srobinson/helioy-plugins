@@ -1,7 +1,7 @@
 {
   "name": "helioy-pstack",
   "version": "0.1.0",
-  "description": "The full pstack engineering workflow system, adapted for Helioy runtimes",
+  "description": "The pstack engineering method (poteto-mode, principles, architect, arena, interrogate) run on Helioy warrooms",
   "author": {
     "name": "Lauren Tan and Helioy"
   }

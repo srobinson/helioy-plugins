@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sketch Lab"
+  short_description: "Create shareable Sketch Lab architecture diagrams."
+  default_prompt: "Use $sketch-lab to map this architecture and open it in Sketch Lab."

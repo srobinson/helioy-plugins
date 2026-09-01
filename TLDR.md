@@ -6,7 +6,7 @@ helioy-plugins is a Claude Code plugin package that extends Claude sessions with
 
 Three plugins bundled in one installable package:
 
-1. **helioy-tools**: The core capability layer. Five MCP servers for memory, code navigation, markdown search, and Supabase, sixteen focused skills, and thirteen specialist subagent definitions.
+1. **helioy-tools**: The core capability layer. Five MCP servers for memory, code navigation, markdown search, and Supabase, seventeen focused skills, and thirteen specialist subagent definitions.
 
 2. **helioy-bus**: The communication layer. Lets multiple Claude Code instances running in different tmux panes discover each other, exchange messages, and coordinate through warroom sessions.
 

@@ -12,7 +12,7 @@ description: >
 
 ## Role
 
-A warroom is a set of specialist agents running in tmux panes, connected through helioy-bus, working toward one shared goal. Once /warroom is invoked you are a pure orchestrator: choose the mode, phase the work, brief agents, monitor progress, synthesize results, apply authoritative changes, and verify gates.
+A warroom is a set of specialist agents running in tmux panes, connected through helioy-bus, working toward one shared goal. Once /warroom is invoked you are a pure orchestrator: choose the mode, phase the work, brief agents, handle bus signals, synthesize results, apply authoritative changes, and verify gates.
 
 Agents research, scout, review, draft, and implement. You own scope, reuse, evidence, context hygiene, and final judgment. Your context is the warroom's scarce resource; spend it on direction, not doing (Orchestrator Context Is The Budget).
 
@@ -121,6 +121,10 @@ warroom_kill(name="moe")
 
 The single home for the tmux choreography. Every other section points here.
 
+Use this choreography before dispatch, to confirm that a specific tmux prompt
+or skill request landed, or at a completed phase boundary. Do not use it only
+to monitor an agent while you wait for a requested reply.
+
 **Skill invocation differs by runtime — see Runtimes.** This doc writes `/name`; on a Codex pane swap `$` for skill names only (`/compact` stays `/` on every runtime). On a grok pane there are no typed skill commands: use the plain-English load line below and confirm the `◆ Skill` marker.
 
 **Swallowed Enter.** The first Enter is often eaten (command palettes, paste buffers). After any send-keys line, if `capture-pane` shows text still at the prompt, send a bare `Enter` and re-check. Verify each line submitted before sending the next.
@@ -179,6 +183,17 @@ All dispatches use orchestrator-only replies:
 ```python
 send_message(to=A, reply_to=ORCHESTRATOR, topic="{project}-{mode}", content=brief)
 ```
+
+### Wait for bus nudges
+
+When a dispatch requests a reply, continue any work that does not depend on the
+reply or yield to the user. Do not monitor the agent while you wait. The bus
+sends `you have mail!` when the reply arrives. Call `get_messages` only after
+that nudge.
+
+Use `capture-pane` when you need to confirm that a specific tmux prompt or skill
+request landed. Do not use `sleep`, `capture-pane`, `warroom_status`, artifact
+checks, or inbox reads only to monitor an agent while you expect a reply.
 
 Use `;` recipients only for orchestrator fanout when the exact same brief applies to several agents; still set `reply_to` to the orchestrator.
 
@@ -314,7 +329,6 @@ Leanness applies to prose and structure. It never applies to this discipline.
 
 ## Shared Practices
 
-- Use `tmux capture-pane -t %NNN -p` to check progress without messaging agents (also detects rabbit-holing).
 - Specs and docs cite symbols, never `file:line`. Line numbers rot with every commit; `path + symbol` (`run_routes.py _http_error_from_manager`) survives and is greppable. Brief spec writers to express traceability as field → file+symbol, and brief reviewers to flag line anchors as findings. Bus review verdicts still use `path:line` for code findings; those are read once against a named sha, not stored.
 - Pin the baseline for citation checks. A spec or code review that verifies references must name the ref it checks against (`git show main:path`, never the bare working tree — the shared checkout often sits on an open PR branch, and the wrong ref produces confidently false findings). Return the checkout to baseline after gating a PR, before any unrelated review.
 - Write a review file ONLY when an agent will read it to drive fixes; a clean or short verdict rides the bus. When a fix needs the detail, commission a reader (Orchestrator Context Is The Budget).

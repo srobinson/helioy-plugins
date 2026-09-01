@@ -16,7 +16,7 @@ helioy-plugins/
 
 ### Plugin: helioy-tools
 
-The primary plugin. Five MCP servers, sixteen skills, thirteen agent definitions, and lifecycle hooks.
+The primary plugin. Five MCP servers, seventeen skills, thirteen agent definitions, and lifecycle hooks.
 
 **MCP servers**
 
@@ -39,6 +39,7 @@ The primary plugin. Five MCP servers, sixteen skills, thirteen agent definitions
 | `content`, `social-loop` | Social publishing and engagement routing |
 | `code-hygiene`, `codebase-map` | Codebase maintenance and mapping |
 | `imagegen` | Helioy visual generation styles |
+| `sketch-lab` | Shareable Sketch Lab architecture diagrams |
 | `name-claim`, `npm-claim`, `pypi-claim`, `crate-claim` | Package name reservation workflows |
 | `kubernetes-fundamentals` | Kubernetes knowledge navigation |
 | `snapshot`, `workflows` | Document preservation and workflow inventory |
